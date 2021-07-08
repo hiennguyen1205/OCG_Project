@@ -29,7 +29,7 @@ func ConfigRouterProduct() *mux.Router {
 	routers.Methods(http.MethodGet).Path("/api/orders").HandlerFunc(controller.GetAllOrdersDetails)
 
 	//USERS
-	routers.Methods(http.MethodPost).Path("/api/register").HandlerFunc(controller.Register)
-	routers.Methods(http.MethodPost).Path("/api/login").HandlerFunc(controller.Login)
+	// routers.Methods(http.MethodPost).Path("/api/register").HandlerFunc(controller.Register)
+	// routers.Methods(http.MethodPost).Path("/api/login").HandlerFunc(controller.Login)
 	return routers
 }
