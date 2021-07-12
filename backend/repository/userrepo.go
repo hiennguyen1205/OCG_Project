@@ -15,23 +15,23 @@ func CreateUser(user *models.User) (err error) {
 	return err
 }
 
-func CheckValid(u *models.User) bool {
+func CheckValid(u *models.User) (bool, int) {
 	var user models.User
 	response := db.QueryRow("SELECT * FROM users WHERE username = ?", u.Username)
 	if response == nil {
 		fmt.Println("Lỗi database 5**")
-		return false
+		return false, -1
 	}
 	err := response.Scan(&user.Id, &user.Username, &user.Password, &user.Email, &user.Role)
 	if err != nil {
 		fmt.Println("Tài khoản sai")
-		return false
+		return false, -1
 	}
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(u.Password)); err != nil {
 		fmt.Println("Sai mật khẩu")
-		return false
+		return false, -1
 	}
 
-	return true
+	return true, user.Id
 
 }

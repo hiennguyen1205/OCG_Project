@@ -19,10 +19,11 @@ func main() {
 	routers.PathPrefix("/static/image/").Handler(http.StripPrefix("/static/image/", http.FileServer(http.Dir("./static/image/"))))
 
 	//cấu hình CORS
-	handleCross :=handlers.CORS(
-		handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), 
-		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"}), 
-		handlers.AllowedOrigins([]string{"*"}),
+	handleCross := handlers.CORS(
+		handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization", "Origin", "Accept"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"}),
+		handlers.AllowedOrigins([]string{"http://localhost:8080"}),
+		handlers.AllowCredentials(),
 	)
 	log.Fatal(http.ListenAndServe(":3000", handleCross(routers)))
 }

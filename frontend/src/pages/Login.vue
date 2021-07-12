@@ -115,14 +115,15 @@ export default {
           username: this.username,
           password: this.password,
         }),
-      }).then(response => {
-        console.log(response);
-        await this.$router.push({ name: 'Home' });
-      }).catch(error =>{
-        console.log(error);
-      });
-
-
+      })
+        .then(async (response) => {
+          let data = await response.json();
+          this.$store.commit('updateUserId', parseInt(data));
+          // this.$router.push({ name: 'Home' });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     Signup() {
       console.log(

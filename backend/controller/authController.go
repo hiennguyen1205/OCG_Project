@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -37,7 +38,7 @@ func Login(write http.ResponseWriter, request *http.Request) {
 	var user models.User
 	json.Unmarshal(requestBody, &user)
 
-	isValid := repository.CheckValid(&user)
+	isValid, userId := repository.CheckValid(&user)
 	if isValid {
 		//jwt
 
@@ -48,7 +49,8 @@ func Login(write http.ResponseWriter, request *http.Request) {
 		token, err := claims.SignedString([]byte(SecretKey))
 
 		if err != nil {
-			json.NewEncoder(write).Encode("Không thể đăng nhập")
+			statusCode := http.StatusUnauthorized
+			http.Error(write, strconv.Itoa(userId), statusCode)
 		}
 
 		cookie := &http.Cookie{
@@ -62,8 +64,12 @@ func Login(write http.ResponseWriter, request *http.Request) {
 		//request.AddCookie(cookie)
 		http.SetCookie(write, cookie)
 
+		json.NewEncoder(write).Encode(userId)
+
 	} else {
-		json.NewEncoder(write).Encode("Tài khoản hoặc mật khẩu không đúng")
+		statusCode := http.StatusUnauthorized
+		http.Error(write, strconv.Itoa(userId), statusCode)
+
 	}
 }
 
