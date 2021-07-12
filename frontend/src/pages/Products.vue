@@ -21,23 +21,6 @@
             <li>Ghế dài và đôn</li>
             <li>Ghế thư giãn</li>
             <li>Bàn ăn</li>
-            <li>Ghế ăn</li>
-            <li>Tủ ly</li>
-            <li>Bàn console</li>
-            <li>Tủ bếp</li>
-            <li>Giường ngủ</li>
-            <li>Bàn đầu giường</li>
-            <li>Bàn trang điểm</li>
-            <li>Tủ hộc kéo</li>
-            <li>Tủ áo</li>
-            <li>Tủ âm</li>
-            <li>Bàn làm việc</li>
-            <li>Ghế làm việc</li>
-            <li>Kệ sách</li>
-            <li>Thảm</li>
-            <li>Đèn</li>
-            <li>Đồ trang trí</li>
-            <li>Bàn ngoài trời</li>
           </ul>
         </div>
 
@@ -77,33 +60,33 @@
             <div
               class=" col-md-4"
               v-for="product in searchProductsByName"
-              :key="product.ID"
+              :key="product.id"
             >
               <div class="product-item">
-                <div :class="{ discount: product.Sale }">
-                  {{ product.Sale > 0 ? product.Sale + "%" : "" }}
+                <div :class="{ discount: product.sale }">
+                  {{ product.sale > 0 ? product.sale + "%" : "" }}
                 </div>
                 <img
-                  :src="`http://localhost:3000/${product.Image}`"
+                  :src="`http://localhost:3000/${product.image}`"
                   alt="hihi"
                 />
                 <div class="decription">
                   <router-link
                     :to="{
                       name: 'ProductDetail',
-                      params: { id: product.ID },
+                      params: { id: product.id },
                     }"
-                    ><h4>{{ product.Name }}</h4></router-link
+                    ><h4>{{ product.name }}</h4></router-link
                   >
                   <p>
-                    {{ product.Description }}
+                    {{ product.description }}
                   </p>
                   <div class="price">
                     <div
                       id="style-price"
                       style="text-align:center; font-size:30px"
                     >
-                      {{ formatCurrency(product.Price) }}
+                      {{ formatCurrency(product.price) }}
                     </div>
                     <button @click="addOneToCart(product)">
                       <i
@@ -120,7 +103,7 @@
           </div>
 
           <!-- Pagination -->
-          <div class="paging">
+          <!-- <div class="paging">
             <nav aria-label="Page navigation example">
               <ul class="pagination">
                 <li class="page-item">
@@ -148,7 +131,16 @@
                 </li>
               </ul>
             </nav>
+          </div> -->
+
+          <!-- test xem thêm -->
+          <div>
+            <button @click="paging()">Xem thêm nào!!</button>
           </div>
+
+
+
+
         </div>
       </div>
     </div>
@@ -172,7 +164,7 @@ export default {
       sort: "ID",
       search: "",
       totalProducts: 0,
-      offset: 0,
+      cursor: 0,
       totalPage: 0,
       category: "",
       searchProducts: "",
@@ -181,10 +173,10 @@ export default {
 
   async created() {
     const response = await fetch(
-      `http://localhost:3000/api/product?limit=${this.limit}&offset=${this.offset}`
+      `http://localhost:3000/api/products?limit=${this.limit}&cursor=${this.cursor}&categoryId=1`
     );
     let result = await response.json();
-    this.products = result.listProduct;
+    this.products = result;
     // console.log(this.products);
     this.totalPage = result.totalPages;
     this.totalProducts = result.totalProducts;
@@ -195,7 +187,7 @@ export default {
   computed: {
     searchProductsByName() {
       return this.products.filter((product) => {
-        return product.Name.toLowerCase().includes(this.searchProducts);
+        return product.name.toLowerCase().includes(this.searchProducts);
       });
     },
   },
@@ -209,24 +201,16 @@ export default {
       product["quantity"] = 1;
       this.$store.commit("addProductToCart", product);
     },
-    // async getAmrchairs() {
-    //   const response = await fetch(
-    //     `http://localhost:3000/api/product/category/Armchair?limit=${this.limit}&offset=${this.offset}`
-    //   );
-    //   let result = await response.json();
-    //   this.products = result.listProduct;
-    //   console.log(this.products);
-    //   this.totalPage = result.totalPages;
-    //   this.totalProducts = result.totalProducts;
-    // },
 
-    async paging(index) {
-      this.offset = index * this.limit;
+
+    async paging() {
+      this.limit += this.limit;
       const response = await fetch(
-        `http://localhost:3000/api/product?limit=${this.limit}&offset=${this.offset}`
+        `http://localhost:3000/api/products?limit=${this.limit}&cursor=${this.cursor}&categoryId=1`
       );
       let result = await response.json();
-      this.products = result.listProduct;
+      console.log(result);
+      this.products = result;
     },
 
     selectOption(event) {

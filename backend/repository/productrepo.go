@@ -120,24 +120,30 @@ func InitData() {
 * input: 4 params giúp cho việc phân trang, search theo tên và sắp xếp sản phẩm
 * output: 1 slice các sản phẩm
 */
-func GetAllProducts(limit int, cursor int, search string, sort string) (result []models.Product) {
+func GetAllProducts(limit int, cursor int, search string, sort string, categoryId int, isFeature int) (result []models.Product) {
 	var strQuery string
 	var response *sql.Rows
 	lenSearch := len(search)
 	lenSort := len(sort)
 	if lenSearch != 0 && lenSort != 0 {
-		strQuery = ("SELECT * FROM products WHERE id > ? AND name LIKE ? ORDER BY price " + sort + " LIMIT ?")
-		response, _ = db.Query(strQuery, cursor, "%"+search+"%", limit)
+		strQuery = ("SELECT * FROM products WHERE id > ? AND category_id = ? AND name LIKE ? ORDER BY price " + sort + " LIMIT ?")
+		response, _ = db.Query(strQuery, cursor, categoryId, "%"+search+"%", limit)
 	} else if lenSearch != 0 && len(sort) == 0 {
-		strQuery = ("SELECT * FROM products WHERE id > ? AND name LIKE ? LIMIT ?")
-		response, _ = db.Query(strQuery, cursor, "%"+search+"%", limit)
+		strQuery = ("SELECT * FROM products WHERE id > ? AND category_id = ? AND name LIKE ? LIMIT ?")
+		response, _ = db.Query(strQuery, cursor, categoryId, "%"+search+"%", limit)
 	} else if lenSearch == 0 && len(sort) != 0 {
-		strQuery = ("SELECT * FROM products WHERE id > ? ORDER BY price " + sort + " LIMIT ?")
-		response, _ = db.Query(strQuery, cursor, limit)
+		strQuery = ("SELECT * FROM products WHERE id > ? AND category_id = ? ORDER BY price " + sort + " LIMIT ?")
+		response, _ = db.Query(strQuery, cursor, categoryId, limit)
 	} else {
-		strQuery = ("SELECT * FROM products WHERE id > ? LIMIT ?")
+		strQuery = ("SELECT * FROM products WHERE id > ? AND category_id = ? LIMIT ?")
+		response, _ = db.Query(strQuery, cursor, categoryId, limit)
+	}
+
+	if isFeature == 1 {
+		strQuery = ("SELECT * FROM products WHERE id > ? AND is_feature = 1 LIMIT ?")
 		response, _ = db.Query(strQuery, cursor, limit)
 	}
+
 	if response == nil {
 		return
 	}
@@ -162,6 +168,8 @@ func GetProductById(id int) models.Product {
 	return product
 }
 
+
+
 func CreateProduct(product models.Product) (err error) {
 	strQuery := "INSERT INTO products(name, description, price, category_id, image, sale, is_feature) VALUES (?,?,?,?,?,?,?)"
 	result, err := db.Exec(strQuery, product.Name, product.Description, product.Price, product.CategoryId, product.Image, product.Sale, product.IsFeature)
@@ -170,6 +178,7 @@ func CreateProduct(product models.Product) (err error) {
 }
 
 func UpdateProduct(product models.Product) (err error) {
+	
 	strQuery, err := db.Prepare("UPDATE products SET name = ?, description = ?, price = ?, category_id = ?, image = ?, sale = ?, is_feature = ? WHERE id=?")
 	if err != nil {
 		panic(err.Error())

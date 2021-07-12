@@ -35,16 +35,16 @@ CREATE TABLE `address` (
 CREATE TABLE `order_details` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `user_id` INT NOT NULL,
-  `total_price` FLOAT NOT NULL,
+  `total_price` FLOAT NOT NULL DEFAULT 0,
   `payment` VARCHAR(100) NOT NULL,
-  `discount` TINYINT(100) NOT NULL,
-  `active` TINYINT(1) DEFAULT 0
+  `discount` TINYINT(100) NOT NULL
 );
 CREATE TABLE `order_items` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `order_id` INT NOT NULL,
   `product_id` INT NOT NULL,
-  `quantity` INT NOT NULL
+  `quantity` INT NOT NULL,
+`active` TINYINT(1) DEFAULT 0
 );
 -- ADD FOREIGN KEY
 -- table products
@@ -77,10 +77,13 @@ ADD
 INSERT INTO
   `categories` (name)
 VALUES
-  ("Loại 1"),
-  ("Loại 2"),
-  ("Loại 3"),
-  ("Loại 4");
+  ("Armchair"),
+  ("Sofa"),
+  ("Table"),
+  ("Tủ Tivi"),
+  ("Kệ trưng bày"),
+  ("Ghế thư giãn"),
+  ("Bàn ăn");
 -- table products
 INSERT INTO
   `products` (
@@ -98,7 +101,7 @@ VALUES
     "được vl bạn êi",
     101,
     1,
-    "link ảnh nè",
+    "static/image/armchair_1.jpg",
     10,
     1
   ),
@@ -106,8 +109,8 @@ VALUES
     "XYZ",
     "mua làm cc gì",
     103,
-    2,
-    "link ảnh nè",
+    1,
+    "static/image/armchair_2.jpg",
     0,
     0
   ),
@@ -115,8 +118,8 @@ VALUES
     "HIHI",
     "Hàng như loz vậy. Nhưng t thích loz, nên t thích hàng",
     150,
-    3,
-    "link ảnh nè",
+    1,
+    "static/image/armchair_3.jpg",
     10,
     1
   ),
@@ -124,8 +127,8 @@ VALUES
     "AAHQ",
     "ádsdsad",
     1067,
-    4,
-    "link ảnh nè",
+    1,
+    "static/image/armchair_4.jpg",
     15,
     0
   ),
@@ -133,8 +136,8 @@ VALUES
     "ADRF",
     "ádasdsadsad",
     10890,
-    4,
-    "link ảnh nè",
+    1,
+    "static/image/armchair_5.jpg",
     35,
     1
   ),
@@ -142,8 +145,8 @@ VALUES
     "ACBHT",
     "sadsadsadsa",
     10000,
-    3,
-    "link ảnh nè",
+    1,
+    "static/image/armchair_6.jpg",
     20,
     1
   ),
@@ -152,7 +155,7 @@ VALUES
     "ffjgjhjkjh",
     1076,
     2,
-    "link ảnh nè",
+    "static/image/armchair_7.jpg",
     50,
     0
   ),
@@ -161,7 +164,7 @@ VALUES
     "khkjhjhj",
     1550,
     1,
-    "link ảnh nè",
+    "static/image/armchair_8.jpg",
     90,
     1
   ),
@@ -170,7 +173,7 @@ VALUES
     "hjhgjghjghj",
     130,
     3,
-    "link ảnh nè",
+    "static/image/armchair_1.jpg",
     12,
     0
   ),
@@ -188,7 +191,8 @@ INSERT INTO
   `users` (username, password, email)
 VALUES
   ("user1", "1234", "user1@gmail.com"),
-  ("user2", "abc", "user2@gmail.com");
+  ("user2", "abc", "user2@gmail.com"),
+  ("user3", "xyz", "user3@gmail.com");
 -- table address
 INSERT INTO
   `address` (user_id, detail)
@@ -207,6 +211,15 @@ INSERT INTO
 VALUES
   (1, 1234, "Tiền mặt", 12),
   (2, 3456, "Thẻ Master Card", 40);
+
+
+-- table order items
+INSERT INTO
+  order_items (`order_id`, `product_id`, `quantity`)
+VALUES
+  (1, 2, 12),
+  (2, 6, 40);
+  
 -- test query
 SELECT * FROM products
 SELECT
@@ -224,12 +237,12 @@ SELECT * FROM categories
 SELECT * FROM products WHERE id > 0 AND name LIKE "A" LIMIT 6
 
 
-SELECT
-  *
-FROM
-  products
-WHERE
-  id = 100
-  AND name LIKE "A"
-LIMIT
-  6
+
+SELECT * FROM products WHERE id > 0 AND is_feature = 1 LIMIT 6
+
+  SELECT od.user_id, od.id, od.discount, od.total_price, od.payment,oi.`active`, oi.product_id, oi.quantity, p.`name`, p.price, p.image FROM  order_items oi JOIN order_details od ON od.id = oi.order_id JOIN products p ON p.id = oi.product_id WHERE od.user_id = 1 AND oi.`active` = 0
+
+
+SELECT od.user_id, od.discount, od.total_price, od.payment FROM order_items oi JOIN order_details od ON od.id = oi.order_id WHERE od.user_id = 1
+
+SELECT od.user_id, od.id, od.discount, od.total_price, od.payment,oi.`active`, oi.product_id, oi.quantity, p.`name`, p.price, p.image FROM order_items oi JOIN order_details od ON od.id = oi.order_id JOIN products p ON p.id = oi.product_id WHERE od.user_id = 1 AND oi.`active` = 0

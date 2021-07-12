@@ -6,4 +6,5 @@ type OrderDetail struct {
 	TotalPrice float64 `json:"total_price"`
 	Payment    string  `json:"payment"`
 	Discount   int     `json:"discount"`
+	Active     int     `json:"active"`
 }

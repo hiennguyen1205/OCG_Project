@@ -32,7 +32,7 @@ const store = createStore({
     getters: {
         calcSubTotal(state) {
             return state.products.reduce(
-                (totalPrice, product) => totalPrice + product.Price * product.quantity,
+                (totalPrice, product) => totalPrice + product.price * product.quantity,
                 0
             );
             
@@ -41,7 +41,7 @@ const store = createStore({
             return (
                 state.products.reduce(
                     (totalPrice, product) =>
-                        totalPrice + product.Price * product.quantity,
+                        totalPrice + product.price * product.quantity,
                     0
                 ) / 10
             );
@@ -62,7 +62,7 @@ const store = createStore({
                 console.log(state.calcSubTotal);
                 state.discount =
                     (parseInt(s[0].discount.substr(0, 2)) / 100) * state.products.reduce(
-                        (totalPrice, product) => totalPrice + product.Price * product.quantity,
+                        (totalPrice, product) => totalPrice + product.price * product.quantity,
                         0
                     );
             } else state.discount = 0;
@@ -72,7 +72,7 @@ const store = createStore({
         changeQuantity(state, {productId, number}) {
             console.log(number, productId);
             state.products = state.products.map((product) => {
-                if (product.ID === productId) {
+                if (product.id === productId) {
                     if (parseInt(number) > 0 && parseInt(number) < 300) {
                         product.quantity = parseInt(number);
                         return product;
@@ -91,7 +91,7 @@ const store = createStore({
             let confirmDelete = confirm("Do you want to delete state product " + productId + "??");
             if (confirmDelete) {
                 state.products = state.products.filter(
-                    (product) => product.ID != productId
+                    (product) => product.id != productId
                 );
             }
         },
@@ -105,7 +105,7 @@ const store = createStore({
         },
 
         addProductToCart(state, product){
-            let checkProduct = state.products.filter((productInStore) => productInStore.ID === product.ID);
+            let checkProduct = state.products.filter((productInStore) => productInStore.id === product.id);
             // console.log(checkProduct.length===0);
             if (checkProduct.length === 0){
                 console.log(1);
@@ -113,7 +113,7 @@ const store = createStore({
             } else {
                 console.log(2);
                 state.products.forEach(element => {
-                    if (element.ID === product.ID) {
+                    if (element.id === product.id) {
                         element["quantity"] += product["quantity"];
                     }
                 });
@@ -126,15 +126,15 @@ const store = createStore({
             console.log("sort " + state.sortType);
             if (state.sortType === "price-asc") {
                 return state.products.sort(function (product1, product2) {
-                    return product1.Price - product2.Price;
+                    return product1.price - product2.price;
                 });
             } else if (state.sortType === "price-desc") {
                 return state.products.sort(function (product1, product2) {
-                    return product2.Price - product1.Price;
+                    return product2.price - product1.price;
                 });
             } else {
                 return state.products.sort(function (product1, product2) {
-                    return product1.ID - product2.ID;
+                    return product1.id - product2.id;
                 });
             }
         },
