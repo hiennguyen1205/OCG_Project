@@ -4,6 +4,7 @@ import { createStore } from "vuex";
 const store = createStore({
     state() {
         return {
+            userId: -1,
             products: [],
 
             listBackupProducts: [],
@@ -25,7 +26,7 @@ const store = createStore({
             promoCode: "",
             discount: 0,
             tax: 0,
-            sortType:"",
+            sortType: "",
         };
     },
 
@@ -35,7 +36,7 @@ const store = createStore({
                 (totalPrice, product) => totalPrice + product.price * product.quantity,
                 0
             );
-            
+
         },
         calcTax(state) {
             return (
@@ -53,11 +54,14 @@ const store = createStore({
     },
 
     mutations: {
+        updateUserId(state, id) {
+            state.userId = id;
+        },
         calcDiscount(state) {
             let s = state.promotions.filter(
                 (promotion) => promotion.code === state.promoCode
             );
-           
+
             if (s.length > 0) {
                 console.log(state.calcSubTotal);
                 state.discount =
@@ -66,10 +70,10 @@ const store = createStore({
                         0
                     );
             } else state.discount = 0;
-            
+
         },
 
-        changeQuantity(state, {productId, number}) {
+        changeQuantity(state, { productId, number }) {
             console.log(number, productId);
             state.products = state.products.map((product) => {
                 if (product.id === productId) {
@@ -87,7 +91,7 @@ const store = createStore({
         },
 
         removeItem(state, productId) {
-          
+
             let confirmDelete = confirm("Do you want to delete state product " + productId + "??");
             if (confirmDelete) {
                 state.products = state.products.filter(
@@ -100,14 +104,14 @@ const store = createStore({
             state.products = [...state.listBackupProducts]
         },
 
-        changeDiscountCode(state, value){
+        changeDiscountCode(state, value) {
             state.promoCode = value;
         },
 
-        addProductToCart(state, product){
+        addProductToCart(state, product) {
             let checkProduct = state.products.filter((productInStore) => productInStore.id === product.id);
             // console.log(checkProduct.length===0);
-            if (checkProduct.length === 0){
+            if (checkProduct.length === 0) {
                 console.log(1);
                 state.products.push(product);
             } else {
@@ -143,7 +147,7 @@ const store = createStore({
 
     // Giống mutations nhưng dùng cho hàm async
     actions: {
-        
+
     },
 });
 
