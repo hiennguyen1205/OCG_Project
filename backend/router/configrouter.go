@@ -6,21 +6,21 @@ import (
 	"github.com/gorilla/mux"
 
 	"bt/project/controller"
-	"bt/project/middleware"
 )
 
 func ConfigRouterProduct() *mux.Router {
 	routers := mux.NewRouter()
 	// routers.HandleFunc("/", controller.Hello).Methods(http.MethodGet)
 	routeApi := routers.PathPrefix("/c").Subrouter()
-	routeApi.Use(middleware.AuthMiddleware)
-	//routeProduct(routeApi)
+	routeApi.Use(controller.AuthMiddleware)
+	routeProduct(routeApi)
 	//API PRODUCTS
 	//Get All Products
-	routers.HandleFunc("/api/products", controller.GetAllProducts).Methods(http.MethodGet)
+	//routers.HandleFunc("/api/products", controller.GetAllProducts).Methods(http.MethodGet)
 	//Get Products By Id
 
-	http.Handle("/api/products/{id_product}", middleware.AuthMiddleware(routers))
+	//http.Handle("/api/products/{id_product}", middleware.AuthMiddleware(routers))
+	routers.HandleFunc("/api/products", controller.GetAllProducts).Methods(http.MethodGet)
 	//Create Product
 	routers.Methods(http.MethodPost).Path("/api/products").HandlerFunc(controller.CreateProduct)
 	//Delete Product By Id
@@ -45,4 +45,9 @@ func ConfigRouterProduct() *mux.Router {
 	routers.HandleFunc("/api/categories", controller.GetAllCategories).Methods(http.MethodGet)
 
 	return routers
+}
+
+func routeProduct(router *mux.Router) {
+
+	router.HandleFunc("/api/products", controller.GetAllProducts).Methods(http.MethodGet)
 }
