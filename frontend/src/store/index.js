@@ -6,9 +6,7 @@ const store = createStore({
         return {
             userId: -1,
             products: [],
-
             listBackupProducts: [],
-
             promotions: [
                 {
                     code: "SUMMER",
@@ -27,6 +25,10 @@ const store = createStore({
             discount: 0,
             tax: 0,
             sortType: "",
+
+            user: {},
+            payment: "Tiền mặt",
+            totalPrice: 0,
         };
     },
 
@@ -48,9 +50,10 @@ const store = createStore({
             );
         },
 
-        // calcTotal(getters) {
-        //     return getters.calcSubTotal - getters.discount + getters.calcTax;
-        // },
+        calcTotalPrice(state) {
+            state.totalPrice = state.products.reduce((totalPrice, product) => totalPrice + product.price * product.quantity,
+                0)
+        }
     },
 
     mutations: {
@@ -91,7 +94,6 @@ const store = createStore({
         },
 
         removeItem(state, productId) {
-
             let confirmDelete = confirm("Do you want to delete state product " + productId + "??");
             if (confirmDelete) {
                 state.products = state.products.filter(
@@ -112,10 +114,10 @@ const store = createStore({
             let checkProduct = state.products.filter((productInStore) => productInStore.id === product.id);
             // console.log(checkProduct.length===0);
             if (checkProduct.length === 0) {
-                console.log(1);
+                // console.log(1);
                 state.products.push(product);
             } else {
-                console.log(2);
+                // console.log(2);
                 state.products.forEach(element => {
                     if (element.id === product.id) {
                         element["quantity"] += product["quantity"];
@@ -143,12 +145,46 @@ const store = createStore({
             }
         },
 
+        saveOrder(state) {
+            state.user = {
+                user_id: state.userId,
+                order_id: 1,
+                discount: state.discount,
+                total_price: state.totalPrice,
+                payment: state.payment
+            };
+            state.products.forEach(product => {
+                product["active"] = 0;
+            });
+
+            console.log(state.user);
+            console.log(state.products);
+        },
+        submitedOrder(state) {
+            state.products = []
+            console.log(state.products);
+        }
+
     },
 
     // Giống mutations nhưng dùng cho hàm async
     actions: {
+        async submitOrder({ commit }, order) {
+            await fetch('http://localhost:3000/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(order),
+            })
+            .then(() => {
+                commit("submitedOrder")
+                console.log(order);
+                console.log("OK");
+                // this.$router.push({ name: 'Home' });
+            })
+            .catch(err => console.log(err))
 
+        }
     },
 });
-
 export default store;
