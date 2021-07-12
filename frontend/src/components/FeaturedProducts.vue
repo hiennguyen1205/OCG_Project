@@ -13,21 +13,21 @@
       <div
         class="product-item col-md-4 "
         v-for="product in products"
-        :key="product.ID"
+        :key="product.id"
       >
-        <div :class="{ discount: product.Sale }">
-          {{ product.Sale > 0 ? product.Sale + "%" : "" }}
+        <div :class="{ discount: product.sale }">
+          {{ product.Sale > 0 ? product.sale + "%" : "" }}
         </div>
-        <img :src="`http://localhost:3000/${product.Image}`" alt="hihi" />
+        <img :src="`http://localhost:3000/${product.image}`" alt="hihi" />
         <div>
-          <h4>{{ product.Name }}</h4>
+          <h4>{{ product.name }}</h4>
           <p>
-            {{ product.Description }}
+            {{ product.description }}
           </p>
           <div style="height: 40px"></div>
           <div class="price">
             <p id="style-price">
-              {{ formatCurrency(product.Price) }}
+              {{ formatCurrency(product.price) }}
               <button>
                 <i
                   id="icon-cart"
@@ -54,10 +54,9 @@ export default {
   },
 
   async created() {
-    const response = await fetch("http://localhost:3000/api/product?limit=6&offset=0");
+    const response = await fetch("http://localhost:3000/api/products?limit=6&cursor=0&isFeature=1");
     this.products = await response.json();
-    console.log(this.products);
-    this.products = this.products.listProduct.slice(0, 6);
+    // console.log(this.products);
   },
   methods: {
     formatCurrency(money) {

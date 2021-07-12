@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"strconv"
-	"net/http"
-	"io/ioutil"
 	"encoding/json"
+	"io/ioutil"
+	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 
@@ -15,10 +15,12 @@ import (
 func GetAllProducts(write http.ResponseWriter, request *http.Request) {
 	limit, _ := strconv.Atoi(request.URL.Query().Get("limit"))
 	cursor, _ := strconv.Atoi(request.URL.Query().Get("cursor"))
+	categoryId, _ := strconv.Atoi(request.URL.Query().Get("categoryId"))
 	search := request.URL.Query().Get("search")
 	sort := request.URL.Query().Get("sort")
+	isFeature,_ := strconv.Atoi(request.URL.Query().Get("isFeature"))
 	write.Header().Set("Content-Type", "application/json")
-	listProducts := repository.GetAllProducts(limit, cursor, search,sort)
+	listProducts := repository.GetAllProducts(limit, cursor, search,sort, categoryId, isFeature)
 	json.NewEncoder(write).Encode(listProducts)
 }
 

@@ -26,10 +26,21 @@ func ConfigRouterProduct() *mux.Router {
 
 	//API ORDER
 	//Get Order By Id
-	routers.Methods(http.MethodGet).Path("/api/orders").HandlerFunc(controller.GetAllOrdersDetails)
+	routers.Methods(http.MethodGet).Path("/api/orders").HandlerFunc(controller.GetOrdersDetailsByUserId)
+	//tecs check valid orders
+	routers.Methods(http.MethodGet).Path("/api/orders/check").HandlerFunc(controller.CheckValid)
+	//save order to database
+	routers.Methods(http.MethodPut).Path("/api/orders").HandlerFunc(controller.SaveOrderByUserActive)
 
 	//USERS
-	// routers.Methods(http.MethodPost).Path("/api/register").HandlerFunc(controller.Register)
-	// routers.Methods(http.MethodPost).Path("/api/login").HandlerFunc(controller.Login)
+	routers.Methods(http.MethodPost).Path("/api/register").HandlerFunc(controller.Register)
+	routers.Methods(http.MethodPost).Path("/api/login").HandlerFunc(controller.Login)
+
+	//CATEGORY
+	routers.HandleFunc("/api/categories", controller.GetAllCategories).Methods(http.MethodGet)
+
 	return routers
 }
+
+
+
