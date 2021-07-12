@@ -14,7 +14,7 @@ func ConfigRouterProduct() *mux.Router {
 	// routers.HandleFunc("/", controller.Hello).Methods(http.MethodGet)
 	routeApi := routers.PathPrefix("/c").Subrouter()
 	routeApi.Use(middleware.AuthMiddleware)
-	//routeProduct(routeApi)
+
 	//API PRODUCTS
 	//Get All Products
 	routers.HandleFunc("/api/products", controller.GetAllProducts).Methods(http.MethodGet)
