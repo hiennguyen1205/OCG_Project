@@ -11,20 +11,20 @@
     <section class="container">
       <div v-if="productsInChild.length > 0">
         <ul class="products">
-          <li class="row" v-for="product in productsInChild" :key="product.ID">
+          <li class="row" v-for="product in productsInChild" :key="product.id">
             <!-- {{product.id}},{{index}},{{key}} -->
             <div class="col left ">
               <div class="thumbnail">
                 <a href="#">
-                  <img :src="`http://localhost:3000/${product.Image}`" :alt="product.Name" />
+                  <img :src="`http://localhost:3000/${product.image}`" :alt="product.name" />
                 </a>
               </div>
               <div class="detail">
                 <div class="name">
-                   <router-link to="/detail_product"><p>{{ product.Name }}</p></router-link>
+                   <router-link to="/detail_product"><p>{{ product.name }}</p></router-link>
                 </div>
-                <div class="description">{{ product.Description }}</div>
-                <div class="price">{{ formatCurrency(product.Price) }}</div>
+                <div class="description">{{ product.description }}</div>
+                <div class="price">{{ formatCurrency(product.price) }}</div>
               </div>
             </div>
             <div class="col right">
@@ -33,7 +33,7 @@
                   type="number"
                   class="quantity"
                   v-model="product.quantity"
-                  @input="changeQuantity(product.ID, $event)"
+                  @input="changeQuantity(product.id, $event)"
                 />
               </div>
 
@@ -41,7 +41,7 @@
                 <i
                   class="fas fa-trash"
                   id="delete-product"
-                  @click="removeItem(product.ID)"
+                  @click="removeItem(product.id)"
                 ></i>
               </div>
             </div>
@@ -76,7 +76,7 @@ export default {
     changeQuantity(productId, event) {
       // console.log(event.target.value);
 
-      this.$store.commit("changeQuantity",{ productId: productId,number: event.target.value});
+      this.$store.commit("changeQuantity",{ productId: productId, number: event.target.value});
     },
     removeItem(productId) {
       // this.isShowModal = true;
