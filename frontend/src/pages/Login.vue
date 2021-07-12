@@ -12,74 +12,131 @@
         >Sign Up</label
       >
       <div class="login-form">
-        <div class="sign-in-htm">
-          <div class="group">
-            <label for="user" class="label">Username</label>
-            <input id="user" type="text" class="input" />
+        <form @submit.prevent="Login">
+          <div class="sign-in-htm">
+            <div class="group">
+              <label for="user" class="label">Username</label>
+              <input id="user" v-model="username" type="text" class="input" />
+            </div>
+            <div class="group">
+              <label for="pass" class="label">Password</label>
+              <input
+                id="pass"
+                v-model="password"
+                type="password"
+                class="input"
+                data-type="password"
+                required
+              />
+            </div>
+
+            <div class="group">
+              <input type="submit" class="button" value="Sign In" />
+            </div>
+            <div class="hr"></div>
+            <div class="foot-lnk">
+              <a href="#forgot" class="forgot">Forgot Password?</a>
+            </div>
           </div>
-          <div class="group">
-            <label for="pass" class="label">Password</label>
-            <input
-              id="pass"
-              type="password"
-              class="input"
-              data-type="password"
-            />
+        </form>
+        <form @submit.prevent="Signup">
+          <div class="sign-up-htm">
+            <div class="group">
+              <label for="user" class="label">Username</label>
+              <input
+                id="user"
+                v-model="username"
+                type="text"
+                class="input"
+                required
+              />
+            </div>
+            <div class="group">
+              <label for="pass" class="label">Password</label>
+              <input
+                id="pass"
+                v-model="password"
+                type="password"
+                class="input"
+                data-type="password"
+                required
+              />
+            </div>
+            <div class="group">
+              <label for="pass" class="label">Repeat Password</label>
+              <input
+                id="pass"
+                v-model="password_confirm"
+                type="password"
+                class="input"
+                data-type="password"
+                required
+              />
+            </div>
+            <div class="group">
+              <label for="pass" class="label">Email Address</label>
+              <input
+                id="pass"
+                type="email"
+                v-model="email"
+                class="input"
+                required
+              />
+            </div>
+            <div class="group">
+              <input type="submit" class="button" value="Sign Up" />
+            </div>
+            <div class="hr"></div>
           </div>
-          <div class="group">
-            <input id="check" type="checkbox" class="check" checked />
-            <label for="check"
-              ><span class="icon"></span> Keep me Signed in</label
-            >
-          </div>
-          <div class="group">
-            <input type="submit" class="button" value="Sign In" />
-          </div>
-          <div class="hr"></div>
-          <div class="foot-lnk">
-            <a href="#forgot" class="forgot">Forgot Password?</a>
-          </div>
-        </div>
-        <div class="sign-up-htm">
-          <div class="group">
-            <label for="user" class="label">Username</label>
-            <input id="user" type="text" class="input" />
-          </div>
-          <div class="group">
-            <label for="pass" class="label">Password</label>
-            <input
-              id="pass"
-              type="password"
-              class="input"
-              data-type="password"
-            />
-          </div>
-          <div class="group">
-            <label for="pass" class="label">Repeat Password</label>
-            <input
-              id="pass"
-              type="password"
-              class="input"
-              data-type="password"
-            />
-          </div>
-          <div class="group">
-            <label for="pass" class="label">Email Address</label>
-            <input id="pass" type="text" class="input" />
-          </div>
-          <div class="group">
-            <input type="submit" class="button" value="Sign Up" />
-          </div>
-          <div class="hr"></div>
-          
-        </div>
+        </form>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  name: 'Loginout',
+  data() {
+    return {
+      username: '',
+      email: '',
+      password: '',
+      password_confirm: '',
+    };
+  },
+  methods: {
+    async Login() {
+      await fetch('http://localhost:3000/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          username: this.username,
+          password: this.password,
+        }),
+      }).then(response => {
+        console.log(response);
+        await this.$router.push({ name: 'Home' });
+      }).catch(error =>{
+        console.log(error);
+      });
+
+
+    },
+    Signup() {
+      console.log(
+        this.username +
+          ' ' +
+          this.password +
+          ' ' +
+          this.password_confirm +
+          ' ' +
+          this.email
+      );
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -87,7 +144,7 @@ body {
   margin: 0;
   color: #6a6f8c;
   background: #c8c8c8;
-  font: 600 16px/18px "Open Sans", sans-serif;
+  font: 600 16px/18px 'Open Sans', sans-serif;
 }
 *,
 :after,
@@ -96,7 +153,7 @@ body {
 }
 .clearfix:after,
 .clearfix:before {
-  content: "";
+  content: '';
   display: table;
 }
 .clearfix:after {
@@ -118,8 +175,8 @@ a {
     no-repeat center;
   box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24),
     0 17px 50px 0 rgba(0, 0, 0, 0.19);
-    margin-top: 120px;
-    margin-bottom:20px;
+  margin-top: 120px;
+  margin-bottom: 20px;
 }
 .login-html {
   width: 100%;
@@ -185,7 +242,7 @@ a {
   border-radius: 25px;
   background: rgba(255, 255, 255, 0.1);
 }
-.login-form .group input[data-type="password"] {
+.login-form .group input[data-type='password'] {
   text-security: circle;
   -webkit-text-security: circle;
 }
@@ -206,7 +263,7 @@ a {
 }
 .login-form .group label .icon:before,
 .login-form .group label .icon:after {
-  content: "";
+  content: '';
   width: 10px;
   height: 2px;
   background: #fff;
@@ -257,7 +314,7 @@ a {
 .foot-lnk {
   text-align: center;
 }
-.forgot{
-    color: #fff;
+.forgot {
+  color: #fff;
 }
 </style>
