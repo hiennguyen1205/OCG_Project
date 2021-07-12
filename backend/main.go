@@ -1,7 +1,10 @@
 package main
 
 import (
+	"log"
 	"net/http"
+
+	"github.com/gorilla/handlers"
 
 	"bt/project/connect"
 	"bt/project/router"
@@ -12,15 +15,14 @@ func main() {
 	//connect database
 	connect.Connect()
 
-	//đoạn này không biết có cần config CORS không
-	// These two lines are important if you're designing a front-end to utilise this API methods
-	// allowedOrigins := handlers.AllowedOrigins([]string{"*"})
-	// allowedMethods := handlers.AllowedMethods([]string{"GET", "POST", "DELETE", "PUT"})
-	//https://medium.com/@gautamprajapati/writing-a-simple-e-commerce-website-api-in-go-programming-language-9f671324b4dd
+	//cấu hình file public
+	routers.PathPrefix("/static/image/").Handler(http.StripPrefix("/static/image/", http.FileServer(http.Dir("./static/image/"))))
 
-	err := http.ListenAndServe(":3000", (routers))
-	// log.Fatal(http.ListenAndServe(":3000", routers))
-	if err != nil {
-		panic(err)
-	}
+	//cấu hình CORS
+	handleCross :=handlers.CORS(
+		handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), 
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"}), 
+		handlers.AllowedOrigins([]string{"*"}),
+	)
+	log.Fatal(http.ListenAndServe(":3000", handleCross(routers)))
 }

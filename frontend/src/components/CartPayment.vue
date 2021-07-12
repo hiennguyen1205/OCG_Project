@@ -75,10 +75,7 @@ export default {
   },
 
   methods: {
-    
-
-
- formatCurrency(money) {
+    formatCurrency(money) {
       return money.toLocaleString("vi", { style: "currency", currency: "VND" });
     },
     calcDiscount() {
