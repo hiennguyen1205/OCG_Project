@@ -4,7 +4,7 @@
     style="padding: 0px;"
   >
     <div class="container-fluid">
-      <router-link to="/"><img :src="logoShop" alt=""></router-link>
+      <router-link to="/"><img :src="logoShop" alt=""/></router-link>
 
       <button
         class="navbar-toggler"
@@ -40,9 +40,18 @@
         </ul>
 
         <div class="left-nav">
-           <router-link to="/checkout"> <i class="fas fa-shopping-cart"><sup>{{totalProductsInCart}}</sup></i></router-link>
+          <router-link to="/checkout">
+            <i class="fas fa-shopping-cart"
+              ><sup>{{ totalProductsInCart }}</sup></i
+            ></router-link
+          >
           <!-- <i class="fas fa-search"></i> -->
-           <router-link to="/login"><i class="fas fa-user-alt"></i></router-link>
+          <a v-if="isAuthenticated" @click.prevent="logOut">
+            <i class="fas fa-sign-out-alt"></i>
+          </a>
+          <router-link v-else to="/login"
+            ><i class="fas fa-user-alt"></i
+          ></router-link>
         </div>
       </div>
     </div>
@@ -52,18 +61,39 @@
 
 <script>
 export default {
-  name: "Navbar",
+  name: 'Navbar',
   data() {
     return {
-      logoShop: require("@/assets/images/logos/nha-xinh-logo.jpg")
+      logoShop: require('@/assets/images/logos/nha-xinh-logo.jpg'),
     };
   },
+  methods: {
+    async logOut() {
+      await fetch('http://localhost:3000/api/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      })
+        .then(async () => {
+          await this.$store.dispatch('setAuth', false);
+          this.$router.push({ name: 'Home' });
+        })
+        .catch(() => {
+          console.log('server failed');
+        });
+    },
+  },
 
-  computed:{
-    totalProductsInCart(){
-      return this.$store.state.products.length!=0?this.$store.state.products.length:"";
-    }
-  }
+  computed: {
+    totalProductsInCart() {
+      return this.$store.state.products.length != 0
+        ? this.$store.state.products.length
+        : '';
+    },
+    isAuthenticated() {
+      return this.$store.state.authenticated;
+    },
+  },
 };
 </script>
 
@@ -73,8 +103,8 @@ export default {
   font-size: 25px;
   color: rgb(5, 5, 5);
 }
-.container-fluid img{
-  width:91px;
+.container-fluid img {
+  width: 91px;
   height: 37px;
 }
 .name-shop:hover {
@@ -85,7 +115,6 @@ export default {
   justify-content: center;
 }
 
-
 a {
   text-decoration: none;
   padding: 20px 30px;
@@ -94,7 +123,7 @@ a {
   font-size: 20px;
   color: rgb(87, 87, 87);
 }
-a::before{
+a::before {
   transform: scale(1.1);
 }
 nav .nav-item {

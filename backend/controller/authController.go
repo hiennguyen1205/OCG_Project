@@ -63,11 +63,11 @@ func Login(write http.ResponseWriter, request *http.Request) {
 		}
 
 		cookie1 := &http.Cookie{
-			Name:     "id",
-			Path:     "/",
-			Value:    strconv.Itoa(userId),
-			Expires:  time.Now().Add(time.Hour * 24),
-			HttpOnly: true,
+			Name:    "id",
+			Path:    "/",
+			Value:   strconv.Itoa(userId),
+			Expires: time.Now().Add(time.Hour * 24),
+			//HttpOnly: true,
 		}
 
 		//request.AddCookie(cookie)
@@ -94,7 +94,16 @@ func Logout(write http.ResponseWriter, request *http.Request) {
 		HttpOnly: true,
 	}
 
+	cookie1 := &http.Cookie{
+		Name:    "id",
+		Path:    "/",
+		Value:   "",
+		Expires: time.Now().Add(-time.Hour),
+		//HttpOnly: true,
+	}
+
 	http.SetCookie(write, cookie)
+	http.SetCookie(write, cookie1)
 
 	json.NewEncoder(write).Encode("Success logout")
 

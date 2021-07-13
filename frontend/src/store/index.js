@@ -4,6 +4,7 @@ import { createStore } from "vuex";
 const store = createStore({
     state() {
         return {
+            authenticated: false,
             promotions: [
                 {
                     code: "SUMMER",
@@ -152,9 +153,14 @@ const store = createStore({
         },
         submitedOrder(state) {
             state.products = []
+
         },
         GET_CART(state, data){
             state.order = data;
+            console.log(state.products);
+        },
+        SET_AUTH(state, auth) {
+            state.authenticated = auth;
         }
     },
 
@@ -186,6 +192,16 @@ const store = createStore({
                 })
                 .catch(err => console.log(err))
         }
+                    console.log(order);
+                    console.log("OK");
+                })
+                .catch(err => console.log(err))
+
+        },
+
+        setAuth: ({ commit }, auth) => {
+            commit("SET_AUTH", auth)
+        },
     },
 });
 export default store;
