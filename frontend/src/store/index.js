@@ -4,7 +4,7 @@ import { createStore } from "vuex";
 const store = createStore({
     state() {
         return {
-            userId: -1,
+            authenticated: false,
             products: [],
             listBackupProducts: [],
             promotions: [
@@ -33,6 +33,9 @@ const store = createStore({
     },
 
     getters: {
+        getUserId() {
+            return parseInt(document.cookie.slice(3,));
+        },
         calcSubTotal(state) {
             return state.products.reduce(
                 (totalPrice, product) => totalPrice + product.price * product.quantity,
@@ -163,6 +166,10 @@ const store = createStore({
         submitedOrder(state) {
             state.products = []
             console.log(state.products);
+        },
+
+        SET_AUTH(state, auth) {
+            state.authenticated = auth;
         }
 
     },
@@ -176,15 +183,21 @@ const store = createStore({
                 credentials: 'include',
                 body: JSON.stringify(order),
             })
-            .then(() => {
-                commit("submitedOrder")
-                console.log(order);
-                console.log("OK");
-                // this.$router.push({ name: 'Home' });
-            })
-            .catch(err => console.log(err))
+                .then(() => {
+                    commit("submitedOrder")
+                    console.log(order);
+                    console.log("OK");
+                    // this.$router.push({ name: 'Home' });
+                })
+                .catch(err => console.log(err))
 
-        }
+        },
+
+        setAuth: ({ commit }, auth) => {
+            commit("SET_AUTH", auth)
+        },
+
+
     },
 });
 export default store;

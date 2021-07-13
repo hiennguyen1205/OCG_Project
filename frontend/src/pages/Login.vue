@@ -84,6 +84,10 @@
               />
             </div>
             <div class="group">
+              <label for="pass" class="label">Address</label>
+              <input id="pass" type="text" v-model="address" class="input" />
+            </div>
+            <div class="group">
               <input type="submit" class="button" value="Sign Up" />
             </div>
             <div class="hr"></div>
@@ -103,6 +107,7 @@ export default {
       email: '',
       password: '',
       password_confirm: '',
+      address: '',
     };
   },
   methods: {
@@ -116,25 +121,40 @@ export default {
           password: this.password,
         }),
       })
-        .then(async (response) => {
-          let data = await response.json();
-          this.$store.commit('updateUserId', parseInt(data));
+        .then(async () => {
+          await this.$store.dispatch('setAuth', true);
+
           this.$router.push({ name: 'Home' });
         })
-        .catch((error) => {
+        .catch(async (error) => {
+          await this.$store.dispatch('setAuth', false);
           console.log(error);
         });
     },
-    Signup() {
-      console.log(
-        this.username +
-          ' ' +
-          this.password +
-          ' ' +
-          this.password_confirm +
-          ' ' +
-          this.email
-      );
+    async Signup() {
+      if (this.password != this.password_confirm) {
+        alert('Passwords did not match');
+      } else {
+        await fetch('http://localhost:3000/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: this.username,
+            password: this.password,
+            email: this.email,
+          }),
+        })
+          .then(async () => {
+            await this.$store.dispatch('setAuth', true);
+            alert('Password created successfully');
+            await this.Signup();
+            this.$router.push({ name: 'Home' });
+          })
+          .catch(async (error) => {
+            await this.$store.dispatch('setAuth', false);
+            console.log(error);
+          });
+      }
     },
   },
 };
