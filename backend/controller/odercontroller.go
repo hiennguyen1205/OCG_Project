@@ -3,16 +3,23 @@ package controller
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"strconv"
 
 	dto "bt/project/models/dto"
 	"bt/project/repository"
+
+	"github.com/gorilla/mux"
 )
 
 func GetOrdersDetailsByUserId(write http.ResponseWriter, request *http.Request) {
-	//id user luwu tren header vd id =1
+	//id user lưu trên cookie
+	vars := mux.Vars(request)
+	strIdUser,_ := strconv.Atoi(vars["user_id"])
+	log.Println(strIdUser)
 	write.Header().Set("Content-Type", "application/json")
-	listOrders := repository.GetOrdersDetailsByUserId(1)
+	listOrders := repository.GetOrdersDetailsByUserId(strIdUser)
 	json.NewEncoder(write).Encode(listOrders)
 }
 

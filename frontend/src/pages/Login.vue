@@ -118,7 +118,8 @@ export default {
       })
         .then(async (response) => {
           let data = await response.json();
-          this.$store.commit('updateUserId', parseInt(data));
+          console.log("id login: "+data);
+          this.$store.dispatch('getCartByUserId', parseInt(document.cookie.slice(3,)));
           this.$router.push({ name: 'Home' });
         })
         .catch((error) => {
