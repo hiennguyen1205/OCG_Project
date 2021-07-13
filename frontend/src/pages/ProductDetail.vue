@@ -8,7 +8,7 @@
         <div class="col-md-4 col-xs-12">
           <div>
             <img
-              :src="`http://localhost:3000/${product.Image}`"
+              :src="`http://localhost:3000/${product.image}`"
               alt=""
               class="img-fluid wc-image"
             />

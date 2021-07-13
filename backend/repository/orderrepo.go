@@ -34,15 +34,19 @@ func GetOrdersDetailsByUserId(id int) (result dto.DisplayOrder) {
 	}
 	//nếu người đó không có danh sách sản phẩm thì danh sách sản phẩm null
 	if result.Products == nil {
+
 		strQuery := "SELECT od.user_id, od.discount, od.total_price, od.payment, oi.order_id " +
 			"FROM order_items oi " +
 			"JOIN order_details od ON od.id = oi.order_id " +
 			"WHERE od.user_id = ?"
 		response := db.QueryRow(strQuery, id)
-		if err != nil {
+		err := response.Scan(&user.UserId, &user.Discount, &user.TotalPrice, &user.Payment, &user.OrderId)
+		if err == sql.ErrNoRows {
 			log.Println(err)
+			strQuery = "SELECT * FROM order_details WHERE user_id = ? "
+			response = db.QueryRow(strQuery, id)
+			response.Scan(&user.UserId, &user.Discount, &user.TotalPrice, &user.Payment, &user.OrderId)
 		}
-		response.Scan(&user.UserId, &user.Discount, &user.TotalPrice, &user.Payment, &user.OrderId)
 		result.User = user
 	}
 	defer response.Close()
@@ -117,7 +121,7 @@ func SaveOrderByUserNotActive(display dto.DisplayOrder) (result string) {
 // func SaveOrderByUserNotActive(display dto.DisplayOrder) (result string) {
 // 	user := display.User
 // 	listProducts := display.Products
-	
+
 // 		for _, product := range listProducts {
 // 			//insert vào order detail
 // 			if IsValidProductItemByOrderId(user.OrderId, product.ProductId) {

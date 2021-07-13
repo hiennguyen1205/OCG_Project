@@ -123,7 +123,7 @@ export default {
       })
         .then(async () => {
           await this.$store.dispatch('setAuth', true);
-
+          await this.$store.dispatch('getCartByUserId', parseInt(document.cookie.slice(3,)));
           this.$router.push({ name: 'Home' });
         })
         .catch(async (error) => {

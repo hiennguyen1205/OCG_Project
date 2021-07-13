@@ -16,11 +16,10 @@ func ConfigRouterProduct() *mux.Router {
 	routeProduct(routeApi)
 
 	//API PRODUCTS
-	//Get All Products
-	//routers.HandleFunc("/api/products", controller.GetAllProducts).Methods(http.MethodGet)
 	//Get Products By Id
 	routers.HandleFunc("/api/products/{id_product}", controller.GetProductById).Methods(http.MethodGet)
-	//http.Handle("/api/products/{id_product}", middleware.AuthMiddleware(routers))
+
+	//Get All Products
 	routers.HandleFunc("/api/products", controller.GetAllProducts).Methods(http.MethodGet)
 	//Create Product
 	routers.Methods(http.MethodPost).Path("/api/products").HandlerFunc(controller.CreateProduct)
@@ -31,7 +30,7 @@ func ConfigRouterProduct() *mux.Router {
 
 	//API ORDER
 	//Get Order By Id
-	routers.Methods(http.MethodGet).Path("/api/orders/{id_product}").HandlerFunc(controller.GetOrdersDetailsByUserId)
+	routers.Methods(http.MethodGet).Path("/api/orders/{user_id}").HandlerFunc(controller.GetOrdersDetailsByUserId)
 	//save order to database active = 1
 	routers.Methods(http.MethodPut).Path("/api/orders").HandlerFunc(controller.SaveOrderByUserActive)
 	//save order to database active = 0

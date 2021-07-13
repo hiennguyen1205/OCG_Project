@@ -5,8 +5,6 @@ const store = createStore({
     state() {
         return {
             authenticated: false,
-            products: [],
-            listBackupProducts: [],
             promotions: [
                 {
                     code: "SUMMER",
@@ -26,9 +24,9 @@ const store = createStore({
             tax: 0,
             sortType: "",
 
+            products: [],
             user: {},
-            payment: "Tiền mặt",
-            totalPrice: 0,
+            order :{},
         };
     },
 
@@ -60,8 +58,8 @@ const store = createStore({
     },
 
     mutations: {
-        updateUserId(state, id) {
-            state.userId = id;
+        updateUserId(state) {
+            state.userId = parseInt(document.cookie.slice(3,));
         },
         calcDiscount(state) {
             let s = state.promotions.filter(
@@ -149,29 +147,21 @@ const store = createStore({
         },
 
         saveOrder(state) {
-            state.user = {
-                user_id: state.userId,
-                order_id: 1,
-                discount: state.discount,
-                total_price: state.totalPrice,
-                payment: state.payment
-            };
-            state.products.forEach(product => {
+            state.order.products.forEach(product => {
                 product["active"] = 0;
             });
-
-            console.log(state.user);
-            console.log(state.products);
         },
         submitedOrder(state) {
             state.products = []
+
+        },
+        GET_CART(state, data){
+            state.order = data;
             console.log(state.products);
         },
-
         SET_AUTH(state, auth) {
             state.authenticated = auth;
         }
-
     },
 
     // Giống mutations nhưng dùng cho hàm async
@@ -185,9 +175,25 @@ const store = createStore({
             })
                 .then(() => {
                     commit("submitedOrder")
+                    console.log("OK");
+                })
+                .catch(err => console.log(err))
+        },
+        async getCartByUserId({ commit }, userId) {
+            await fetch('http://localhost:3000/api/orders/'+userId, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+            })
+                .then(async (response) => {
+                    const data = await response.json()
+                    commit("GET_CART", data)
+                    console.log("ĐƯỢC");
+                })
+                .catch(err => console.log(err))
+        }
                     console.log(order);
                     console.log("OK");
-                    // this.$router.push({ name: 'Home' });
                 })
                 .catch(err => console.log(err))
 
@@ -196,8 +202,6 @@ const store = createStore({
         setAuth: ({ commit }, auth) => {
             commit("SET_AUTH", auth)
         },
-
-
     },
 });
 export default store;

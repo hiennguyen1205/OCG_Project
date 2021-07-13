@@ -92,11 +92,8 @@ export default {
 
     checkout() {
       this.$store.commit("saveOrder");
-      let order = {
-        user: this.$store.state.user,
-        products: this.$store.state.products,
-      };
-      this.$store.dispatch("submitOrder", order);
+      console.log(this.$store.state.order);
+      this.$store.dispatch("submitOrder", this.$store.state.order);
     },
   },
 };
