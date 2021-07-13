@@ -14,6 +14,7 @@ func ConfigRouterProduct() *mux.Router {
 	routeApi := routers.PathPrefix("/c").Subrouter()
 	routeApi.Use(controller.AuthMiddleware)
 	routeProduct(routeApi)
+
 	//API PRODUCTS
 	//Get All Products
 	//routers.HandleFunc("/api/products", controller.GetAllProducts).Methods(http.MethodGet)
@@ -31,10 +32,10 @@ func ConfigRouterProduct() *mux.Router {
 	//API ORDER
 	//Get Order By Id
 	routers.Methods(http.MethodGet).Path("/api/orders").HandlerFunc(controller.GetOrdersDetailsByUserId)
-	//tecs check valid orders
-	routers.Methods(http.MethodGet).Path("/api/orders/check").HandlerFunc(controller.CheckValid)
-	//save order to database
+	//save order to database active = 1
 	routers.Methods(http.MethodPut).Path("/api/orders").HandlerFunc(controller.SaveOrderByUserActive)
+	//save order to database active = 0
+	routers.Methods(http.MethodPost).Path("/api/orders").HandlerFunc(controller.SaveOrderByUserNotActive)
 
 	//USERS
 	routers.Methods(http.MethodPost).Path("/api/register").HandlerFunc(controller.Register)
@@ -48,6 +49,5 @@ func ConfigRouterProduct() *mux.Router {
 }
 
 func routeProduct(router *mux.Router) {
-
 	router.HandleFunc("/api/products", controller.GetAllProducts).Methods(http.MethodGet)
 }

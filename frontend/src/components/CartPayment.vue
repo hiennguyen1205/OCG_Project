@@ -42,7 +42,7 @@
       </div>
 
       <div class="checkout">
-        <button type="button" class="btn">Check Out</button>
+        <button type="button" class="btn" @click="checkout()">Check Out</button>
       </div>
     </section>
     <!-- End Summary -->
@@ -54,7 +54,11 @@ export default {
   name: "CartPayment",
 
   data() {
-    return {};
+    return {
+      user: {},
+      products: {},
+      order: {},
+    };
   },
 
   computed: {
@@ -84,6 +88,15 @@ export default {
 
     changeDiscountCode(event) {
       this.$store.commit("changeDiscountCode", event.target.value);
+    },
+
+    checkout() {
+      this.$store.commit("saveOrder");
+      let order = {
+        user: this.$store.state.user,
+        products: this.$store.state.products,
+      };
+      this.$store.dispatch("submitOrder", order);
     },
   },
 };

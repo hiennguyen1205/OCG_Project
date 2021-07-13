@@ -84,7 +84,7 @@ func SaveOrderByUserNotActive(display dto.DisplayOrder) (result string) {
 		_, err := db.Exec(strQuery, user.UserId, user.TotalPrice, user.Payment, user.Discount)
 		if err != nil {
 			log.Println(err)
-			return "Save Order failed"
+			return "Save User failed"
 		}
 	} else {
 		//có user thì update trong order detail
@@ -101,21 +101,36 @@ func SaveOrderByUserNotActive(display dto.DisplayOrder) (result string) {
 		}
 		//update danh sách product trong order items
 		for _, product := range listProducts {
-			// log.Println(IsValidProductItemByOrderId(user.OrderId, product.ProductId))
-			//nếu có product khớp với order detail id thì update
+			//insert vào order detail
 			if IsValidProductItemByOrderId(user.OrderId, product.ProductId) {
-				strQuery, err := db.Prepare("UPDATE order_items SET quantity = ?, active = 0 WHERE order_id = ? AND product_id = ? AND active = 0")
+				strQuery, err := db.Prepare("INSERT INTO order_items(order_id,product_id,quantity,active) VALUES(?,?,?,0)")
 				if err != nil {
 					log.Println(err.Error())
 				}
-				strQuery.Exec(product.Quantity, user.OrderId, product.ProductId)
+				strQuery.Exec(user.OrderId, product.ProductId, product.Quantity)
 			}
 		}
 	}
 	return "Successed!!"
 }
 
-//save order vào database (active = 0)
+// func SaveOrderByUserNotActive(display dto.DisplayOrder) (result string) {
+// 	user := display.User
+// 	listProducts := display.Products
+	
+// 		for _, product := range listProducts {
+// 			//insert vào order detail
+// 			if IsValidProductItemByOrderId(user.OrderId, product.ProductId) {
+// 				strQuery, err := db.Prepare("INSERT INTO order_items(order_id,product_id,quantity,active) VALUES(?,?,?,0)")
+// 				if err != nil {
+// 					log.Println(err.Error())
+// 				}
+// 				strQuery.Exec(user.OrderId, product.ProductId, product.Quantity)
+// 			}
+// 		}
+// 	return "Successed!!"
+// }
+
 //Sau khi user checkout thành công mới thì trường active product = 1
 func SaveOrderByUserActive(display dto.DisplayOrder) (result string) {
 	user := display.User

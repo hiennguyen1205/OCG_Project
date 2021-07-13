@@ -191,5 +191,5 @@ func DeleteProductById(id int) (str string, err error) {
 	strQuery := "DELETE FROM products WHERE id = ?"
 	result, err := db.Exec(strQuery, id)
 	fmt.Println(result)
-	return "dccm", err
+	return "Sai", err
 }

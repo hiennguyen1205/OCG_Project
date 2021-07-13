@@ -16,19 +16,22 @@ func GetOrdersDetailsByUserId(write http.ResponseWriter, request *http.Request) 
 	json.NewEncoder(write).Encode(listOrders)
 }
 
-//check valid order
-func CheckValid(write http.ResponseWriter, request *http.Request) {
-	write.Header().Set("Content-Type", "application/json")
-	listOrders := repository.IsValidOrderByUserId(3)
-	json.NewEncoder(write).Encode(listOrders)
-}
-
-// save order to database
+// save order to database avtive = 1
 func SaveOrderByUserActive(write http.ResponseWriter, request *http.Request) {
 	requestBody, _ := ioutil.ReadAll(request.Body)
 	var saveOrder dto.DisplayOrder
 	json.Unmarshal(requestBody, &saveOrder)
 	write.Header().Set("content-type", "application/json")
 	result := repository.SaveOrderByUserActive(saveOrder)
+	json.NewEncoder(write).Encode(result)
+}
+
+// save order to database avtive = 0
+func SaveOrderByUserNotActive(write http.ResponseWriter, request *http.Request) {
+	requestBody, _ := ioutil.ReadAll(request.Body)
+	var saveOrder dto.DisplayOrder
+	json.Unmarshal(requestBody, &saveOrder)
+	write.Header().Set("content-type", "application/json")
+	result := repository.SaveOrderByUserNotActive(saveOrder)
 	json.NewEncoder(write).Encode(result)
 }
