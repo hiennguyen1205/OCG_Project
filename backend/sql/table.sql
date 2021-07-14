@@ -1,5 +1,5 @@
--- Drop table
-DROP TABLE IF EXISTS `address`;
+-- -- Drop table
+-- DROP TABLE IF EXISTS `address`;
 DROP TABLE IF EXISTS `order_items`;
 DROP TABLE IF EXISTS `order_details`;
 DROP TABLE IF EXISTS `users`;
@@ -25,13 +25,14 @@ CREATE TABLE `users` (
   `username` VARCHAR(255) NOT NULL,
   `password` TEXT NOT NULL,
   `email` VARCHAR(255) NOT NULL,
+  `address` TEXT NOT NULL,
   `role` TINYINT(1) DEFAULT 0
 );
-CREATE TABLE `address` (
-  `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `user_id` INT NOT NULL,
-  `detail` NVARCHAR(255) NOT NULL
-);
+-- CREATE TABLE `address` (
+--   `id` INT PRIMARY KEY AUTO_INCREMENT,
+--   `user_id` INT NOT NULL,
+--   `detail` NVARCHAR(255) NOT NULL
+-- );
 CREATE TABLE `order_details` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `user_id` INT NOT NULL,
@@ -44,7 +45,7 @@ CREATE TABLE `order_items` (
   `order_id` INT NOT NULL,
   `product_id` INT NOT NULL,
   `quantity` INT NOT NULL,
-`active` TINYINT(1) DEFAULT 0
+  `active` TINYINT(1) DEFAULT 0
 );
 -- ADD FOREIGN KEY
 -- table products
@@ -67,11 +68,11 @@ ALTER TABLE
 ADD
   FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 -- table address
-ALTER TABLE
-  `address`
-ADD
-  FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
--- table
+  -- ALTER TABLE
+  --   `address`
+  -- ADD
+  --   FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+  -- -- table
   -- insert data
   -- table categories
 INSERT INTO
@@ -188,19 +189,16 @@ VALUES
   );
 -- table users
 INSERT INTO
-  `users` (username, password, email)
+  `users` (username, password, email, address)
 VALUES
-  ("user1", "1234", "user1@gmail.com"),
-  ("user2", "abc", "user2@gmail.com"),
-  ("user3", "xyz", "user3@gmail.com");
+  ("user1", "1234", "user1@gmail.com", "hà nội");
 -- table address
-INSERT INTO
-  `address` (user_id, detail)
-VALUES
-  (1, "Hà Nội, Việt Nam"),
-  (2, "Ở đâu còn lâu mới nói");
-
--- table order details
+  -- INSERT INTO
+  --   `address` (user_id, detail)
+  -- VALUES
+  --   (1, "Hà Nội, Việt Nam"),
+  --   (2, "Ở đâu còn lâu mới nói");
+  -- table order details
 INSERT INTO
   order_details (
     `user_id`,
@@ -209,40 +207,95 @@ INSERT INTO
     `discount`
   )
 VALUES
-  (1, 1234, "Tiền mặt", 12),
-  (2, 3456, "Thẻ Master Card", 40);
-
-
+  (1, 1234, "Tiền mặt", 12);
 -- table order items
 INSERT INTO
   order_items (`order_id`, `product_id`, `quantity`)
 VALUES
-  (1, 2, 12),
-  (2, 6, 40);
-  
+  (1, 2, 12);
 -- test query
-SELECT * FROM products
 SELECT
   *
 FROM
   products
-  WHERE
+SELECT
+  *
+FROM
+  products
+WHERE
   id > 0
   AND name LIKE "%A%"
 ORDER BY
   price ASC
-  LIMIT 4;
-SELECT * FROM categories
-
-SELECT * FROM products WHERE id > 0 AND name LIKE "A" LIMIT 6
-
-
-
-SELECT * FROM products WHERE id > 0 AND is_feature = 1 LIMIT 6
-
-  SELECT od.user_id, od.id, od.discount, od.total_price, od.payment,oi.`active`, oi.product_id, oi.quantity, p.`name`, p.price, p.image FROM  order_items oi JOIN order_details od ON od.id = oi.order_id JOIN products p ON p.id = oi.product_id WHERE od.user_id = 1 AND oi.`active` = 0
-
-
-SELECT od.user_id, od.discount, od.total_price, od.payment FROM order_items oi JOIN order_details od ON od.id = oi.order_id WHERE od.user_id = 1
-
-SELECT od.user_id, od.id, od.discount, od.total_price, od.payment,oi.`active`, oi.product_id, oi.quantity, p.`name`, p.price, p.image FROM order_items oi JOIN order_details od ON od.id = oi.order_id JOIN products p ON p.id = oi.product_id WHERE od.user_id = 1 AND oi.`active` = 0
+LIMIT
+  4;
+SELECT
+  *
+FROM
+  categories
+SELECT
+  *
+FROM
+  products
+WHERE
+  id > 0
+  AND name LIKE "A"
+LIMIT
+  6
+SELECT
+  *
+FROM
+  products
+WHERE
+  id > 0
+  AND is_feature = 1
+LIMIT
+  6
+SELECT
+  od.user_id,
+  od.id,
+  od.discount,
+  od.total_price,
+  od.payment,
+  oi.`active`,
+  oi.product_id,
+  oi.quantity,
+  p.`name`,
+  p.price,
+  p.image
+FROM
+  order_items oi
+  JOIN order_details od ON od.id = oi.order_id
+  JOIN products p ON p.id = oi.product_id
+WHERE
+  od.user_id = 1
+  AND oi.`active` = 0
+SELECT
+  od.user_id,
+  od.discount,
+  od.total_price,
+  od.payment
+FROM
+  order_items oi
+  JOIN order_details od ON od.id = oi.order_id
+WHERE
+  od.user_id = 1
+SELECT
+  od.user_id,
+  od.id,
+  od.discount,
+  od.total_price,
+  od.payment,
+  oi.`active`,
+  oi.product_id,
+  oi.quantity,
+  p.`name`,
+  p.price,
+  p.image
+FROM
+  order_items oi
+  JOIN order_details od ON od.id = oi.order_id
+  JOIN products p ON p.id = oi.product_id
+WHERE
+  od.user_id = 1
+  AND oi.`active` = 0
