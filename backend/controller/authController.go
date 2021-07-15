@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -136,4 +137,68 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		}
 
 	})
+}
+
+func GetUserById(w http.ResponseWriter, r *http.Request) {
+	var result models.User
+	c, err := r.Cookie("id")
+	if err != nil {
+		log.Println("không lấy được cookie")
+		statusCode := http.StatusUnauthorized
+		http.Error(w, "Token doesnt exist", statusCode)
+	}
+	log.Println(c.Value)
+	intIdUser, _ := strconv.Atoi(c.Value)
+	result = repository.GetUserById(intIdUser)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(result)
+}
+
+type userInfor struct {
+	Email   string `json:"email"`
+	Address string `json:"address"`
+}
+
+func ChangeUserInfor(w http.ResponseWriter, r *http.Request) {
+	c, err := r.Cookie("id")
+	if err != nil {
+		log.Println("không lấy được cookie")
+		statusCode := http.StatusUnauthorized
+		http.Error(w, "Token doesnt exist", statusCode)
+	}
+	requestBody, _ := ioutil.ReadAll(r.Body)
+	var userinfor userInfor
+	json.Unmarshal(requestBody, &userinfor)
+	log.Println(userinfor)
+	intIdUser, _ := strconv.Atoi(c.Value)
+	err = repository.UpdateUserInfor(userinfor.Email, userinfor.Address, intIdUser)
+	if err != nil {
+		json.NewEncoder(w).Encode(err)
+	} else {
+		json.NewEncoder(w).Encode("Đổi thông tin thành công")
+	}
+	w.Header().Set("Content-Type", "application/json")
+}
+
+func ChangeUserPassword(w http.ResponseWriter, r *http.Request) {
+	c, err := r.Cookie("id")
+	if err != nil {
+		log.Println("không lấy được cookie")
+		statusCode := http.StatusUnauthorized
+		http.Error(w, "Token doesnt exist", statusCode)
+	}
+	requestBody, _ := ioutil.ReadAll(r.Body)
+	var password string
+	json.Unmarshal(requestBody, &password)
+	passwordencoded, _ := bcrypt.GenerateFromPassword([]byte(password), 14)
+	log.Println(c.Value)
+	intIdUser, _ := strconv.Atoi(c.Value)
+	err = repository.UpdateUserPasword(string(passwordencoded), intIdUser)
+	if err != nil {
+		json.NewEncoder(w).Encode(err)
+	} else {
+		json.NewEncoder(w).Encode("Đổi mật khẩu thành công")
+	}
+	w.Header().Set("Content-Type", "application/json")
+
 }
