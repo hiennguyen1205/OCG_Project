@@ -3,14 +3,15 @@ package repository
 import (
 	"bt/project/models"
 	"fmt"
+	"log"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
 func CreateUser(user *models.User) (err error) {
 
-	strQuery := "INSERT INTO users(username, password, email) VALUES (?,?,?)"
-	result, err := db.Exec(strQuery, user.Username, user.Password, user.Email)
+	strQuery := "INSERT INTO users(username, password, email, address) VALUES (?,?,?,?)"
+	result, err := db.Exec(strQuery, user.Username, user.Password, user.Email, user.Address)
 	result.LastInsertId()
 	return err
 }
@@ -22,7 +23,7 @@ func CheckValid(u *models.User) (bool, int) {
 		fmt.Println("Lỗi database 5**")
 		return false, -1
 	}
-	err := response.Scan(&user.Id, &user.Username, &user.Password, &user.Email, &user.Role)
+	err := response.Scan(&user.Id, &user.Username, &user.Password, &user.Email, &user.Address, &user.Role)
 	if err != nil {
 		fmt.Println("Tài khoản sai")
 		return false, -1
@@ -34,4 +35,35 @@ func CheckValid(u *models.User) (bool, int) {
 
 	return true, user.Id
 
+}
+
+func GetUserById(id int) models.User {
+	var user models.User
+	err := db.QueryRow("SELECT * FROM users WHERE id = ?", id).Scan(&user.Id, &user.Username, &user.Password, &user.Email, &user.Address, &user.Role)
+	if err != nil {
+		fmt.Println("Error in GetUserById()")
+	}
+	return user
+}
+
+func UpdateUserInfor(email string, address string, id int) (err error) {
+
+	strQuery, err := db.Prepare("UPDATE users SET email = ?, address = ? WHERE id=?")
+	if err != nil {
+		log.Println("Cannot change infor")
+		fmt.Println(err)
+	}
+	strQuery.Exec(email, address, id)
+	return err
+}
+
+func UpdateUserPasword(pass string, id int) (err error) {
+
+	strQuery, err := db.Prepare("UPDATE users SET password = ? WHERE id=?")
+	if err != nil {
+		log.Println("Cannot change password")
+		fmt.Println(err)
+	}
+	strQuery.Exec(pass, id)
+	return err
 }

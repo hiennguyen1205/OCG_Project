@@ -35,6 +35,9 @@ func ConfigRouterProduct() *mux.Router {
 	routers.Methods(http.MethodPost).Path("/api/login").HandlerFunc(controller.Login)
 	//Logout
 	routers.Methods(http.MethodPost).Path("/api/logout").HandlerFunc(controller.Logout)
+	routers.Methods(http.MethodGet).Path("/api/user").HandlerFunc(controller.GetUserById)
+	routers.Methods(http.MethodPost).Path("/api/change-infor").HandlerFunc(controller.ChangeUserInfor)
+	routers.Methods(http.MethodPost).Path("/api/change-password").HandlerFunc(controller.ChangeUserPassword)
 
 	//CATEGORY
 	//Get All

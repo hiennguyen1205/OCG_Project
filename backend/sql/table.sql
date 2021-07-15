@@ -1,4 +1,6 @@
+
 -- Drop table
+
 DROP TABLE IF EXISTS `order_items`;
 DROP TABLE IF EXISTS `order_details`;
 DROP TABLE IF EXISTS `users`;
@@ -63,6 +65,7 @@ ALTER TABLE
   `order_details`
 ADD
   FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+  
 -- table
   -- insert data
   -- table categories
@@ -254,7 +257,6 @@ INSERT INTO
   `users` (username, password, email, address)
 VALUES
   ("user1", "1234", "user1@gmail.com", "hà nội");
-
 -- table order details
 INSERT INTO
   order_details (
@@ -265,6 +267,7 @@ INSERT INTO
   )
 VALUES
   (1, 1234, "Tiền mặt", 12);
+
 
 
 -- table order items

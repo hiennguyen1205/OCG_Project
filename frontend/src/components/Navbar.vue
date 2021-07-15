@@ -26,7 +26,7 @@
           </li>
 
           <li class="nav-item dropdown">
-            <router-link to="/products">Product</router-link>
+            <router-link to="/products/armchair">Product</router-link>
           </li>
 
           <!-- <li class="nav-item">
