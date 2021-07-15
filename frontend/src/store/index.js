@@ -26,7 +26,7 @@ const store = createStore({
 
             products: [],
             user: {},
-            order :{},
+            order: {},
         };
     },
 
@@ -155,7 +155,7 @@ const store = createStore({
             state.products = []
 
         },
-        GET_CART(state, data){
+        GET_CART(state, data) {
             state.order = data;
             console.log(state.products);
         },
@@ -180,7 +180,7 @@ const store = createStore({
                 .catch(err => console.log(err))
         },
         async getCartByUserId({ commit }, userId) {
-            await fetch('http://localhost:3000/api/orders/'+userId, {
+            await fetch('http://localhost:3000/api/orders/' + userId, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -191,11 +191,7 @@ const store = createStore({
                     console.log("ĐƯỢC");
                 })
                 .catch(err => console.log(err))
-        }
-                    console.log(order);
-                    console.log("OK");
-                })
-                .catch(err => console.log(err))
+
 
         },
 

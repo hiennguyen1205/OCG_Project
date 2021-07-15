@@ -44,6 +44,26 @@ const routes = [
         component: () => import(/* webpackChunkName: "detail_product/:id" */ '../pages/ProductDetail.vue'),
         props: true
     },
+    {
+        // path: '/login', component: Login 
+        path: '/user',
+        name: 'User',
+        component: () => import(/* webpackChunkName: "login" */ '../pages/User.vue'),
+        children: [
+            {
+                // path: '/login', component: Login 
+                path: 'userinfor',
+                name: 'UserInfor',
+                component: () => import(/* webpackChunkName: "login" */ '../pages/user/UserInfor.vue')
+            },
+            {
+                // path: '/login', component: Login 
+                path: 'userpassword',
+                name: 'UserPassword',
+                component: () => import(/* webpackChunkName: "login" */ '../pages/user/UserPassword.vue')
+            },
+        ]
+    },
 
 ]
 
