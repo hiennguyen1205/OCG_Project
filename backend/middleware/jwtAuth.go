@@ -11,20 +11,25 @@ import (
 
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		cookie, err := r.Cookie("jwt")
+		c, err := r.Cookie("jwt")
 
 		if err != nil {
+			statusCode := http.StatusUnauthorized
+			http.Error(w, "Token doesnt exist", statusCode)
 			fmt.Println(err)
-			json.NewEncoder(w).Encode(err)
+
 		} else {
-			token, err := jwt.ParseWithClaims(cookie.Value, &jwt.StandardClaims{}, func(t *jwt.Token) (interface{}, error) {
+			token, err := jwt.ParseWithClaims(c.Value, &jwt.StandardClaims{}, func(t *jwt.Token) (interface{}, error) {
 				return []byte(controller.SecretKey), nil
 			})
 			if err != nil {
-				fmt.Println("Unauthenticated 2")
+				statusCode := http.StatusUnauthorized
+				http.Error(w, "Unauthenticated", statusCode)
+
 			} else {
 				claims := token.Claims
 				json.NewEncoder(w).Encode(claims)
+				json.NewEncoder(w).Encode('1')
 				next.ServeHTTP(w, r)
 			}
 
