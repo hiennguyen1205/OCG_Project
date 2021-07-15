@@ -76,6 +76,7 @@ export default {
       })
         .then(async () => {
           await this.$store.dispatch('setAuth', false);
+          await this.$store.dispatch('emptyListProducts');
           this.$router.push({ name: 'Home' });
         })
         .catch(() => {
@@ -86,8 +87,8 @@ export default {
 
   computed: {
     totalProductsInCart() {
-      return this.$store.state.products.length != 0
-        ? this.$store.state.products.length
+      return this.$store.state.order.products != null
+        ? this.$store.state.order.products.length
         : '';
     },
     isAuthenticated() {

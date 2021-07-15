@@ -182,7 +182,7 @@ VALUES
     "ghjhgjhgj",
     1220,
     2,
-    "link ảnh nè",
+    "static/image/table_3.jpg",
     60,
     1
   );

@@ -59,7 +59,7 @@ func IsValidOrderByUserId(id int) bool {
 	var check int
 	err := response.Scan(&check)
 	if err == sql.ErrNoRows {
-		log.Println(err)
+		log.Println("không có order của user, ",err)
 		return false
 	}
 	return true
@@ -71,7 +71,7 @@ func IsValidProductItemByOrderId(orderId int, productId int) bool {
 	var check int
 	err := response.Scan(&check)
 	if err == sql.ErrNoRows {
-		log.Println(err)
+		log.Println("không có product trong order, ",err)
 		return false
 	}
 	return true
@@ -105,35 +105,47 @@ func SaveOrderByUserNotActive(display dto.DisplayOrder) (result string) {
 		}
 		//update danh sách product trong order items
 		for _, product := range listProducts {
+
 			//insert vào order detail
-			if IsValidProductItemByOrderId(user.OrderId, product.ProductId) {
-				strQuery, err := db.Prepare("INSERT INTO order_items(order_id,product_id,quantity,active) VALUES(?,?,?,0)")
+			if !IsValidProductItemByOrderId(user.OrderId, product.ProductId) {
+				
+				strQuery, err := db.Prepare("INSERT INTO order_items(order_id,product_id,quantity,`active`) VALUES(?,?,?,0)")
 				if err != nil {
 					log.Println(err.Error())
 				}
-				strQuery.Exec(user.OrderId, product.ProductId, product.Quantity)
+				_, err = strQuery.Exec(user.OrderId, product.ProductId, product.Quantity)
+				if err != nil {
+					log.Println("insert vào db lỗi",err.Error())
+				}
+			} else {
+				response := db.QueryRow("SELECT active FROM order_items WHERE order_id = ? AND product_id = ?", user.OrderId, product.ProductId)
+				var check int
+				err := response.Scan(&check)
+				if err == sql.ErrNoRows {
+					log.Println(err)
+				}
+				//nếu active = 1 thì insert sản phẩm với active = 0
+				if check == 1 {
+					strQuery, err := db.Prepare("INSERT INTO order_items(order_id,product_id,quantity,active) VALUES(?,?,?,0)")
+					if err != nil {
+						log.Println(err.Error())
+					}
+					strQuery.Exec(user.OrderId, product.ProductId, product.Quantity)
+				} else { //nếu active = 0 thì update số lượng
+					strQuery, err := db.Prepare("UPDATE order_items SET quantity = ? WHERE order_id = ? AND product_id = ? AND active = 0")
+					if err != nil {
+						log.Println(err.Error())
+					}
+					_, err = strQuery.Exec(product.Quantity, user.OrderId, product.ProductId)
+					if err != nil {
+						log.Println(err.Error())
+					}
+				}
 			}
 		}
 	}
 	return "Successed!!"
 }
-
-// func SaveOrderByUserNotActive(display dto.DisplayOrder) (result string) {
-// 	user := display.User
-// 	listProducts := display.Products
-
-// 		for _, product := range listProducts {
-// 			//insert vào order detail
-// 			if IsValidProductItemByOrderId(user.OrderId, product.ProductId) {
-// 				strQuery, err := db.Prepare("INSERT INTO order_items(order_id,product_id,quantity,active) VALUES(?,?,?,0)")
-// 				if err != nil {
-// 					log.Println(err.Error())
-// 				}
-// 				strQuery.Exec(user.OrderId, product.ProductId, product.Quantity)
-// 			}
-// 		}
-// 	return "Successed!!"
-// }
 
 //Sau khi user checkout thành công mới thì trường active product = 1
 func SaveOrderByUserActive(display dto.DisplayOrder) (result string) {

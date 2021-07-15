@@ -19,6 +19,8 @@ export default {
   },
   mounted() {
     if (document.cookie) {
+      let userId = parseInt(document.cookie.slice(3));
+      this.$store.dispatch('getCartByUserId',userId);
       this.$store.dispatch('setAuth', true);
     } else {
       this.$store.dispatch('setAuth', false);

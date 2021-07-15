@@ -134,13 +134,11 @@
           </div> -->
 
           <!-- test xem thêm -->
-          <div>
-            <button @click="paging()">Xem thêm nào!!</button>
+          <div class="readmore">
+            <button @click="paging()" class="button-paging">
+              Xem thêm sản phẩm
+            </button>
           </div>
-
-
-
-
         </div>
       </div>
     </div>
@@ -201,7 +199,6 @@ export default {
       product["quantity"] = 1;
       this.$store.commit("addProductToCart", product);
     },
-
 
     async paging() {
       this.limit += this.limit;
@@ -381,4 +378,20 @@ ul {
   top: 14px;
   background-color: #d7292a;
 }
+.readmore{
+  display: flex;
+  justify-content: center;
+}
+.button-paging {
+  background-color: #f3f3f3;
+   border-radius: 6px;
+  transition: background 0.5s ease;
+  width: 30%;
+  height: 50px;
+}
+.button-paging:hover {
+  background: transparent;
+  background-color: #fc7878;
+}
+
 </style>

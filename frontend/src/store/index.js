@@ -24,35 +24,47 @@ const store = createStore({
             tax: 0,
             sortType: "",
 
-            products: [],
-            user: {},
-            order :{},
+            order: {
+                user: {},
+                products: [],
+            },
         };
     },
 
     getters: {
+        getLengthListProducts(state) {
+            return state.order.products.length
+        },
         getUserId() {
             return parseInt(document.cookie.slice(3,));
         },
         calcSubTotal(state) {
-            return state.products.reduce(
-                (totalPrice, product) => totalPrice + product.price * product.quantity,
-                0
-            );
-
+            if (state.order.products != null) {
+                return state.order.products.reduce(
+                    (totalPrice, product) => totalPrice + product.price * product.quantity,
+                    0
+                );
+            } else {
+                return 0;
+            }
         },
         calcTax(state) {
-            return (
-                state.products.reduce(
-                    (totalPrice, product) =>
-                        totalPrice + product.price * product.quantity,
-                    0
-                ) / 10
-            );
+            if (state.order.products != null) {
+                return (
+                    state.order.products.reduce(
+                        (totalPrice, product) =>
+                            totalPrice + product.price * product.quantity,
+                        0
+                    ) / 10
+                );
+            } else {
+                return 0;
+            }
+
         },
 
         calcTotalPrice(state) {
-            state.totalPrice = state.products.reduce((totalPrice, product) => totalPrice + product.price * product.quantity,
+            state.totalPrice = state.order.products.reduce((totalPrice, product) => totalPrice + product.price * product.quantity,
                 0)
         }
     },
@@ -67,9 +79,8 @@ const store = createStore({
             );
 
             if (s.length > 0) {
-                console.log(state.calcSubTotal);
                 state.discount =
-                    (parseInt(s[0].discount.substr(0, 2)) / 100) * state.products.reduce(
+                    (parseInt(s[0].discount.substr(0, 2)) / 100) * state.order.products.reduce(
                         (totalPrice, product) => totalPrice + product.price * product.quantity,
                         0
                     );
@@ -79,7 +90,7 @@ const store = createStore({
 
         changeQuantity(state, { productId, number }) {
             console.log(number, productId);
-            state.products = state.products.map((product) => {
+            state.order.products = state.order.products.map((product) => {
                 if (product.id === productId) {
                     if (parseInt(number) > 0 && parseInt(number) < 300) {
                         product.quantity = parseInt(number);
@@ -97,14 +108,10 @@ const store = createStore({
         removeItem(state, productId) {
             let confirmDelete = confirm("Do you want to delete state product " + productId + "??");
             if (confirmDelete) {
-                state.products = state.products.filter(
+                state.order.products = state.order.products.filter(
                     (product) => product.id != productId
                 );
             }
-        },
-
-        undoProduct(state) {
-            state.products = [...state.listBackupProducts]
         },
 
         changeDiscountCode(state, value) {
@@ -112,18 +119,23 @@ const store = createStore({
         },
 
         addProductToCart(state, product) {
-            let checkProduct = state.products.filter((productInStore) => productInStore.id === product.id);
-            // console.log(checkProduct.length===0);
-            if (checkProduct.length === 0) {
-                // console.log(1);
-                state.products.push(product);
+
+            // console.log(state.order.products);
+            if (state.order.products != null) {
+
+                let checkProduct = state.order.products.filter((productInStore) => productInStore.id === product.id);
+                if (checkProduct.length === 0) {
+                    state.order.products.push(product);
+                } else {
+                    state.order.products.forEach(element => {
+                        if (element.id === product.id) {
+                            element["quantity"] += product["quantity"];
+                        }
+                    });
+                }
             } else {
-                // console.log(2);
-                state.products.forEach(element => {
-                    if (element.id === product.id) {
-                        element["quantity"] += product["quantity"];
-                    }
-                });
+                state.order.products = [];
+                state.order.products.push(product);
             }
 
         },
@@ -132,15 +144,19 @@ const store = createStore({
             state.sortType = sort;
             console.log("sort " + state.sortType);
             if (state.sortType === "price-asc") {
-                return state.products.sort(function (product1, product2) {
+                //gọi API
+                
+                return state.order.products.sort(function (product1, product2) {
                     return product1.price - product2.price;
                 });
-            } else if (state.sortType === "price-desc") {
-                return state.products.sort(function (product1, product2) {
+            } else if (state.order.sortType === "price-desc") {
+                //gọi API
+                return state.order.products.sort(function (product1, product2) {
                     return product2.price - product1.price;
                 });
             } else {
-                return state.products.sort(function (product1, product2) {
+                //API
+                return state.order.products.sort(function (product1, product2) {
                     return product1.id - product2.id;
                 });
             }
@@ -151,22 +167,25 @@ const store = createStore({
                 product["active"] = 0;
             });
         },
-        submitedOrder(state) {
-            state.products = []
+        // submitedOrder(state) {
+        //     state.order.products = []
 
-        },
-        GET_CART(state, data){
+        // },
+        GET_CART(state, data) {
             state.order = data;
-            console.log(state.products);
+            console.log(1);
         },
         SET_AUTH(state, auth) {
             state.authenticated = auth;
-        }
+        },
+        EMPTY_PRODUCTS(state) {
+            state.order = {};
+        },
     },
 
     // Giống mutations nhưng dùng cho hàm async
     actions: {
-        async submitOrder({ commit }, order) {
+        async submitOrder({state},order) {
             await fetch('http://localhost:3000/api/orders', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -174,13 +193,14 @@ const store = createStore({
                 body: JSON.stringify(order),
             })
                 .then(() => {
-                    commit("submitedOrder")
+                    // commit("submitedOrder")  
+                    console.log(state.order);
                     console.log("OK");
                 })
                 .catch(err => console.log(err))
         },
         async getCartByUserId({ commit }, userId) {
-            await fetch('http://localhost:3000/api/orders/'+userId, {
+            await fetch('http://localhost:3000/api/orders/' + userId, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -188,19 +208,15 @@ const store = createStore({
                 .then(async (response) => {
                     const data = await response.json()
                     commit("GET_CART", data)
-                    console.log("ĐƯỢC");
+                    // console.log("ĐƯỢC");
                 })
                 .catch(err => console.log(err))
-        }
-                    console.log(order);
-                    console.log("OK");
-                })
-                .catch(err => console.log(err))
-
         },
-
         setAuth: ({ commit }, auth) => {
             commit("SET_AUTH", auth)
+        },
+        emptyListProducts({ commit }) {
+            commit("EMPTY_PRODUCTS")
         },
     },
 });

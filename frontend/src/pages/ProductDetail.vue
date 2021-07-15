@@ -17,7 +17,7 @@
 
         <div class="col-md-8 col-xs-12">
           <div   class="form">
-            <h2>{{ product.Name }}</h2>
+            <h2>{{ product.name }}</h2>
             <br />
             <p class="lead">
               <!-- <small><del> $999.00</del></small><strong class="text-primary">$779.00</strong> -->
@@ -29,7 +29,7 @@
             <br />
 
             <div class="row">
-              <div class="col-sm-4">
+              <!-- <div class="col-sm-4">
                 <label class="control-label">Loại sản phẩm</label>
                 <div class="form-group">
                   <select class="form-control">
@@ -38,8 +38,8 @@
                     <option value="2">27 gears</option>
                   </select>
                 </div>
-              </div>
-              <div class="col-sm-8">
+              </div> -->
+              <div class="col-sm-12">
                 <label class="control-label">Số lượng</label>
 
                 <div class="row">
@@ -64,7 +64,7 @@
         </div>
         <h2>Mô tả sản phẩm</h2>
         <p class="lead">
-          {{ product.Description }}
+          {{ product.description }}
         </p>
       </div>
     </div>
@@ -85,7 +85,7 @@ export default {
   async created() {
     console.log(this.id);
     const response = await fetch(
-      `http://localhost:3000/api/product/${this.id}`
+      `http://localhost:3000/api/products/${this.id}`
     );
     this.product = await response.json();
     console.log(this.product);
