@@ -23,11 +23,11 @@ const store = createStore({
             discount: 0,
             tax: 0,
             sortType: "",
-
             order: {
                 user: {},
                 products: [],
             },
+
         };
     },
 
@@ -167,10 +167,7 @@ const store = createStore({
                 product["active"] = 0;
             });
         },
-        // submitedOrder(state) {
-        //     state.order.products = []
-
-        // },
+       
         GET_CART(state, data) {
             state.order = data;
             console.log(1);

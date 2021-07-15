@@ -45,6 +45,9 @@
               ><sup>{{ totalProductsInCart }}</sup></i
             ></router-link
           >
+          <router-link v-if="isAuthenticated" :to="{ name: 'UserInfor' }"
+            ><i class="fas fa-user-alt"></i
+          ></router-link>
           <!-- <i class="fas fa-search"></i> -->
           <a v-if="isAuthenticated" @click.prevent="logOut">
             <i class="fas fa-sign-out-alt"></i>
