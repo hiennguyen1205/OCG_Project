@@ -13,14 +13,24 @@
           </h2>
           <ul>
             <!-- <button @click="getAmrchairs">Armchair</button> -->
-            <li>Armchair</li>
-            <li>Sofa</li>
-            <li>Table</li>
-            <li>Tủ tivi</li>
-            <li>Kệ trưng bày</li>
-            <li>Ghế dài và đôn</li>
-            <li>Ghế thư giãn</li>
-            <li>Bàn ăn</li>
+            <li>
+              <router-link
+                :to="{ name: 'Products', params: { category: 'armchair' } }"
+                >Armchair</router-link
+              >
+            </li>
+            <li>
+              <router-link
+                :to="{ name: 'Products', params: { category: 'sofa' } }"
+                >Sofa</router-link
+              >
+            </li>
+            <li>
+              <router-link
+                :to="{ name: 'Products', params: { category: 'table' } }"
+                >Table</router-link
+              >
+            </li>
           </ul>
         </div>
 
@@ -31,10 +41,10 @@
               <div class="col-md-4">
                 <select
                   name=""
-                  @change="selectOption($event)"
+                  @change="getSortProducts($event)"
                   style="margin: 30px 20px 0px 0px"
                 >
-                  <option value="" id="">--Sắp xếp--</option>
+                  <option value="id" id="">--Sắp xếp--</option>
                   <option value="price-desc" id="op2">Giá cao đến thấp</option>
                   <option value="price-asc" id="op3">Giá thấp đến cao</option>
                 </select>
@@ -48,6 +58,7 @@
                     aria-label="Search"
                     aria-describedby="search-addon"
                     v-model="searchProducts"
+                    @keyup.enter="getSearchProducts()"
                   />
                   <!-- <span class="input-group-text border-0" id="search-addon">
                     <i class="fas fa-search"></i>
@@ -59,12 +70,12 @@
           <div class="row">
             <div
               class=" col-md-4"
-              v-for="product in searchProductsByName"
+              v-for="product in products"
               :key="product.id"
             >
               <div class="product-item">
                 <div :class="{ discount: product.sale }">
-                  {{ product.sale > 0 ? product.sale + "%" : "" }}
+                  {{ product.sale > 0 ? product.sale + '%' : '' }}
                 </div>
                 <img
                   :src="`http://localhost:3000/${product.image}`"
@@ -149,61 +160,127 @@
 // import Banner from "../components/Banner.vue";
 
 export default {
-  name: "ProductList",
-  components: {
-    // Banner,
-  },
+  name: 'ProductList',
+  props: ['category'],
 
   data() {
     return {
       products: [],
       pageIndex: 1,
       limit: 6,
-      sort: "ID",
-      search: "",
-      totalProducts: 0,
+      search: '',
       cursor: 0,
-      totalPage: 0,
-      category: "",
-      searchProducts: "",
+      categoryId: 1,
+      searchProducts: '',
     };
   },
 
-  async created() {
-    const response = await fetch(
-      `http://localhost:3000/api/products?limit=${this.limit}&cursor=${this.cursor}&categoryId=1`
-    );
-    let result = await response.json();
-    this.products = result;
-    // console.log(this.products);
-    this.totalPage = result.totalPages;
-    this.totalProducts = result.totalProducts;
-    // console.log(  this.totalPage );
-    // console.log(  this.totalProducts );
+  created() {
+    console.log(this.$route.query);
+    this.getCagetoryProducts();
   },
-
-  computed: {
-    searchProductsByName() {
-      return this.products.filter((product) => {
-        return product.name.toLowerCase().includes(this.searchProducts);
-      });
+  watch: {
+    category() {
+      switch (this.category) {
+        case 'sofa':
+          this.categoryId = 2;
+          break;
+        case 'table':
+          this.categoryId = 3;
+          break;
+        default:
+          this.categoryId = 1;
+      }
+      this.getCagetoryProducts();
     },
   },
 
   methods: {
+    async getSortProducts(event) {
+      if (event.target.value === 'price-asc') {
+        //gọi API
+        const response = await fetch(
+          `http://localhost:3000/api/products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}&search=${this.searchProducts}&sort=ASC`
+        );
+        let result = await response.json();
+        this.products = result;
+        // console.log(this.products);
+        this.totalPage = result.totalPages;
+        this.totalProducts = result.totalProducts;
+      } else if (event.target.value === 'price-desc') {
+        const response = await fetch(
+          `http://localhost:3000/api/products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}&search=${this.searchProducts}&sort=DESC`
+        );
+        let result = await response.json();
+        this.products = result;
+        // console.log(this.products);
+        this.totalPage = result.totalPages;
+        this.totalProducts = result.totalProducts;
+      } else {
+        const response = await fetch(
+          `http://localhost:3000/api/products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}&search=${this.searchProducts}&sort=`
+        );
+        let result = await response.json();
+        this.products = result;
+        // console.log(this.products);
+        this.totalPage = result.totalPages;
+        this.totalProducts = result.totalProducts;
+      }
+
+      this.$router.push({
+        path: `${this.category}`,
+        query: { sort: event.target.value },
+      });
+    },
+
+    async getSearchProducts() {
+      this.$router.push({
+        path: `${this.category}`,
+        query: { search: this.searchProducts },
+      });
+      this.limit = 6;
+      const response = await fetch(
+        `http://localhost:3000/api/products?cursor=${this.cursor}&search=${this.searchProducts}&categoryId=${this.categoryId}&limit=${this.limit}`
+      );
+      let result = await response.json();
+      this.products = result;
+      // console.log(this.products);
+      this.totalPage = result.totalPages;
+      this.totalProducts = result.totalProducts;
+      // console.log(  this.totalPage );
+      // console.log(  this.totalProducts );
+    },
+
+    async getCagetoryProducts() {
+      this.limit = 6;
+      const response = await fetch(
+        `http://localhost:3000/api/products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}`
+      );
+      let result = await response.json();
+      this.products = result;
+      // console.log(this.products);
+      this.totalPage = result.totalPages;
+      this.totalProducts = result.totalProducts;
+      // console.log(  this.totalPage );
+      // console.log(  this.totalProducts );
+    },
     formatCurrency(money) {
-      return money.toLocaleString("vi", { style: "currency", currency: "VND" });
+      return money.toLocaleString('vi', { style: 'currency', currency: 'VND' });
     },
 
     addOneToCart(product) {
-      product["quantity"] = 1;
-      this.$store.commit("addProductToCart", product);
+      product['quantity'] = 1;
+      this.$store.commit('addProductToCart', product);
     },
 
     async paging() {
       this.limit += this.limit;
+      this.$router.push({
+        path: `${this.category}`,
+        query: { limit: this.limit, cursor: this.cursor },
+      });
       const response = await fetch(
-        `http://localhost:3000/api/products?limit=${this.limit}&cursor=${this.cursor}&categoryId=1`
+        `http://localhost:3000/api/products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}`
       );
       let result = await response.json();
       console.log(result);
@@ -212,7 +289,7 @@ export default {
 
     selectOption(event) {
       this.$store.state.products = this.products;
-      this.$store.commit("selectOption", event.target.value);
+      this.$store.commit('selectOption', event.target.value);
     },
     updateSearchValue(event) {
       // console.log(event.target.value);
@@ -378,13 +455,13 @@ ul {
   top: 14px;
   background-color: #d7292a;
 }
-.readmore{
+.readmore {
   display: flex;
   justify-content: center;
 }
 .button-paging {
   background-color: #f3f3f3;
-   border-radius: 6px;
+  border-radius: 6px;
   transition: background 0.5s ease;
   width: 30%;
   height: 50px;
@@ -393,5 +470,4 @@ ul {
   background: transparent;
   background-color: #fc7878;
 }
-
 </style>
