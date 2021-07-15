@@ -22,9 +22,10 @@ const routes = [
     },
     {
         // path: '/products', component: Products
-        path: '/products',
+        path: '/products/:category',
         name: 'Products',
-        component: () => import(/* webpackChunkName: "products" */ '../pages/Products.vue')
+        component: () => import(/* webpackChunkName: "products" */ '../pages/Products.vue'),
+        props: true
     },
     {
         // path: '/checkout', component: Checkout
