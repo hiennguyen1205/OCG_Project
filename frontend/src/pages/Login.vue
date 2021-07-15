@@ -147,7 +147,7 @@ export default {
           .then(async () => {
             await this.$store.dispatch('setAuth', true);
             alert('Password created successfully');
-            await this.Signup();
+            await this.Login();
             this.$router.push({ name: 'Home' });
           })
           .catch(async (error) => {

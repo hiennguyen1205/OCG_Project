@@ -16,12 +16,17 @@
             <div class="col left ">
               <div class="thumbnail">
                 <a href="#">
-                  <img :src="`http://localhost:3000/${product.image}`" :alt="product.name" />
+                  <img
+                    :src="`http://localhost:3000/${product.image}`"
+                    :alt="product.name"
+                  />
                 </a>
               </div>
               <div class="detail">
                 <div class="name">
-                   <router-link to="/detail_product"><p>{{ product.name }}</p></router-link>
+                  <router-link to="/detail_product"
+                    ><p>{{ product.name }}</p></router-link
+                  >
                 </div>
                 <div class="description">{{ product.description }}</div>
                 <div class="price">{{ formatCurrency(product.price) }}</div>
@@ -47,10 +52,38 @@
             </div>
           </li>
         </ul>
+
+        <!-- <div class="dropdown">
+       
+            <div class="row">
+              <h4 class="col-md-4">Phương thức thanh toán</h4>
+              <div class="col-md-4"></div>
+              <button
+                class="btn btn-secondary dropdown-toggle col-md-4"
+                type="button"
+                id="dropdownMenuButton1"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Dropdown button
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><a class="dropdown-item" href="#">Action</a></li>
+                <li><a class="dropdown-item" href="#">Another action</a></li>
+                <li>
+                  <a class="dropdown-item" href="#">Something else here</a>
+                </li>
+              </ul>
+            </div>
+        
+        </div> -->
       </div>
+
       <div v-else class="empty-product">
         <h3>Không có sản phẩm trong giỏ hàng.</h3>
-        <router-link to="/products"><button class="btn">Tới trang sản phẩm</button></router-link> 
+        <router-link to="/products"
+          ><button class="btn">Tới trang sản phẩm</button></router-link
+        >
       </div>
     </section>
   </div>
@@ -61,52 +94,55 @@ export default {
   name: "CartListProducts",
   data() {
     return {
-
-      // isShowModal: false,
+      // productsInChild: [],
     };
   },
-  // props: {
-  //   productsInChild: Array,
-  //   // backupProducts: Array,
-  // },
-  created(){
-    this.$store.state.listBackupProducts = [...this.$store.state.products] ;
+  created() {
+    // this.productsInChild = [...this.$store.state.order.products] ;
   },
   methods: {
     changeQuantity(productId, event) {
-      // console.log(event.target.value);
-
-      this.$store.commit("changeQuantity",{ productId: productId, number: event.target.value});
+      this.$store.commit("changeQuantity", {
+        productId: productId,
+        number: event.target.value,
+      });
     },
     removeItem(productId) {
-      // this.isShowModal = true;
       this.$store.commit("removeItem", productId);
     },
     undoProduct() {
       this.$store.commit("undoProduct");
     },
-     formatCurrency(money) {
+    formatCurrency(money) {
       return money.toLocaleString("vi", { style: "currency", currency: "VND" });
     },
   },
 
   computed: {
-    productsInChild(){
-      return this.$store.state.products
+    productsInChild() {
+      if (this.$store.state.order.products === null) {
+        return [];
+      } else {
+        return this.$store.state.order.products;
+      }
     },
     totalProducts() {
-      return this.productsInChild.reduce(
-        (sumProducts, product) => (sumProducts += parseInt(product.quantity)),
-        0
-      );
+      if (this.$store.state.order.products === null || this.$store.state.order.products === undefined) {
+        return 0;
+      } else {
+        return this.$store.state.order.products.reduce(
+          (sumProducts, product) => (sumProducts += parseInt(product.quantity)),
+          0
+        );
+      }
     },
   },
 };
 </script>
 
 <style scope>
-.text-header{
-margin-top:70px;
+.text-header {
+  margin-top: 70px;
 }
 
 img {
@@ -152,7 +188,7 @@ header .count {
 
 .products > li {
   padding: 1rem 0;
-  border-bottom: 1px solid #ddd;
+  /* border-bottom: 1px solid #ddd; */
 }
 
 .row {
@@ -168,8 +204,8 @@ header .count {
 
 .col.left {
   width: 70%;
-  display:flex;
-   align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .col.right {
@@ -185,7 +221,7 @@ header .count {
 .detail {
   padding: 0 0.5rem;
   line-height: 2.2rem;
- margin-left: 30px;
+  margin-left: 30px;
 }
 
 .detail .name {
@@ -199,7 +235,7 @@ header .count {
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
-  width:250px;
+  width: 250px;
 }
 
 .detail .price {

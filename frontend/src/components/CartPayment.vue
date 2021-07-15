@@ -91,7 +91,7 @@ export default {
     },
 
     checkout() {
-      this.$store.commit("saveOrder");
+      // this.$store.commit("saveOrder");
       console.log(this.$store.state.order);
       this.$store.dispatch("submitOrder", this.$store.state.order);
     },
