@@ -180,6 +180,10 @@ func ChangeUserInfor(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 }
 
+type userPassword struct {
+	Password string `json:"password"`
+}
+
 func ChangeUserPassword(w http.ResponseWriter, r *http.Request) {
 	c, err := r.Cookie("id")
 	if err != nil {
@@ -188,9 +192,10 @@ func ChangeUserPassword(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Token doesnt exist", statusCode)
 	}
 	requestBody, _ := ioutil.ReadAll(r.Body)
-	var password string
-	json.Unmarshal(requestBody, &password)
-	passwordencoded, _ := bcrypt.GenerateFromPassword([]byte(password), 14)
+	var userpass userPassword
+	json.Unmarshal(requestBody, &userpass)
+	log.Println(userpass.Password)
+	passwordencoded, _ := bcrypt.GenerateFromPassword([]byte(userpass.Password), 14)
 	log.Println(c.Value)
 	intIdUser, _ := strconv.Atoi(c.Value)
 	err = repository.UpdateUserPasword(string(passwordencoded), intIdUser)
