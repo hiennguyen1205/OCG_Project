@@ -8,7 +8,9 @@
         <div class="col-md-4 col-xs-12">
           <div>
             <img
-              :src="`http://localhost:3000/${product.image}`"
+              :src="
+                product.image ? `http://localhost:3000/${product.image}` : ''
+              "
               alt=""
               class="img-fluid wc-image"
             />
@@ -16,7 +18,7 @@
         </div>
 
         <div class="col-md-8 col-xs-12">
-          <div   class="form">
+          <div class="form">
             <h2>{{ product.name }}</h2>
             <br />
             <p class="lead">
@@ -45,17 +47,22 @@
                 <div class="row">
                   <div class="col-sm-6">
                     <div class="form-group">
-                      <input type="text" class="form-control" placeholder="1"  v-model.number="quantityOfProduct"/>
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="1"
+                        v-model.number="quantityOfProduct"
+                      />
                     </div>
                   </div>
 
                   <div class="col-sm-6">
                     <button
-                     
                       class="btn btn-primary btn-block"
                       @click="addToCart(product)"
-                      >Add to Cart</button
                     >
+                      Add to Cart
+                    </button>
                   </div>
                 </div>
               </div>
@@ -78,17 +85,17 @@ export default {
   data() {
     return {
       product: {},
-      quantityOfProduct:1,
+      quantityOfProduct: 1,
     };
   },
 
-  async created() {
-    console.log(this.id);
+  async beforeCreate() {
+    // console.log(this.id);
     const response = await fetch(
       `http://localhost:3000/api/products/${this.id}`
     );
     this.product = await response.json();
-    console.log(this.product);
+    // console.log(this.product);
   },
 
   methods: {
@@ -104,7 +111,7 @@ export default {
         style: "currency",
         currency: "VND",
       });
-      return formatter.format(this.product.Price);
+      return formatter.format(this.product.price);
     },
   },
 };
