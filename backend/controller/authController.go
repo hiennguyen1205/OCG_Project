@@ -4,7 +4,6 @@ import (
 	"bt/project/models"
 	"bt/project/repository"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -18,9 +17,6 @@ const SecretKey = "secret"
 
 func Register(write http.ResponseWriter, request *http.Request) {
 	requestBody, _ := ioutil.ReadAll(request.Body)
-	// if err1 != nil {
-	// 	json.NewEncoder(write).Encode(err1)
-	// }
 	var user models.User
 	json.Unmarshal(requestBody, &user)
 	password, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 14)
@@ -31,7 +27,6 @@ func Register(write http.ResponseWriter, request *http.Request) {
 	} else {
 		json.NewEncoder(write).Encode("Thêm thành công")
 	}
-
 }
 
 func Login(write http.ResponseWriter, request *http.Request) {
@@ -42,7 +37,6 @@ func Login(write http.ResponseWriter, request *http.Request) {
 	isValid, userId := repository.CheckValid(&user)
 	if isValid {
 		//jwt
-
 		claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 			Issuer:    user.Username,
 			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(), // 1 ngày
@@ -70,18 +64,14 @@ func Login(write http.ResponseWriter, request *http.Request) {
 			//HttpOnly: true,
 		}
 
-		//request.AddCookie(cookie)
-		// write.Header().Set("jwt", token)
 		http.SetCookie(write, cookie)
 		http.SetCookie(write, cookie1)
-		write.WriteHeader(http.StatusOK)
 
 		json.NewEncoder(write).Encode(userId)
 
 	} else {
 		statusCode := http.StatusUnauthorized
 		http.Error(write, strconv.Itoa(userId), statusCode)
-
 	}
 }
 
@@ -109,31 +99,31 @@ func Logout(write http.ResponseWriter, request *http.Request) {
 
 }
 
-func AuthMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		c, err := r.Cookie("jwt")
+// func AuthMiddleware(next http.Handler) http.Handler {
+// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 		c, err := r.Cookie("jwt")
 
-		if err != nil {
-			statusCode := http.StatusUnauthorized
-			http.Error(w, "Token doesnt exist", statusCode)
-			fmt.Println(err)
+// 		if err != nil {
+// 			statusCode := http.StatusUnauthorized
+// 			http.Error(w, "Token doesnt exist", statusCode)
+// 			fmt.Println(err)
 
-		} else {
-			token, err := jwt.ParseWithClaims(c.Value, &jwt.StandardClaims{}, func(t *jwt.Token) (interface{}, error) {
-				return []byte(SecretKey), nil
-			})
-			if err != nil {
-				statusCode := http.StatusUnauthorized
-				http.Error(w, "Unauthenticated", statusCode)
+// 		} else {
+// 			token, err := jwt.ParseWithClaims(c.Value, &jwt.StandardClaims{}, func(t *jwt.Token) (interface{}, error) {
+// 				return []byte(SecretKey), nil
+// 			})
+// 			if err != nil {
+// 				statusCode := http.StatusUnauthorized
+// 				http.Error(w, "Unauthenticated", statusCode)
 
-			} else {
-				claims := token.Claims
-				json.NewEncoder(w).Encode(claims)
-				json.NewEncoder(w).Encode('1')
-				next.ServeHTTP(w, r)
-			}
+// 			} else {
+// 				claims := token.Claims
+// 				json.NewEncoder(w).Encode(claims)
+// 				json.NewEncoder(w).Encode('1')
+// 				next.ServeHTTP(w, r)
+// 			}
 
-		}
+// 		}
 
-	})
-}
+// 	})
+// }
