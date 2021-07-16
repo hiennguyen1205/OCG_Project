@@ -140,34 +140,14 @@ const store = createStore({
 
         },
 
-        selectOption(state, sort) {
-            state.sortType = sort;
-            console.log("sort " + state.sortType);
-            if (state.sortType === "price-asc") {
-                //gọi API
-                
-                return state.order.products.sort(function (product1, product2) {
-                    return product1.price - product2.price;
-                });
-            } else if (state.order.sortType === "price-desc") {
-                //gọi API
-                return state.order.products.sort(function (product1, product2) {
-                    return product2.price - product1.price;
-                });
-            } else {
-                //API
-                return state.order.products.sort(function (product1, product2) {
-                    return product1.id - product2.id;
-                });
-            }
-        },
+
 
         saveOrder(state) {
             state.order.products.forEach(product => {
                 product["active"] = 0;
             });
         },
-       
+
         GET_CART(state, data) {
             state.order = data;
             console.log(1);
@@ -182,7 +162,7 @@ const store = createStore({
 
     // Giống mutations nhưng dùng cho hàm async
     actions: {
-        async submitOrder({state},order) {
+        async submitOrder({ state }, order) {
             await fetch('http://localhost:3000/api/orders', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
