@@ -1,6 +1,7 @@
 import router from "../../router/index.js"
 const state = () => ({
     authenticated: false,
+    user : {},
 });
 
 const getters = {
@@ -13,7 +14,6 @@ const getters = {
 
 const actions = {
     login: async ({ commit }, user) => {
-        console.log("user ", user);
         await fetch('http://localhost:3000/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -21,7 +21,6 @@ const actions = {
             body: JSON.stringify(user),
         })
             .then((response) => {
-                console.log(response);
                 if (response.status ===200) {
                     commit('setAuth',true);
                     router.push({ name: "Home" });
@@ -35,8 +34,8 @@ const actions = {
             })
     },
 
-    register: ({ commit }, user) => {
-        fetch("http://localhost:3000/api/register", {
+    register: async ({ commit }, user) => {
+        await fetch("http://localhost:3000/api/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(user),
@@ -74,6 +73,9 @@ const mutations = {
     setAuth(state, auth) {
         state.authenticated = auth;
     },
+    saveUser(state, userInput){
+        state.user = userInput; 
+    }
 };
 
 export default {

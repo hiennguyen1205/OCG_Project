@@ -42,7 +42,7 @@
       </div>
 
       <div class="checkout">
-        <button type="button" class="btn" @click="checkout()">Check Out</button>
+        <router-link to="/checkout/infomation"><button type="button" class="btn" @click="checkout()">Check Out</button></router-link>
       </div>
     </section>
     <!-- End Summary -->
@@ -76,7 +76,6 @@ export default {
     },
 
     showDiscount() {
-      console.log(this.discount);
       return this.discount;
     },
     showPromoCode() {
@@ -93,11 +92,9 @@ export default {
     getDiscount() {
       this.calcDiscount();
     },
-
     fowardDiscountCode(event) {
       this.changeDiscountCode(event.target.value);
     },
-
     checkout() {
       this.submitOrder(this.order);
     },

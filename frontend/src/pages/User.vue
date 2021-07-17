@@ -33,6 +33,16 @@
                 <span class="ms-1 d-none d-sm-inline">Mật khẩu</span>
               </router-link>
             </li>
+
+            <li class="nav-item">
+              <router-link
+                :to="{ name: 'Admin' }"
+                class="nav-link align-middle px-0"
+              >
+                <i class="fs-4 bi-house"></i>
+                <span class="ms-1 d-none d-sm-inline">Danh sách sản phẩm</span>
+              </router-link>
+            </li>
           </ul>
           <hr />
         </div>
