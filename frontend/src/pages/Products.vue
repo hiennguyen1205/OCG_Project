@@ -112,39 +112,7 @@
               </div>
             </div>
           </div>
-
-          <!-- Pagination -->
-          <!-- <div class="paging">
-            <nav aria-label="Page navigation example">
-              <ul class="pagination">
-                <li class="page-item">
-                  <a class="page-link" href="#" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                    <span class="sr-only">Previous</span>
-                  </a>
-                </li>
-
-                <li
-                  class="page-item"
-                  v-for="(page, index) in totalPage"
-                  :key="index"
-                >
-                  <a class="page-link" href="#" @click="paging(index)">{{
-                    index + 1
-                  }}</a>
-                </li>
-
-                <li class="page-item">
-                  <a class="page-link" href="#" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                    <span class="sr-only">Next</span>
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </div> -->
-
-          <!-- test xem thêm -->
+          <!--xem thêm -->
           <div class="readmore">
             <button @click="paging()" class="button-paging">
               Xem thêm sản phẩm
@@ -157,6 +125,7 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
 // import Banner from "../components/Banner.vue";
 
 export default {
@@ -166,7 +135,6 @@ export default {
   data() {
     return {
       products: [],
-      pageIndex: 1,
       limit: 6,
       search: '',
       cursor: 0,
@@ -176,7 +144,7 @@ export default {
   },
 
   created() {
-    console.log(this.$route.query);
+    // console.log(this.$route.query);
     this.getCagetoryProducts();
   },
   watch: {
@@ -196,6 +164,7 @@ export default {
   },
 
   methods: {
+    ...mapMutations('carts',["addProductToCart"]),
     async getSortProducts(event) {
       if (event.target.value === 'price-asc') {
         //gọi API
@@ -222,11 +191,10 @@ export default {
         );
         let result = await response.json();
         this.products = result;
-        // console.log(this.products);
+
         this.totalPage = result.totalPages;
         this.totalProducts = result.totalProducts;
       }
-
       this.$router.push({
         path: `${this.category}`,
         query: { sort: event.target.value },
@@ -244,11 +212,8 @@ export default {
       );
       let result = await response.json();
       this.products = result;
-      // console.log(this.products);
       this.totalPage = result.totalPages;
       this.totalProducts = result.totalProducts;
-      // console.log(  this.totalPage );
-      // console.log(  this.totalProducts );
     },
 
     async getCagetoryProducts() {
@@ -258,11 +223,8 @@ export default {
       );
       let result = await response.json();
       this.products = result;
-      // console.log(this.products);
       this.totalPage = result.totalPages;
       this.totalProducts = result.totalProducts;
-      // console.log(  this.totalPage );
-      // console.log(  this.totalProducts );
     },
     formatCurrency(money) {
       return money.toLocaleString('vi', { style: 'currency', currency: 'VND' });
@@ -270,7 +232,7 @@ export default {
 
     addOneToCart(product) {
       product['quantity'] = 1;
-      this.$store.commit('addProductToCart', product);
+      this.addProductToCart(product);
     },
 
     async paging() {
@@ -283,7 +245,6 @@ export default {
         `http://localhost:3000/api/products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}`
       );
       let result = await response.json();
-      console.log(result);
       this.products = result;
     },
 
@@ -292,9 +253,7 @@ export default {
       this.$store.commit('selectOption', event.target.value);
     },
     updateSearchValue(event) {
-      // console.log(event.target.value);
       this.searchProducts = event.target.value;
-      // console.log(this.searchProducts);
     },
   },
 };

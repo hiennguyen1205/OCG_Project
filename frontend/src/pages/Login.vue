@@ -16,12 +16,17 @@
           <div class="sign-in-htm">
             <div class="group">
               <label for="user" class="label">Username</label>
-              <input id="user" v-model="username" type="text" class="input" />
+              <input
+                id="user-logout"
+                v-model="username"
+                type="text"
+                class="input"
+              />
             </div>
             <div class="group">
-              <label for="pass" class="label">Password</label>
+              <label class="label">Password</label>
               <input
-                id="pass"
+                id="pass-logout"
                 v-model="password"
                 type="password"
                 class="input"
@@ -52,7 +57,7 @@
               />
             </div>
             <div class="group">
-              <label for="pass" class="label">Password</label>
+              <label class="label">Password</label>
               <input
                 id="pass"
                 v-model="password"
@@ -63,9 +68,9 @@
               />
             </div>
             <div class="group">
-              <label for="pass" class="label">Repeat Password</label>
+              <label class="label">Repeat Password</label>
               <input
-                id="pass"
+                id="re-pass"
                 v-model="password_confirm"
                 type="password"
                 class="input"
@@ -74,9 +79,9 @@
               />
             </div>
             <div class="group">
-              <label for="pass" class="label">Email Address</label>
+              <label class="label">Email Address</label>
               <input
-                id="pass"
+                id="email"
                 type="email"
                 v-model="email"
                 class="input"
@@ -84,8 +89,8 @@
               />
             </div>
             <div class="group">
-              <label for="pass" class="label">Address</label>
-              <input id="pass" type="text" v-model="address" class="input" />
+              <label class="label">Address</label>
+              <input id="addr" type="text" v-model="address" class="input" />
             </div>
             <div class="group">
               <input type="submit" class="button" value="Sign Up" />
@@ -99,62 +104,48 @@
 </template>
 
 <script>
+import { mapActions, mapMutations } from "vuex";
 export default {
-  name: 'Loginout',
+  name: "Loginout",
   data() {
     return {
-      username: '',
-      email: '',
-      password: '',
-      password_confirm: '',
-      address: '',
+      username: "",
+      email: "",
+      password: "",
+      password_confirm: "",
+      address: "",
     };
   },
   methods: {
-    async Login() {
-      await fetch('http://localhost:3000/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          username: this.username,
-          password: this.password,
-        }),
+    ...mapActions("carts", ["getCartByUserId"]),
+    ...mapActions("users", ["login", "register"]),
+    ...mapMutations("users", ["setAuth"]),
+    Login() {
+      this.login({
+        username: this.username,
+        password: this.password,
       })
-        .then(async () => {
-          await this.$store.dispatch('setAuth', true);
-          await this.$store.dispatch(
-            'getCartByUserId',
-            parseInt(document.cookie.slice(3))
-          );
-          this.$router.push({ name: 'Home' });
+        .then(() => {
+          this.getCartByUserId(parseInt(document.cookie.slice(3)));
         })
-        .catch(async (error) => {
-          await this.$store.dispatch('setAuth', false);
-          console.log(error);
+        .catch((e) => {
+          console.log(e);
         });
     },
-    async Signup() {
+    Signup() {
       if (this.password != this.password_confirm) {
-        alert('Passwords did not match');
+        alert("Passwords did not match");
       } else {
-        await fetch('http://localhost:3000/api/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            username: this.username,
-            password: this.password,
-            email: this.email,
-          }),
+        this.register({
+          username: this.username,
+          password: this.password,
+          email: this.email,
         })
           .then(async () => {
-            await this.$store.dispatch('setAuth', true);
-            alert('Password created successfully');
             await this.Login();
-            this.$router.push({ name: 'Home' });
+            this.$router.push({ name: "Home" });
           })
-          .catch(async (error) => {
-            await this.$store.dispatch('setAuth', false);
+          .catch((error) => {
             console.log(error);
           });
       }
@@ -168,7 +159,7 @@ body {
   margin: 0;
   color: #6a6f8c;
   background: #c8c8c8;
-  font: 600 16px/18px 'Open Sans', sans-serif;
+  font: 600 16px/18px "Open Sans", sans-serif;
 }
 *,
 :after,
@@ -177,7 +168,7 @@ body {
 }
 .clearfix:after,
 .clearfix:before {
-  content: '';
+  content: "";
   display: table;
 }
 .clearfix:after {
@@ -266,7 +257,7 @@ a {
   border-radius: 25px;
   background: rgba(255, 255, 255, 0.1);
 }
-.login-form .group input[data-type='password'] {
+.login-form .group input[data-type="password"] {
   text-security: circle;
   -webkit-text-security: circle;
 }
@@ -287,7 +278,7 @@ a {
 }
 .login-form .group label .icon:before,
 .login-form .group label .icon:after {
-  content: '';
+  content: "";
   width: 10px;
   height: 2px;
   background: #fff;

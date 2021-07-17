@@ -4,7 +4,7 @@
       <div class="col-md-12">
         <div class="section-heading">
           <h2>Sản phẩm được mua nhiều nhất</h2>
-          <router-link to="/products">Xem thêm<i class="fa fa-angle-right"></i></router-link>
+          <router-link to="/products/armchair">Xem thêm<i class="fa fa-angle-right"></i></router-link>
         </div>
       </div>
     </div>

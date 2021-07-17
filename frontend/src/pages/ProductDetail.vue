@@ -79,6 +79,7 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
 export default {
   name: "ProductDetail",
   props: ["id"],
@@ -99,9 +100,10 @@ export default {
   },
 
   methods: {
+    ...mapMutations('carts',["addProductToCart"]),
     addToCart(product) {
       product["quantity"] = this.quantityOfProduct;
-      this.$store.commit("addProductToCart", product);
+      this.addProductToCart(product);
     },
   },
 

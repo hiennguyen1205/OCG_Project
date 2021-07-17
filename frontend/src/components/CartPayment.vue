@@ -8,12 +8,12 @@
           <input
             type="text"
             id="promo-code"
-            :value="promoCode"
-            @input="changeDiscountCode"
+            :value="showPromoCode"
+            @input="fowardDiscountCode"
           />
           <button
             type="button"
-            @click="calcDiscount"
+            @click="getDiscount"
             class="button-discount btn"
           ></button>
 
@@ -23,18 +23,18 @@
         <div class="summary">
           <ul>
             <li>
-              Subtotal <span> {{ formatCurrency(calcSubTotal) }}</span>
+              Subtotal <span> {{ formatCurrency(showSubTotal) }}</span>
             </li>
             <li>
-              Discount <span>{{ formatCurrency(discount) }}</span>
+              Discount <span>{{ formatCurrency(showDiscount) }}</span>
             </li>
             <li>
-              Tax <span>{{ formatCurrency(calcTax) }}</span>
+              Tax <span>{{ formatCurrency(showTax) }}</span>
             </li>
             <li class="total">
               Total
               <span>{{
-                formatCurrency(calcSubTotal + calcTax - discount)
+                formatCurrency(showSubTotal + showTax - showDiscount)
               }}</span>
             </li>
           </ul>
@@ -50,6 +50,9 @@
 </template>
 
 <script>
+import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
+import { formatCurrency } from "@/utils/currency.js";
+
 export default {
   name: "CartPayment",
 
@@ -62,38 +65,41 @@ export default {
   },
 
   computed: {
-    calcSubTotal() {
-      return this.$store.getters.calcSubTotal;
+    ...mapGetters('carts',["calcSubTotal", "calcTax"]),
+    ...mapState('carts',["discount", "promoCode", "order"]),
+    showSubTotal() {
+      return this.calcSubTotal;
     },
 
-    calcTax() {
-      return this.$store.getters.calcTax;
+    showTax() {
+      return this.calcTax;
     },
 
-    discount() {
-      return this.$store.state.discount;
+    showDiscount() {
+      console.log(this.discount);
+      return this.discount;
     },
-    promoCode() {
-      return this.$store.state.promoCode;
+    showPromoCode() {
+      console.log(this.promoCode);
+      return this.promoCode;
     },
   },
 
   methods: {
-    formatCurrency(money) {
-      return money.toLocaleString("vi", { style: "currency", currency: "VND" });
-    },
-    calcDiscount() {
-      this.$store.commit("calcDiscount");
+    ...mapMutations('carts',["calcDiscount", "changeDiscountCode"]),
+    ...mapActions('carts',["submitOrder"]),
+
+    formatCurrency,
+    getDiscount() {
+      this.calcDiscount();
     },
 
-    changeDiscountCode(event) {
-      this.$store.commit("changeDiscountCode", event.target.value);
+    fowardDiscountCode(event) {
+      this.changeDiscountCode(event.target.value);
     },
 
     checkout() {
-      // this.$store.commit("saveOrder");
-      console.log(this.$store.state.order);
-      this.$store.dispatch("submitOrder", this.$store.state.order);
+      this.submitOrder(this.order);
     },
   },
 };
