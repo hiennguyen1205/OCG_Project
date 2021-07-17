@@ -34,6 +34,12 @@ const routes = [
         component: () => import(/* webpackChunkName: "checkout" */ '../pages/Checkout.vue')
     },
     {
+        // path: '/checkout', component: Checkout
+        path: '/checkout/infomation',
+        name: 'CheckoutInfomation',
+        component: () => import(/* webpackChunkName: "checkout" */ '../pages/CheckoutInfomation.vue')
+    },
+    {
         // path: '/login', component: Login 
         path: '/login',
         name: 'Login',
@@ -62,6 +68,12 @@ const routes = [
                 path: 'userpassword',
                 name: 'UserPassword',
                 component: () => import(/* webpackChunkName: "login" */ '../pages/user/UserPassword.vue')
+            },
+            {
+                // path: '/login', component: Login 
+                path: 'admin',
+                name: 'Admin',
+                component: () => import(/* webpackChunkName: "login" */ '../pages/user/Admin.vue')
             },
         ]
     },

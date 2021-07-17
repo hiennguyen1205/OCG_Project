@@ -126,7 +126,7 @@
 
 <script>
 import { mapMutations } from 'vuex';
-// import Banner from "../components/Banner.vue";
+import { GetData } from "../utils/callapi.js";
 
 export default {
   name: 'ProductList',
@@ -144,7 +144,6 @@ export default {
   },
 
   created() {
-    // console.log(this.$route.query);
     this.getCagetoryProducts();
   },
   watch: {
@@ -167,33 +166,17 @@ export default {
     ...mapMutations('carts',["addProductToCart"]),
     async getSortProducts(event) {
       if (event.target.value === 'price-asc') {
-        //gọi API
-        const response = await fetch(
-          `http://localhost:3000/api/products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}&search=${this.searchProducts}&sort=ASC`
-        );
-        let result = await response.json();
-        this.products = result;
-        // console.log(this.products);
-        this.totalPage = result.totalPages;
-        this.totalProducts = result.totalProducts;
-      } else if (event.target.value === 'price-desc') {
-        const response = await fetch(
-          `http://localhost:3000/api/products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}&search=${this.searchProducts}&sort=DESC`
-        );
-        let result = await response.json();
-        this.products = result;
-        // console.log(this.products);
-        this.totalPage = result.totalPages;
-        this.totalProducts = result.totalProducts;
-      } else {
-        const response = await fetch(
-          `http://localhost:3000/api/products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}&search=${this.searchProducts}&sort=`
-        );
-        let result = await response.json();
-        this.products = result;
+        //API sắp xếp sản phẩm theo giá tăng dần
+        this.products = await GetData(`products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}&search=${this.searchProducts}&sort=ASC`)
 
-        this.totalPage = result.totalPages;
-        this.totalProducts = result.totalProducts;
+      } else if (event.target.value === 'price-desc') {
+        //API sắp xếp sản phẩm theo giá giảm dần
+        this.products = await GetData(`products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}&search=${this.searchProducts}&sort=DESC`)
+
+      } else {
+        //API sắp xếp sản phẩm mặc định, theo ID
+        this.products = await GetData(`products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}&search=${this.searchProducts}&sort=`)
+        
       }
       this.$router.push({
         path: `${this.category}`,
@@ -206,25 +189,14 @@ export default {
         path: `${this.category}`,
         query: { search: this.searchProducts },
       });
-      this.limit = 6;
-      const response = await fetch(
-        `http://localhost:3000/api/products?cursor=${this.cursor}&search=${this.searchProducts}&categoryId=${this.categoryId}&limit=${this.limit}`
-      );
-      let result = await response.json();
-      this.products = result;
-      this.totalPage = result.totalPages;
-      this.totalProducts = result.totalProducts;
+      
+      this.products = await GetData(`products?cursor=${this.cursor}&search=${this.searchProducts}&categoryId=${this.categoryId}&limit=${this.limit}`)
     },
 
     async getCagetoryProducts() {
-      this.limit = 6;
-      const response = await fetch(
-        `http://localhost:3000/api/products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}`
-      );
-      let result = await response.json();
-      this.products = result;
-      this.totalPage = result.totalPages;
-      this.totalProducts = result.totalProducts;
+      //API get product theo category
+        this.products = await GetData(`products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}`)
+
     },
     formatCurrency(money) {
       return money.toLocaleString('vi', { style: 'currency', currency: 'VND' });
@@ -241,11 +213,7 @@ export default {
         path: `${this.category}`,
         query: { limit: this.limit, cursor: this.cursor },
       });
-      const response = await fetch(
-        `http://localhost:3000/api/products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}`
-      );
-      let result = await response.json();
-      this.products = result;
+       this.products = await GetData(`products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}`);
     },
 
     selectOption(event) {

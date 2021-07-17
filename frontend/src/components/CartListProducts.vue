@@ -23,9 +23,7 @@
               </div>
               <div class="detail">
                 <div class="name">
-                  <router-link to="/detail_product"
-                    ><p>{{ product.name }}</p></router-link
-                  >
+                  <p>{{ product.name }}</p>
                 </div>
                 <div class="description">{{ product.description }}</div>
                 <div class="price">{{ formatCurrency(product.price) }}</div>
@@ -37,7 +35,7 @@
                   type="number"
                   class="quantity"
                   v-model="product.quantity"
-                  @input="changeQuantity(product.id, $event)"
+                  @input="changeQuantityInCart(product.id, $event)"
                 />
               </div>
 
@@ -45,7 +43,7 @@
                 <i
                   class="fas fa-trash"
                   id="delete-product"
-                  @click="removeItem(product.id)"
+                  @click="removeItemInCart(product.id)"
                 ></i>
               </div>
             </div>
@@ -65,34 +63,30 @@
 
 <script>
 import { formatCurrency } from "@/utils/currency.js";
-import { mapState } from 'vuex';
+import { mapMutations, mapState } from "vuex";
 
 export default {
   name: "CartListProducts",
   data() {
-    return {
-    };
+    return {};
   },
-  created() {
-  },
+  created() {},
   methods: {
+    ...mapMutations("carts",["removeItem","changeQuantity"]),
     formatCurrency,
-    changeQuantity(productId, event) {
-      this.$store.commit("changeQuantity", {
+    changeQuantityInCart(productId, event) {
+      this.changeQuantity({
         productId: productId,
         number: event.target.value,
       });
     },
-    removeItem(productId) {
-      this.$store.commit("removeItem", productId);
-    },
-    undoProduct() {
-      this.$store.commit("undoProduct");
+    removeItemInCart(productId) {
+      this.removeItem (productId);
     },
   },
 
   computed: {
-    ...mapState('carts',["order"]),
+    ...mapState("carts", ["order"]),
     productsInChild() {
       if (this.order.products === null || this.order.products === undefined) {
         return [];

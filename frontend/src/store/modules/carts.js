@@ -81,7 +81,6 @@ const actions = {
             .catch(err => console.log(err))
     },
     async getCartByUserId({ commit }, userId) {
-        console.log(userId);
         await fetch('http://localhost:3000/api/orders/' + userId, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
@@ -89,7 +88,6 @@ const actions = {
         })
             .then(async (response) => {
                 const data = await response.json()
-                console.log(data.user);
                 commit("GET_CART", data)
                 // console.log("ĐƯỢC");
             })
@@ -114,15 +112,13 @@ const mutations = {
     },
 
     changeQuantity(state, { productId, number }) {
-        console.log(number, productId);
         state.order.products = state.order.products.map((product) => {
             if (product.id === productId) {
                 if (parseInt(number) > 0 && parseInt(number) < 300) {
                     product.quantity = parseInt(number);
                     return product;
                 } else {
-                    console.log(1);
-                    product.quantity = 0;
+                    product.quantity = 1;
                     return product;
                 }
             }
@@ -131,6 +127,7 @@ const mutations = {
     },
 
     removeItem(state, productId) {
+        console.log("hahaha");
         let confirmDelete = confirm("Do you want to delete state product " + productId + "??");
         if (confirmDelete) {
             state.order.products = state.order.products.filter(
@@ -170,9 +167,6 @@ const mutations = {
     GET_CART(state, data) {
         state.order = data;
     },
-    // EMPTY_PRODUCTS(state) {
-    //     state.order = {};
-    // },
 };
 
 export default {

@@ -24,9 +24,7 @@ export default {
   },
 
   mounted() {
-    console.log("get cookie");
     if (document.cookie) {
-      console.log("cookie",document.cookie);
       let userId = parseInt(document.cookie.slice(3));
       this.getCartByUserId(userId);
       this.setAuth(true);

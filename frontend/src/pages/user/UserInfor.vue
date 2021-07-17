@@ -31,6 +31,8 @@
 </template>
 
 <script>
+import { mapMutations, mapState } from 'vuex';
+
 export default {
   name: 'UserInfor',
 
@@ -39,7 +41,13 @@ export default {
       User: [],
     };
   },
+
+  computed: {
+    ...mapState("users",["user"]),
+  },
+
   methods: {
+    ...mapMutations("users",["saveUser"]),
     async changeInfor() {
       await fetch('http://localhost:3000/api/change-infor', {
         method: 'POST',
@@ -67,12 +75,15 @@ export default {
     })
       .then(async (response) => {
         this.User = await response.json();
-        console.log(this.User);
+        this.saveUser(this.User);
+        console.log(this.user);
       })
       .catch(async (error) => {
         console.log(error);
       });
   },
+
+
 };
 </script>
 
