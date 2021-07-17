@@ -19,8 +19,9 @@ func GetAllProducts(write http.ResponseWriter, request *http.Request) {
 	search := request.URL.Query().Get("search")
 	sort := request.URL.Query().Get("sort")
 	isFeature,_ := strconv.Atoi(request.URL.Query().Get("isFeature"))
+	allProducts,_ := strconv.Atoi(request.URL.Query().Get("all"))
 	write.Header().Set("Content-Type", "application/json")
-	listProducts := repository.GetAllProducts(limit, cursor, search,sort, categoryId, isFeature)
+	listProducts := repository.GetAllProducts(limit, cursor, search,sort, categoryId, isFeature, allProducts)
 	json.NewEncoder(write).Encode(listProducts)
 }
 

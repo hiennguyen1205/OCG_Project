@@ -17,19 +17,29 @@ async function PostData(url = '', data = {}) {
 }
 
 async function GetData(url = '') {
-    // Default options are marked with *
     var Url = baseURL + url
     const response = await fetch(Url, {
-        method: 'GET', // *GET, POST, PUT, DELETE, etc.
-        credentials: 'include', // include, *same-origin, omit
+        method: 'GET',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json'
-            // 'Content-Type': 'application/x-www-form-urlencoded',
         },
-        redirect: 'follow', // manual, *follow, error
-        // referrerPolicy: 'no-referrer',
+        redirect: 'follow',
     });
-    return response.json(); // parses JSON response into native JavaScript objects
+    return response.json();
 }
 
-export { PostData, GetData }
+async function DeleteData(url = '') {
+    var Url = baseURL + url
+    const response = await fetch(Url, {
+        method: 'DELETE', 
+        credentials: 'include', 
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        redirect: 'follow', 
+    });
+    return response; 
+}
+
+export { PostData, GetData, DeleteData }

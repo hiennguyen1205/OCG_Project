@@ -120,7 +120,7 @@ func InitData() {
 * input: 4 params giúp cho việc phân trang, search theo tên và sắp xếp sản phẩm
 * output: 1 slice các sản phẩm
 */
-func GetAllProducts(limit int, cursor int, search string, sort string, categoryId int, isFeature int) (result []models.Product) {
+func GetAllProducts(limit int, cursor int, search string, sort string, categoryId int, isFeature int, all int) (result []models.Product) {
 	var strQuery string
 	var response *sql.Rows
 	lenSearch := len(search)
@@ -141,6 +141,11 @@ func GetAllProducts(limit int, cursor int, search string, sort string, categoryI
 
 	if isFeature == 1 {
 		strQuery = ("SELECT * FROM products WHERE id > ? AND is_feature = 1 LIMIT ?")
+		response, _ = db.Query(strQuery, cursor, limit)
+	}
+
+	if all == 1 {
+		strQuery = ("SELECT * FROM products WHERE id > ? LIMIT ?")
 		response, _ = db.Query(strQuery, cursor, limit)
 	}
 
