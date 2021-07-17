@@ -39,6 +39,10 @@ func ConfigRouterProduct() *mux.Router {
 	routers.Methods(http.MethodPost).Path("/api/change-infor").HandlerFunc(controller.ChangeUserInfor)
 	routers.Methods(http.MethodPost).Path("/api/change-password").HandlerFunc(controller.ChangeUserPassword)
 
+	//API ORDER
+	//Get Order By Id
+	routers.Methods(http.MethodGet).Path("/api/orders/{user_id}").HandlerFunc(controller.GetOrdersDetailsByUserId)
+
 	//CATEGORY
 	//Get All
 	routers.HandleFunc("/api/categories", controller.GetAllCategories).Methods(http.MethodGet)
@@ -48,8 +52,6 @@ func ConfigRouterProduct() *mux.Router {
 
 func RouteProduct(routers *mux.Router) {
 	//API ORDER
-	//Get Order By Id
-	routers.Methods(http.MethodGet).Path("/api/orders/{user_id}").HandlerFunc(controller.GetOrdersDetailsByUserId)
 	//save order to database active = 1
 	routers.Methods(http.MethodPut).Path("/api/orders").HandlerFunc(controller.SaveOrderByUserActive)
 	//save order to database active = 0

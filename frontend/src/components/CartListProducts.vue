@@ -12,7 +12,6 @@
       <div v-if="productsInChild.length > 0">
         <ul class="products">
           <li class="row" v-for="product in productsInChild" :key="product.id">
-            <!-- {{product.id}},{{index}},{{key}} -->
             <div class="col left ">
               <div class="thumbnail">
                 <a href="#">
@@ -52,36 +51,11 @@
             </div>
           </li>
         </ul>
-
-        <!-- <div class="dropdown">
-       
-            <div class="row">
-              <h4 class="col-md-4">Phương thức thanh toán</h4>
-              <div class="col-md-4"></div>
-              <button
-                class="btn btn-secondary dropdown-toggle col-md-4"
-                type="button"
-                id="dropdownMenuButton1"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                Dropdown button
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <li><a class="dropdown-item" href="#">Action</a></li>
-                <li><a class="dropdown-item" href="#">Another action</a></li>
-                <li>
-                  <a class="dropdown-item" href="#">Something else here</a>
-                </li>
-              </ul>
-            </div>
-        
-        </div> -->
       </div>
 
       <div v-else class="empty-product">
         <h3>Không có sản phẩm trong giỏ hàng.</h3>
-        <router-link to="/products"
+        <router-link to="/products/armchair"
           ><button class="btn">Tới trang sản phẩm</button></router-link
         >
       </div>
@@ -90,17 +64,19 @@
 </template>
 
 <script>
+import { formatCurrency } from "@/utils/currency.js";
+import { mapState } from 'vuex';
+
 export default {
   name: "CartListProducts",
   data() {
     return {
-      // productsInChild: [],
     };
   },
   created() {
-    // this.productsInChild = [...this.$store.state.order.products] ;
   },
   methods: {
+    formatCurrency,
     changeQuantity(productId, event) {
       this.$store.commit("changeQuantity", {
         productId: productId,
@@ -113,24 +89,22 @@ export default {
     undoProduct() {
       this.$store.commit("undoProduct");
     },
-    formatCurrency(money) {
-      return money.toLocaleString("vi", { style: "currency", currency: "VND" });
-    },
   },
 
   computed: {
+    ...mapState('carts',["order"]),
     productsInChild() {
-      if (this.$store.state.order.products === null) {
+      if (this.order.products === null || this.order.products === undefined) {
         return [];
       } else {
-        return this.$store.state.order.products;
+        return this.order.products;
       }
     },
     totalProducts() {
-      if (this.$store.state.order.products === null || this.$store.state.order.products === undefined) {
+      if (this.order.products === null || this.order.products === undefined) {
         return 0;
       } else {
-        return this.$store.state.order.products.reduce(
+        return this.order.products.reduce(
           (sumProducts, product) => (sumProducts += parseInt(product.quantity)),
           0
         );

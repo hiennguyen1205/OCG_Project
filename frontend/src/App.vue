@@ -8,22 +8,30 @@
 </template>
 
 <script>
-import Navbar from './components/Navbar.vue';
-import Footer from './components/Footer.vue';
+import Navbar from "./components/Navbar.vue";
+import Footer from "./components/Footer.vue";
+import { mapActions, mapMutations } from "vuex";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     Navbar,
     Footer,
   },
+  methods: {
+    ...mapActions("carts", ["getCartByUserId"]),
+    ...mapMutations("users", ["setAuth"]),
+  },
+
   mounted() {
+    console.log("get cookie");
     if (document.cookie) {
+      console.log("cookie",document.cookie);
       let userId = parseInt(document.cookie.slice(3));
-      this.$store.dispatch('getCartByUserId',userId);
-      this.$store.dispatch('setAuth', true);
+      this.getCartByUserId(userId);
+      this.setAuth(true);
     } else {
-      this.$store.dispatch('setAuth', false);
+      this.setAuth(false);
     }
   },
 };

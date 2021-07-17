@@ -63,39 +63,38 @@
 </template>
 
 <script>
+import { mapActions, mapState, mapGetters, mapMutations } from "vuex";
 export default {
-  name: 'Navbar',
+  name: "Navbar",
   data() {
     return {
-      logoShop: require('@/assets/images/logos/nha-xinh-logo.jpg'),
+      logoShop: require("@/assets/images/logos/nha-xinh-logo.jpg"),
     };
   },
   methods: {
-    async logOut() {
-      await fetch('http://localhost:3000/api/logout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-      })
-        .then(async () => {
-          await this.$store.dispatch('setAuth', false);
-          await this.$store.dispatch('emptyListProducts');
-          this.$router.push({ name: 'Home' });
+    ...mapActions("users", ["logout"]),
+    ...mapGetters("carts", ["emptyListProducts"]),
+    ...mapMutations("users",["setAuth"]),
+    logOut() {
+      this.logout()
+        .then(() => {
+          this.$router.push({ name: "Home" });
+          this.emptyListProducts();
         })
         .catch(() => {
-          console.log('server failed');
+          console.log("server failed");
         });
     },
   },
 
   computed: {
+    ...mapState("carts", ["order"]),
+    ...mapState("users", ["authenticated"]),
     totalProductsInCart() {
-      return this.$store.state.order.products != null
-        ? this.$store.state.order.products.length
-        : '';
+      return this.order.products != null ? this.order.products.length : "";
     },
     isAuthenticated() {
-      return this.$store.state.authenticated;
+      return this.authenticated;
     },
   },
 };
