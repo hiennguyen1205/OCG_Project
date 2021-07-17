@@ -11,7 +11,7 @@
           <h2 style="border-bottom: 1px solid rgb(189, 189, 189);">
             Danh mục
           </h2>
-          <ul>
+          <ul class="category">
             <!-- <button @click="getAmrchairs">Armchair</button> -->
             <li>
               <router-link
@@ -105,7 +105,7 @@
                         class="fas fa-shopping-cart"
                         style="padding: 5px"
                       ></i
-                      >Buy
+                      >Mua
                     </button>
                   </div>
                 </div>
@@ -216,13 +216,13 @@ export default {
        this.products = await GetData(`products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}`);
     },
 
-    selectOption(event) {
-      this.$store.state.products = this.products;
-      this.$store.commit('selectOption', event.target.value);
-    },
-    updateSearchValue(event) {
-      this.searchProducts = event.target.value;
-    },
+    // selectOption(event) {
+    //   this.$store.state.products = this.products;
+    //   this.$store.commit('selectOption', event.target.value);
+    // },
+    // updateSearchValue(event) {
+    //   this.searchProducts = event.target.value;
+    // },
   },
 };
 </script>
@@ -268,6 +268,12 @@ li {
 ul {
   padding: 0px;
   list-style: none;
+}
+
+.category a{
+  font-size: 25px;
+  text-decoration: none;
+  color: black;
 }
 /* pagination */
 .paging {

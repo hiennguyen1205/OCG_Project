@@ -126,6 +126,27 @@ const mutations = {
         });
     },
 
+    increaseQuantity(state, productId) {
+        state.order.products = state.order.products.map((product) => {
+            if (product.id === productId) {
+                product.quantity++;
+            }
+            return product;
+        });
+    },
+
+    decreaseQuantity(state, productId) {
+        state.order.products = state.order.products.map((product) => {
+            if (product.id === productId) {
+                product.quantity--;
+                if (product.quantity < 0) {
+                    product.quantity = 1;
+                }
+            }
+            return product;
+        });
+    },
+
     removeItem(state, productId) {
         console.log("hahaha");
         let confirmDelete = confirm("Do you want to delete state product " + productId + "??");

@@ -79,7 +79,8 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex';
+import { mapMutations } from "vuex";
+import { GetData } from "../utils/callapi.js";
 export default {
   name: "ProductDetail",
   props: ["id"],
@@ -91,17 +92,15 @@ export default {
   },
 
   async beforeCreate() {
-    // console.log(this.id);
-    const response = await fetch(
-      `http://localhost:3000/api/products/${this.id}`
-    );
-    this.product = await response.json();
-    // console.log(this.product);
+    this.product = await GetData(`products/${this.id}`);
   },
 
   methods: {
-    ...mapMutations('carts',["addProductToCart"]),
+    ...mapMutations("carts", ["addProductToCart"]),
     addToCart(product) {
+      if (this.quantityOfProduct < 0) {
+        this.quantityOfProduct = 1;
+      }
       product["quantity"] = this.quantityOfProduct;
       this.addProductToCart(product);
     },

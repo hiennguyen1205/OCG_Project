@@ -4,7 +4,9 @@
       <div class="col-md-12">
         <div class="section-heading">
           <h2>Sản phẩm được mua nhiều nhất</h2>
-          <router-link to="/products/armchair">Xem thêm<i class="fa fa-angle-right"></i></router-link>
+          <router-link to="/products/armchair"
+            >Xem thêm<i class="fa fa-angle-right"></i
+          ></router-link>
         </div>
       </div>
     </div>
@@ -28,7 +30,7 @@
           <div class="price">
             <p id="style-price">
               {{ formatCurrency(product.price) }}
-              <button>
+              <button @click="addProduct(product)">
                 <i
                   id="icon-cart"
                   class="fas fa-shopping-cart"
@@ -45,6 +47,9 @@
 </template>
 
 <script>
+import { mapMutations } from "vuex";
+import { GetData } from "../utils/callapi.js";
+
 export default {
   name: "FeaturedProduct",
   data() {
@@ -54,13 +59,16 @@ export default {
   },
 
   async created() {
-    const response = await fetch("http://localhost:3000/api/products?limit=6&cursor=0&isFeature=1");
-    this.products = await response.json();
-    // console.log(this.products);
+    this.products = await GetData(`products?limit=6&cursor=0&isFeature=1`);
   },
   methods: {
+    ...mapMutations("carts", ["addProductToCart"]),
     formatCurrency(money) {
       return money.toLocaleString("vi", { style: "currency", currency: "VND" });
+    },
+    addProduct(product) {
+      product["quantity"] = 1;
+      this.addProductToCart(product);
     },
   },
 };
@@ -162,6 +170,4 @@ export default {
   top: 14px;
   background-color: #d7292a;
 }
-
-
 </style>

@@ -30,6 +30,7 @@
               </div>
             </div>
             <div class="col right">
+              <a class="qty" @click="minus(product.id)">-</a>
               <div class="quantity">
                 <input
                   type="number"
@@ -38,7 +39,7 @@
                   @input="changeQuantityInCart(product.id, $event)"
                 />
               </div>
-
+              <a class="qty" @click="plus(product.id)">+</a>
               <div class="remove">
                 <i
                   class="fas fa-trash"
@@ -70,9 +71,9 @@ export default {
   data() {
     return {};
   },
-  created() {},
+
   methods: {
-    ...mapMutations("carts",["removeItem","changeQuantity"]),
+    ...mapMutations("carts", ["removeItem", "changeQuantity","decreaseQuantity","increaseQuantity"]),
     formatCurrency,
     changeQuantityInCart(productId, event) {
       this.changeQuantity({
@@ -81,7 +82,13 @@ export default {
       });
     },
     removeItemInCart(productId) {
-      this.removeItem (productId);
+      this.removeItem(productId);
+    },
+    minus(productId) {
+      this.decreaseQuantity(productId);
+    },
+    plus(productId) {
+      this.increaseQuantity(productId);
     },
   },
 
@@ -109,6 +116,22 @@ export default {
 </script>
 
 <style scope>
+a.qty {
+  width: 1em;
+  line-height: 1em;
+  font-size: 2.5em;
+  border-radius: 50%;
+  font-weight: bold;
+  text-align: center;
+  background: #ffffff;
+  color: rgb(90, 203, 248);
+}
+a.qty:hover {
+  background: #505050;
+}
+.remove {
+  margin-left: 50px;
+}
 .text-header {
   margin-top: 70px;
 }
@@ -211,7 +234,7 @@ header .count {
 }
 
 .quantity {
-  width: 50%;
+  width: 25%;
   text-align: center;
 }
 

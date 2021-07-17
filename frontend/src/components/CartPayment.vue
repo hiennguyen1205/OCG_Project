@@ -60,7 +60,7 @@ export default {
     return {
       user: {},
       products: {},
-      order: {},
+      
     };
   },
 
@@ -79,7 +79,6 @@ export default {
       return this.discount;
     },
     showPromoCode() {
-      console.log(this.promoCode);
       return this.promoCode;
     },
   },
