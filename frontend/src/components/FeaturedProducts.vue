@@ -13,11 +13,12 @@
 
     <div class="row">
       <div
-        class="product-item col-md-4 "
+        class="col-md-4 "
         v-for="product in products"
         :key="product.id"
       >
-        <div :class="{ discount: product.sale }">
+      <div class="product-item">
+          <div :class="{ discount: product.sale }">
           {{ product.Sale > 0 ? product.sale + "%" : "" }}
         </div>
         <img :src="`http://localhost:3000/${product.image}`" alt="hihi" />
@@ -41,6 +42,8 @@
             </p>
           </div>
         </div>
+      </div>
+        
       </div>
     </div>
   </div>
@@ -75,9 +78,9 @@ export default {
 </script>
 
 <style scoped>
-.row {
+/* .row {
   justify-content: space-between;
-}
+} */
 .section-heading {
   display: flex;
   justify-content: space-between;
@@ -92,14 +95,8 @@ export default {
 
 .product-item {
   position: relative;
-  border: 1px solid #eee;
-  margin-bottom: 30px;
-  width: 32%;
 }
 
-.col-md-4 {
-  padding: 0px;
-}
 
 .product-item img {
   width: 100%;

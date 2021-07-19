@@ -1,51 +1,40 @@
 <template>
-     <!-- Modal HTML -->
-  <div id="myModal" class="modal fade" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <!-- header -->
-        <div class="modal-header">
-          <h5 class="modal-title">Function Group</h5>
-          <button type="button" class="close" data-dismiss="modal">
-            &times;
-          </button>
-        </div>
-
-        <!-- body -->
-        <div class="modal-body">
-          <div class="modal-container">
-            <input type="hidden" id="id" name="id" />
-
-            <label for="name"><b>Name</b></label>
-            <input
-              type="text"
-              placeholder="Enter Name"
-              name="name"
-              id="name"
-              required
-            />
-            <br />
-            <label for="name"><b>Total Member</b></label>
-            <input
-              type="text"
-              placeholder="Enter Total Member"
-              name="totalMember"
-              id="totalMember"
-              required
-            />
-            <br />
-          </div>
-        </div>
-
-        <!-- footer -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">
-            Cancel
-          </button>
-          <button type="button" class="btn btn-primary" onclick="save()">
-            Save
-          </button>
-        </div>
+  <div id="myModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+      <label for="name"><b>Tên sản phẩm</b></label>
+      <input
+        type="text"
+        placeholder="Enter Name"
+        name="name"
+        id="name"
+        v-model="productUpdate.name"
+        required
+      />
+      <br />
+      <label for="name"><b>Giá</b></label>
+      <input
+        type="number"
+        placeholder="Enter Price"
+        name="price"
+        id="price"
+         v-model="productUpdate.price"
+        required
+      />
+      <br />
+       <label for="name"><b>Giảm giá (%)</b></label>
+      <input
+        type="number"
+        placeholder="Enter Sale"
+        name="sale"
+        id="sale"
+         v-model="productUpdate.sale"
+        required
+      />
+      <br />
+      <div class="button">
+        <button @click="yesConfirm">YES</button>
+        <button @click="noConfirm">NO</button>
       </div>
     </div>
   </div>
@@ -53,6 +42,78 @@
 
 <script>
 export default {
-  
-}
+  name: "ModalUpdate",
+  props: ["productModal"],
+  data(){
+    return{
+      productUpdate: {},
+    };
+  },
+  mounted() {
+    this.productUpdate = this.productModal;
+  },
+  methods: {
+    noConfirm: function() {
+      this.$emit("confirmUpdateModal", null);
+      
+    },
+    yesConfirm: function() {
+      this.productUpdate.sale = Number(this.productUpdate.sale)
+      this.$emit("confirmUpdateModal", this.productUpdate);
+      
+      //gọi API  
+    },
+  },
+};
 </script>
+
+<style scoped>
+.button {
+  display: flex;
+  justify-content: space-around;
+}
+[type=button]:not(:disabled), [type=reset]:not(:disabled), [type=submit]:not(:disabled), button:not(:disabled) {
+  border-radius: 10px;
+  cursor: pointer;
+  height: 40px;
+  width: 400px;
+}
+.modal {
+  text-align: center;
+  font-size: 25px;
+  display: block;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+</style>
+
