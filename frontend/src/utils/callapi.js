@@ -42,4 +42,18 @@ async function DeleteData(url = '') {
     return response; 
 }
 
-export { PostData, GetData, DeleteData }
+async function PutData(url = '', data = {}) {
+    var Url = baseURL + url
+    const response = await fetch(Url, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        redirect: 'follow',
+        body: JSON.stringify(data)
+    });
+    return response;
+}
+
+export { PostData, GetData, DeleteData, PutData }

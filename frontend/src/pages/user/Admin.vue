@@ -42,10 +42,10 @@
           <td>{{ product.image }}</td>
           <td>{{ product.sale }}</td>
           <td>{{ product.price }}</td>
-          <td>{{ product.isFeature == true ? "Đang hot" : "Không" }}</td>
+          <td>{{ product.is_feature ? "Đang hot" : "Không" }}</td>
           <td>
-            <button>
-              <i class="fas fa-pen" @click="openUpdateModal(product)"></i>
+            <button class="btn btn-primary" @click="openUpdateModal(product)">
+              <i class="fas fa-pen"></i>
             </button>
 
             <button
@@ -58,7 +58,11 @@
         </tr>
       </thead>
     </table>
-    <ModalUpdate v-if="isDisplay" :productModal="product" @confirmUpdateModal="confirmUpdateModal(product)"/>
+    <ModalUpdate
+      v-if="isDisplay"
+      :productModal="product"
+      @confirmUpdateModal="confirmUpdateModal(product)"
+    />
   </div>
 
   <AlertSuccess />
@@ -67,7 +71,7 @@
 <script>
 import AlertSuccess from "../../components/edit-product/AlertSuccess.vue";
 import ModalUpdate from "../../components/edit-product/ModalUpdate.vue";
-import { DeleteData, GetData } from "../../utils/callapi.js";
+import { DeleteData, GetData, PutData } from "../../utils/callapi.js";
 
 export default {
   name: "Admin",
@@ -118,16 +122,21 @@ export default {
       this.product = product;
     },
 
-    confirmUpdateModal(product){
-      console.log(11);
+    async confirmUpdateModal(product) {
       this.isDisplay = false;
-      if (product){
-        console.log("gọi API");
+      if (product) {
+        //API
         console.log(product);
+        let response = await PutData(`products`, product);
+        if (response.status == 200) {
+          console.log("Update thành công");
+        } else {
+          console.log("Update thất bại");
+        }
       } else {
-        console.log("Chả làm gì");
+        console.log("Đóng modal update");
       }
-    }
+    },
   },
 
   created() {
