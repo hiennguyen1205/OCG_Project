@@ -126,7 +126,7 @@
 
 <script>
 import { mapMutations } from 'vuex';
-import { GetData } from "../utils/callapi.js";
+import { GetData } from '../utils/callapi.js';
 
 export default {
   name: 'ProductList',
@@ -163,20 +163,23 @@ export default {
   },
 
   methods: {
-    ...mapMutations('carts',["addProductToCart"]),
+    ...mapMutations('carts', ['addProductToCart']),
     async getSortProducts(event) {
       if (event.target.value === 'price-asc') {
         //API sắp xếp sản phẩm theo giá tăng dần
-        this.products = await GetData(`products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}&search=${this.searchProducts}&sort=ASC`)
-
+        this.products = await GetData(
+          `products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}&search=${this.searchProducts}&sort=ASC`
+        );
       } else if (event.target.value === 'price-desc') {
         //API sắp xếp sản phẩm theo giá giảm dần
-        this.products = await GetData(`products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}&search=${this.searchProducts}&sort=DESC`)
-
+        this.products = await GetData(
+          `products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}&search=${this.searchProducts}&sort=DESC`
+        );
       } else {
         //API sắp xếp sản phẩm mặc định, theo ID
-        this.products = await GetData(`products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}&search=${this.searchProducts}&sort=`)
-        
+        this.products = await GetData(
+          `products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}&search=${this.searchProducts}&sort=`
+        );
       }
       this.$router.push({
         path: `${this.category}`,
@@ -189,14 +192,17 @@ export default {
         path: `${this.category}`,
         query: { search: this.searchProducts },
       });
-      
-      this.products = await GetData(`products?cursor=${this.cursor}&search=${this.searchProducts}&categoryId=${this.categoryId}&limit=${this.limit}`)
+
+      this.products = await GetData(
+        `products?cursor=${this.cursor}&search=${this.searchProducts}&categoryId=${this.categoryId}&limit=${this.limit}`
+      );
     },
 
     async getCagetoryProducts() {
       //API get product theo category
-        this.products = await GetData(`products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}`)
-
+      this.products = await GetData(
+        `products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}`
+      );
     },
     formatCurrency(money) {
       return money.toLocaleString('vi', { style: 'currency', currency: 'VND' });
@@ -213,7 +219,9 @@ export default {
         path: `${this.category}`,
         query: { limit: this.limit, cursor: this.cursor },
       });
-       this.products = await GetData(`products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}`);
+      this.products = await GetData(
+        `products?limit=${this.limit}&cursor=${this.cursor}&categoryId=${this.categoryId}`
+      );
     },
 
     // selectOption(event) {
@@ -270,7 +278,7 @@ ul {
   list-style: none;
 }
 
-.category a{
+.category a {
   font-size: 25px;
   text-decoration: none;
   color: black;

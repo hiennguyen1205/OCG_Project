@@ -34,7 +34,7 @@
               </router-link>
             </li>
 
-            <li class="nav-item">
+            <li class="nav-item" v-if="user.role === 1">
               <router-link
                 :to="{ name: 'Admin' }"
                 class="nav-link align-middle px-0"
@@ -55,8 +55,14 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+
 export default {
-  name: "User",
+  name: 'User',
+
+  computed: {
+    ...mapState('users', ['user']),
+  },
 };
 </script>
 

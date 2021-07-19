@@ -42,7 +42,7 @@
       </div>
 
       <div class="checkout">
-        <router-link to="/checkout/infomation"><button type="button" class="btn" @click="checkout()">Check Out</button></router-link>
+        <button type="button" class="btn" @click="checkout()">Check Out</button>
       </div>
     </section>
     <!-- End Summary -->
@@ -50,23 +50,23 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
-import { formatCurrency } from "@/utils/currency.js";
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
+import { formatCurrency } from '@/utils/currency.js';
 
 export default {
-  name: "CartPayment",
+  name: 'CartPayment',
 
   data() {
     return {
       user: {},
       products: {},
-      
     };
   },
 
   computed: {
-    ...mapGetters('carts',["calcSubTotal", "calcTax"]),
-    ...mapState('carts',["discount", "promoCode", "order"]),
+    ...mapGetters('carts', ['calcSubTotal', 'calcTax']),
+    ...mapState('carts', ['discount', 'promoCode', 'order']),
+    ...mapState('users', ['authenticated']),
     showSubTotal() {
       return this.calcSubTotal;
     },
@@ -84,8 +84,8 @@ export default {
   },
 
   methods: {
-    ...mapMutations('carts',["calcDiscount", "changeDiscountCode"]),
-    ...mapActions('carts',["submitOrder"]),
+    ...mapMutations('carts', ['calcDiscount', 'changeDiscountCode']),
+    ...mapActions('carts', ['submitOrder']),
 
     formatCurrency,
     getDiscount() {
@@ -95,7 +95,15 @@ export default {
       this.changeDiscountCode(event.target.value);
     },
     checkout() {
-      this.submitOrder(this.order);
+      if (this.authenticated && this.order.products != null) {
+        if (this.order.products.length > 0) {
+          this.submitOrder(this.order);
+        } else {
+          alert('Gio hang chong');
+        }
+      } else {
+        alert('Gio hang chong hoac ban chua dang nhap !');
+      }
     },
   },
 };
@@ -176,7 +184,7 @@ ul {
 }
 
 .promotion > .btn::after {
-  content: "\276f";
+  content: '\276f';
   font-size: 1rem;
 }
 
