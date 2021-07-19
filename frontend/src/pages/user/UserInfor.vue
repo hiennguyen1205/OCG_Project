@@ -43,19 +43,23 @@ export default {
   },
 
   computed: {
-    ...mapState("users",["user"]),
+    ...mapState('users', ['user']),
   },
 
   methods: {
-    ...mapMutations("users",["saveUser"]),
+    ...mapMutations('users', ['saveUser']),
     async changeInfor() {
-      await fetch('http://localhost:3000/api/change-infor', {
-        method: 'POST',
+      await fetch('http://localhost:3000/api/user', {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
+          id: this.user.id,
+          username: this.user.username,
+          pass: this.user.password,
           email: this.User.email,
           address: this.User.address,
+          role: this.user.role,
         }),
       })
         .then(async () => {
@@ -82,8 +86,6 @@ export default {
         console.log(error);
       });
   },
-
-
 };
 </script>
 

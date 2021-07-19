@@ -1,7 +1,7 @@
 import router from "../../router/index.js"
 const state = () => ({
     authenticated: false,
-    user : {},
+    user: {},
 });
 
 const getters = {
@@ -21,12 +21,12 @@ const actions = {
             body: JSON.stringify(user),
         })
             .then((response) => {
-                if (response.status ===200) {
-                    commit('setAuth',true);
+                if (response.status === 200) {
+                    commit('setAuth', true);
                     router.push({ name: "Home" });
                 } else {
-                   alert("Tài khoản hoặc mật khẩu sai!!!")
-                   return
+                    alert("Tài khoản hoặc mật khẩu sai!!!")
+                    return
                 }
             })
             .catch((e) => {
@@ -67,14 +67,17 @@ const actions = {
 };
 
 const mutations = {
+    emptyUser(state) {
+        state.user = {};
+    },
     // updateUserId(state) {
     //     state.userId = parseInt(document.cookie.slice(3,));
     // },
     setAuth(state, auth) {
         state.authenticated = auth;
     },
-    saveUser(state, userInput){
-        state.user = userInput; 
+    saveUser(state, userInput) {
+        state.user = userInput;
     }
 };
 

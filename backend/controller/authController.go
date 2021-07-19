@@ -207,3 +207,12 @@ func ChangeUserPassword(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 }
+
+func UpdateUser(w http.ResponseWriter, r *http.Request) {
+	requestBody, _ := ioutil.ReadAll(r.Body)
+	var user models.User
+	json.Unmarshal(requestBody, &user)
+	repository.UpdateUser(&user)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode("Success")
+}
