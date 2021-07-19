@@ -6,13 +6,12 @@
           <h2>Chỉnh sửa danh sách sản phẩm</h2>
         </div>
         <div class="col-sm-4">
-          <!-- Search -->
           <div>
             <input
               type="text"
-              placeholder="Enter Name Group"
-              name="nameGroup"
-              id="nameGroup"
+              placeholder="Tên sản phẩm"
+              name="nameProduct"
+              id="nameProduct"
               required
             />
             <button class="fa fa-search" onclick="search()"></button>
@@ -23,7 +22,7 @@
             data-toggle="modal"
             onclick="openAddModal()"
           >
-            <i class="fa fa-plus"></i> Add New
+            <i class="fa fa-plus"></i> Thêm sản phẩm
           </button>
         </div>
       </div>
@@ -45,25 +44,24 @@
           <td>{{ product.price }}</td>
           <td>{{ product.isFeature == true ? "Đang hot" : "Không" }}</td>
           <td>
-            <button><i class="fas fa-pen"></i></button>
-            <button @click="openConfirmDelete(product.id)">
+            <button>
+              <i class="fas fa-pen" @click="openUpdateModal(product)"></i>
+            </button>
+
+            <button
+              class="btn btn-danger"
+              @click="openConfirmDelete(product.id)"
+            >
               <i class="fas fa-trash"></i>
             </button>
           </td>
         </tr>
       </thead>
-      <tbody></tbody>
     </table>
-    <ul class="pagination"></ul>
+    <ModalUpdate v-if="isDisplay" :productModal="product" @confirmUpdateModal="confirmUpdateModal(product)"/>
   </div>
 
- 
-  <div>
-    <ModalUpdate />
-  </div>
-  <div v-show="confirm">
-    <AlertSuccess />
-  </div>
+  <AlertSuccess />
 </template>
 
 <script>
@@ -83,6 +81,8 @@ export default {
     return {
       listProducts: [],
       confirm: false,
+      product: {},
+      isDisplay: false,
     };
   },
 
@@ -95,12 +95,9 @@ export default {
       let index = this.listProducts.findIndex(
         (product) => product.id === productId
       );
-
       var result = confirm(
         "Want to delete " + this.listProducts[index].name + "?"
       );
-      this.confirm = true;
-      console.log(this.confirm);
       if (result) {
         this.deleteGroup(this.listProducts[index].id);
       }
@@ -108,13 +105,29 @@ export default {
 
     async deleteGroup(productId) {
       let response = await DeleteData(`products/${productId}`);
-      if (response.status) {
+      if (response.status == 200) {
         alert("Xóa sản phẩm ok :>");
         this.getAllProducts();
       } else {
         alert("Xóa sản phẩm bị lỗi!!!");
       }
     },
+
+    openUpdateModal(product) {
+      this.isDisplay = true;
+      this.product = product;
+    },
+
+    confirmUpdateModal(product){
+      console.log(11);
+      this.isDisplay = false;
+      if (product){
+        console.log("gọi API");
+        console.log(product);
+      } else {
+        console.log("Chả làm gì");
+      }
+    }
   },
 
   created() {
