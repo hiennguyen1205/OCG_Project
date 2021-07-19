@@ -31,19 +31,19 @@
     <table class="table table-bordered">
       <thead>
         <tr>
-        
           <th>Tên</th>
-        <th>Ảnh</th>
+          <th>Ảnh</th>
           <th>Giảm giá (%)</th>
           <th>Giá</th>
+          <th>Mua nhiều</th>
           <th>Sửa</th>
         </tr>
         <tr v-for="product in listProducts" :key="product.id">
-        
           <td>{{ product.name }}</td>
           <td>{{ product.image }}</td>
           <td>{{ product.sale }}</td>
           <td>{{ product.price }}</td>
+          <td>{{ product.isFeature == true ? "Đang hot" : "Không" }}</td>
           <td>
             <button><i class="fas fa-pen"></i></button>
             <button @click="openConfirmDelete(product.id)">
@@ -57,85 +57,27 @@
     <ul class="pagination"></ul>
   </div>
 
-  <!-- Modal HTML -->
-  <div id="myModal" class="modal fade" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <!-- header -->
-        <div class="modal-header">
-          <h5 class="modal-title">Function Group</h5>
-          <button type="button" class="close" data-dismiss="modal">
-            &times;
-          </button>
-        </div>
-
-        <!-- body -->
-        <div class="modal-body">
-          <div class="modal-container">
-            <input type="hidden" id="id" name="id" />
-
-            <label for="name"><b>Name</b></label>
-            <input
-              type="text"
-              placeholder="Enter Name"
-              name="name"
-              id="name"
-              required
-            />
-            <br />
-            <label for="name"><b>Total Member</b></label>
-            <input
-              type="text"
-              placeholder="Enter Total Member"
-              name="totalMember"
-              id="totalMember"
-              required
-            />
-            <br />
-            <!-- <label for="name"><b>Creator</b></label>
-                        <input type="text" placeholder="Enter Creator Name" name="creator" id="creator" required> -->
-          </div>
-        </div>
-
-        <!-- footer -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">
-            Cancel
-          </button>
-          <button type="button" class="btn btn-primary" onclick="save()">
-            Save
-          </button>
-        </div>
-      </div>
-    </div>
+ 
+  <div>
+    <ModalUpdate />
   </div>
-
-  <!-- success alert -->
-
-  <div class="modal" tabindex="-1" v-if="confirm">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Modal title</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <p>Modal body text goes here.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
+  <div v-show="confirm">
+    <AlertSuccess />
   </div>
-</div>
-
 </template>
 
 <script>
+import AlertSuccess from "../../components/edit-product/AlertSuccess.vue";
+import ModalUpdate from "../../components/edit-product/ModalUpdate.vue";
 import { DeleteData, GetData } from "../../utils/callapi.js";
+
 export default {
   name: "Admin",
+
+  components: {
+    AlertSuccess,
+    ModalUpdate,
+  },
 
   data() {
     return {
@@ -147,29 +89,32 @@ export default {
   methods: {
     async getAllProducts() {
       this.listProducts = await GetData(`products?limit=10&cursor=0&all=1`);
-      console.log(this.listProducts);
     },
 
     openConfirmDelete(productId) {
       let index = this.listProducts.findIndex(
         (product) => product.id === productId
       );
-      var result = confirm("Want to delete " + this.listProducts[index].name + "?");
+
+      var result = confirm(
+        "Want to delete " + this.listProducts[index].name + "?"
+      );
+      this.confirm = true;
+      console.log(this.confirm);
       if (result) {
         this.deleteGroup(this.listProducts[index].id);
       }
     },
 
-    async deleteGroup(productId){
-        let response = await DeleteData(`products/${productId}`);
-        if(response.status){
-           alert("Xóa sản phẩm ok :>")
-        }else{
-            alert("Xóa sản phẩm bị lỗi!!!")
-        }
-        console.log(response.status);
+    async deleteGroup(productId) {
+      let response = await DeleteData(`products/${productId}`);
+      if (response.status) {
+        alert("Xóa sản phẩm ok :>");
+        this.getAllProducts();
+      } else {
+        alert("Xóa sản phẩm bị lỗi!!!");
+      }
     },
-
   },
 
   created() {

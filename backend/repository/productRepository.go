@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"fmt"
 	"database/sql"
+	"fmt"
 
 	"bt/project/connect"
 	"bt/project/models"
@@ -119,7 +119,7 @@ func InitData() {
 * Hàm lấy danh sách sản phẩm
 * input: 4 params giúp cho việc phân trang, search theo tên và sắp xếp sản phẩm
 * output: 1 slice các sản phẩm
-*/
+ */
 func GetAllProducts(limit int, cursor int, search string, sort string, categoryId int, isFeature int, all int) (result []models.Product) {
 	var strQuery string
 	var response *sql.Rows
@@ -173,8 +173,6 @@ func GetProductById(id int) models.Product {
 	return product
 }
 
-
-
 func CreateProduct(product models.Product) (err error) {
 	strQuery := "INSERT INTO products(name, description, price, category_id, image, sale, is_feature) VALUES (?,?,?,?,?,?,?)"
 	result, err := db.Exec(strQuery, product.Name, product.Description, product.Price, product.CategoryId, product.Image, product.Sale, product.IsFeature)
@@ -183,7 +181,7 @@ func CreateProduct(product models.Product) (err error) {
 }
 
 func UpdateProduct(product models.Product) (err error) {
-	
+
 	strQuery, err := db.Prepare("UPDATE products SET name = ?, description = ?, price = ?, category_id = ?, image = ?, sale = ?, is_feature = ? WHERE id=?")
 	if err != nil {
 		panic(err.Error())
@@ -193,8 +191,12 @@ func UpdateProduct(product models.Product) (err error) {
 }
 
 func DeleteProductById(id int) (str string, err error) {
+	//xóa foreign key
+	strQueryOrderItem := "DELETE FROM order_items WHERE product_id = ?"
+	db.Exec(strQueryOrderItem, id)
+	//xóa sản phẩm
 	strQuery := "DELETE FROM products WHERE id = ?"
 	result, err := db.Exec(strQuery, id)
 	fmt.Println(result)
-	return "Sai", err
+	return "Xóa thành công!", err
 }

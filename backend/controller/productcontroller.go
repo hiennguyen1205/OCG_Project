@@ -56,8 +56,7 @@ func DeleteProductById(write http.ResponseWriter, request *http.Request) {
 	vars := mux.Vars(request)
 	strIdProduct := vars["id_product"]
 	intIdProduct, _ := strconv.Atoi(strIdProduct)
-	repository.DeleteProductById(intIdProduct)
+	result, _ := repository.DeleteProductById(intIdProduct)
 	write.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(write).Encode(result)
 }
-
-//config CORS w.Header().Set("Access-Control-Allow-Origin", "*")
