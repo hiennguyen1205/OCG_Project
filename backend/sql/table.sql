@@ -1,6 +1,4 @@
-
 -- Drop table
-
 DROP TABLE IF EXISTS `order_items`;
 DROP TABLE IF EXISTS `order_details`;
 DROP TABLE IF EXISTS `users`;
@@ -30,7 +28,6 @@ CREATE TABLE `users` (
   `address` TEXT NOT NULL,
   `role` TINYINT(1) DEFAULT 0
 );
-
 CREATE TABLE `order_details` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `user_id` INT NOT NULL,
@@ -43,7 +40,8 @@ CREATE TABLE `order_items` (
   `order_id` INT NOT NULL,
   `product_id` INT NOT NULL,
   `quantity` INT NOT NULL,
-  `active` TINYINT(1) DEFAULT 0
+  `active` TINYINT(1) DEFAULT 0,
+  `send_email` TINYINT(1) DEFAULT 0
 );
 -- ADD FOREIGN KEY
 -- table products
@@ -65,7 +63,6 @@ ALTER TABLE
   `order_details`
 ADD
   FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
-  
 -- table
   -- insert data
   -- table categories
@@ -182,76 +179,76 @@ VALUES
     1
   ),
   (
-  "Sofa John",
-  "Sofa John 3 chỗ với thiết kế mạnh mẽ - khỏe khoắn với hình khối vuông cạnh là điểm cộng của mẫu sofa John. Phần nệm ngồi rộng cho phép nằm thư giãn hoặc một giấc ngủ sâu sau một ngày bận rộn. Sofa có phần phối vải kẻ sọc cho sofa hình khối không những không bị cứng mà còn là điểm nhấn riêng biệt. Tại Nhà Xinh có đa dạng các mẫu sofa đẹp hiện đại, đa dạng kiểu dáng, phù hợp cho từng không gian nhà bạn.",
-  2590000,
-  2,
-  "static/image/sofa_3.jpg",
-  5,
-  0
-),
-(
-  "Sofa Twoback",
-  "Sofa Twoback 2.5 chỗ với gam màu xanh tươi mát, nhã nhặn. Kết cấu khung làm từ gỗ thông của Newzerland, bọc nệm vải cao cấp tạo cảm giác thoải mái. Sofa Twoback là 1 lựa chọn tối ưu cho không gian phòng khách hiện đại.",
-  3180000,
-  2,
-  "static/image/sofa_4.jpg",
-  0,
-  0
-),
-(
-  "Sofa Dubai",
-  "Sofa Dubai 2.5 chỗ với đường nét mỏng đảm bảo cái nhìn nhẹ nhàng và thanh thoát. Thiết kế sofa 2 chỗ nhưng vẫn mang lại cảm giác chỗ ngồi rộng hơn. Sofa Dubai có 2 màu nâu và kem để chọn lựa phù hợp cho không gian phòng khách hiện đại của gia đình bạn.",
-  16500000,
-  2,
-  "static/image/sofa_5.jpg",
-  0,
-  0
-),
-(
-  "Sofa Bridge 3 chỗ",
-  "Sofa Bridge 3 chỗ với thiết kế vượt thời gian, sử dụng chất liệu gỗ sồi đặc và da bò tự nhiên, sofa Bridge là điểm nhấn đẳng cấp trong phòng khách của bạn. Đặc biệt, phần tay vịn được hoàn thiện vô cùng tinh xảo kết hợp với kết cấu vô cùng chắn chắn giúp cho sofa Bridge tạo cảm xúc gần gũi, tự nhiên và thoái mái khi sử dụng. Sản phẩm có các màu sắc hoàn thiện gỗ sồi sáng và trầm và nhiều màu da khác nhau để lựa chọn. Sofa Bridge 3 chỗ là 1 lựa chọn sáng gia cho phong cách nội thất Bắc Âu.",
-  8400000,
-  2,
-  "static/image/sofa_6.jpg",
-  12,
-  0
-),
-(
-  "Bàn nước Pio",
-  "Bàn nước PIO thu hút ánh nhìn với mặt bàn bằng chất liệu hiện đại melamine marble. Thiết kế với kiểu dáng oval giúp, bàn nước Pio tạo điểm nhấn khác biệt cho không gian phòng khách của bạn. Việc bổ sung ngăn bên dưới là khu chứa đồ cũng như trưng bày các vật dụng trang trí. PIO – Vẻ đẹp yên bình giữa lối sống đô thị Pha trộn giữa phong cách scandinavian và sự mới lạ trong chọn lựa màu sắc, bộ sưu tập PIO toát lên vẻ đẹp nhẹ nhàng, thanh lịch và cũng rất gần gũi với thiên nhiên. PIO thể hiện lối sống của những người trẻ, biết chiêm nghiệm và thưởng ngoạn sự trở về bình yên giữa nhịp sống hiện đại. Thiết kế bởi những đường cong, điểm xuyến các chi tiết nhấn nhá bên cạnh sử dụng các vật liệu như gỗ beech, melamine marble.. giúp PIO trở nên cá tính và thu hút trong không gian hiện đại. Sản phẩm được thiết kế bởi đội ngũ Nhà Xinh và sản xuất tại Việt Nam.",
-  6900000,
-  3,
-  "static/image/table_1.jpg",
-  20,
-  0
-),
-(
-  "Bàn nước Jazz",
-  "Bàn nước Jazz được ghép từ những thanh gỗ sồi già tự nhiên. Bề mặt đặc trưng với những đường nứt tét gỗ tự nhiên được xử lý khéo léo, kết hợp với chân sắt sơn tĩnh điện đầy mạnh mẽ sẽ mang lại nét cá tính độc đáo cho gia chủ.",
-  9500000,
-  3,
-  "static/image/table_2.jpg",
-  20,
-  0
-),
-(
-  "Bàn nước Mây",
- "Một chiếc bàn nước kết hợp nhịp nhàng bởi 2 khối hình khác nhau về độ cao. Bàn nước Mây giúp cho không gian phòng khách trở nên cá tính hơn. Sản phẩm sử dụng chất liệu đã marble cho phần mặt bàn, được bao quanh bởi kết cấu khung gỗ và nhấn nhá với phần chân kim loại đồng hiện đại.",
- 10900000,
-  3,
-  "static/image/table_3.jpg",
-  40,
-  0
-),(
-  "Bàn nước Daylight",
-  "Bàn nước Daylight với thiết kế hiện đại, kết hợp giữa mặt đá và chân inox mạ sang trọng sẽ là điểm nhấn độc đáo cho phòng khách nhà bạn.",
-  12500000,
-  3,
-  "static/image/table_4.jpg",
-  30,
-  0
-);
+    "Sofa John",
+    "Sofa John 3 chỗ với thiết kế mạnh mẽ - khỏe khoắn với hình khối vuông cạnh là điểm cộng của mẫu sofa John. Phần nệm ngồi rộng cho phép nằm thư giãn hoặc một giấc ngủ sâu sau một ngày bận rộn. Sofa có phần phối vải kẻ sọc cho sofa hình khối không những không bị cứng mà còn là điểm nhấn riêng biệt. Tại Nhà Xinh có đa dạng các mẫu sofa đẹp hiện đại, đa dạng kiểu dáng, phù hợp cho từng không gian nhà bạn.",
+    2590000,
+    2,
+    "static/image/sofa_3.jpg",
+    5,
+    0
+  ),
+  (
+    "Sofa Twoback",
+    "Sofa Twoback 2.5 chỗ với gam màu xanh tươi mát, nhã nhặn. Kết cấu khung làm từ gỗ thông của Newzerland, bọc nệm vải cao cấp tạo cảm giác thoải mái. Sofa Twoback là 1 lựa chọn tối ưu cho không gian phòng khách hiện đại.",
+    3180000,
+    2,
+    "static/image/sofa_4.jpg",
+    0,
+    0
+  ),
+  (
+    "Sofa Dubai",
+    "Sofa Dubai 2.5 chỗ với đường nét mỏng đảm bảo cái nhìn nhẹ nhàng và thanh thoát. Thiết kế sofa 2 chỗ nhưng vẫn mang lại cảm giác chỗ ngồi rộng hơn. Sofa Dubai có 2 màu nâu và kem để chọn lựa phù hợp cho không gian phòng khách hiện đại của gia đình bạn.",
+    16500000,
+    2,
+    "static/image/sofa_5.jpg",
+    0,
+    0
+  ),
+  (
+    "Sofa Bridge 3 chỗ",
+    "Sofa Bridge 3 chỗ với thiết kế vượt thời gian, sử dụng chất liệu gỗ sồi đặc và da bò tự nhiên, sofa Bridge là điểm nhấn đẳng cấp trong phòng khách của bạn. Đặc biệt, phần tay vịn được hoàn thiện vô cùng tinh xảo kết hợp với kết cấu vô cùng chắn chắn giúp cho sofa Bridge tạo cảm xúc gần gũi, tự nhiên và thoái mái khi sử dụng. Sản phẩm có các màu sắc hoàn thiện gỗ sồi sáng và trầm và nhiều màu da khác nhau để lựa chọn. Sofa Bridge 3 chỗ là 1 lựa chọn sáng gia cho phong cách nội thất Bắc Âu.",
+    8400000,
+    2,
+    "static/image/sofa_6.jpg",
+    12,
+    0
+  ),
+  (
+    "Bàn nước Pio",
+    "Bàn nước PIO thu hút ánh nhìn với mặt bàn bằng chất liệu hiện đại melamine marble. Thiết kế với kiểu dáng oval giúp, bàn nước Pio tạo điểm nhấn khác biệt cho không gian phòng khách của bạn. Việc bổ sung ngăn bên dưới là khu chứa đồ cũng như trưng bày các vật dụng trang trí. PIO – Vẻ đẹp yên bình giữa lối sống đô thị Pha trộn giữa phong cách scandinavian và sự mới lạ trong chọn lựa màu sắc, bộ sưu tập PIO toát lên vẻ đẹp nhẹ nhàng, thanh lịch và cũng rất gần gũi với thiên nhiên. PIO thể hiện lối sống của những người trẻ, biết chiêm nghiệm và thưởng ngoạn sự trở về bình yên giữa nhịp sống hiện đại. Thiết kế bởi những đường cong, điểm xuyến các chi tiết nhấn nhá bên cạnh sử dụng các vật liệu như gỗ beech, melamine marble.. giúp PIO trở nên cá tính và thu hút trong không gian hiện đại. Sản phẩm được thiết kế bởi đội ngũ Nhà Xinh và sản xuất tại Việt Nam.",
+    6900000,
+    3,
+    "static/image/table_1.jpg",
+    20,
+    0
+  ),
+  (
+    "Bàn nước Jazz",
+    "Bàn nước Jazz được ghép từ những thanh gỗ sồi già tự nhiên. Bề mặt đặc trưng với những đường nứt tét gỗ tự nhiên được xử lý khéo léo, kết hợp với chân sắt sơn tĩnh điện đầy mạnh mẽ sẽ mang lại nét cá tính độc đáo cho gia chủ.",
+    9500000,
+    3,
+    "static/image/table_2.jpg",
+    20,
+    0
+  ),
+  (
+    "Bàn nước Mây",
+    "Một chiếc bàn nước kết hợp nhịp nhàng bởi 2 khối hình khác nhau về độ cao. Bàn nước Mây giúp cho không gian phòng khách trở nên cá tính hơn. Sản phẩm sử dụng chất liệu đã marble cho phần mặt bàn, được bao quanh bởi kết cấu khung gỗ và nhấn nhá với phần chân kim loại đồng hiện đại.",
+    10900000,
+    3,
+    "static/image/table_3.jpg",
+    40,
+    0
+  ),(
+    "Bàn nước Daylight",
+    "Bàn nước Daylight với thiết kế hiện đại, kết hợp giữa mặt đá và chân inox mạ sang trọng sẽ là điểm nhấn độc đáo cho phòng khách nhà bạn.",
+    12500000,
+    3,
+    "static/image/table_4.jpg",
+    30,
+    0
+  );
 -- table users
 INSERT INTO
   `users` (username, password, email, address)
@@ -267,9 +264,6 @@ INSERT INTO
   )
 VALUES
   (1, 1234, "Tiền mặt", 12);
-
-
-
 -- table order items
 INSERT INTO
   order_items (`order_id`, `product_id`, `quantity`)

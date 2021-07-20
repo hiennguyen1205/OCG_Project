@@ -42,3 +42,13 @@ func SaveOrderByUserNotActive(write http.ResponseWriter, request *http.Request) 
 	result := repository.SaveOrderByUserNotActive(saveOrder)
 	json.NewEncoder(write).Encode(result)
 }
+
+//information order
+func GetInformationOrder(write http.ResponseWriter, request *http.Request){
+	vars := mux.Vars(request)
+	strIdUser,_ := strconv.Atoi(vars["user_id"])
+	log.Println(strIdUser)
+	write.Header().Set("Content-Type", "application/json")
+	info := repository.InformationOrder(strIdUser)
+	json.NewEncoder(write).Encode(info)
+}

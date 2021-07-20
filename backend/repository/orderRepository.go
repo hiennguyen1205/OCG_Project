@@ -11,6 +11,32 @@ import (
 	"log"
 )
 
+//thông tin đơn hàng
+func InformationOrder(id int) (result dto.DisplayOrder) {
+	var product dto.DetailProduct
+	var user dto.DetailUser
+	//lấy danh sách sản phẩm của user đã mua (active = 1)
+	strQuery := "SELECT od.user_id, od.id, od.discount, od.total_price, od.payment,oi.`active`, oi.product_id, oi.quantity, p.`name`, p.price, p.image " +
+		"FROM order_items oi " +
+		"JOIN order_details od ON od.id = oi.order_id " +
+		"JOIN products p ON p.id = oi.product_id " +
+		"WHERE od.user_id = ? AND oi.`active` = 1 AND oi.`send_email` = 0"
+	response, err := db.Query(strQuery, id)
+	if err != nil {
+		log.Println(err)
+	}
+	for response.Next() {
+		err := response.Scan(&user.UserId, &user.OrderId, &user.Discount, &user.TotalPrice, &user.Payment, &product.Active, &product.ProductId, &product.Quantity, &product.Name, &product.Price, &product.Image)
+		if err != nil {
+			log.Println(err)
+		}
+		result.User = user
+		result.Products = append(result.Products, product)
+	}
+	defer response.Close()
+	return result
+}
+
 func GetOrdersDetailsByUserId(id int) (result dto.DisplayOrder) {
 	var product dto.DetailProduct
 	var user dto.DetailUser
@@ -53,6 +79,8 @@ func GetOrdersDetailsByUserId(id int) (result dto.DisplayOrder) {
 	return result
 }
 
+
+
 //kiểm tra xem order của user có tồn tại không
 func IsValidOrderByUserId(id int) bool {
 	response := db.QueryRow(`SELECT id FROM order_details WHERE user_id = ?`, id)
@@ -71,7 +99,7 @@ func IsValidProductItemByOrderId(orderId int, productId int) bool {
 	var check int
 	err := response.Scan(&check)
 	if err == sql.ErrNoRows {
-		log.Println("không có product trong order, ",err)
+		log.Println("không có product trong order,",err)
 		return false
 	}
 	return true
@@ -82,13 +110,26 @@ func IsValidProductItemByOrderId(orderId int, productId int) bool {
 func SaveOrderByUserNotActive(display dto.DisplayOrder) (result string) {
 	user := display.User
 	listProducts := display.Products
-	//không có user trong order details thì insert user vào order details
+	
 	if !IsValidOrderByUserId(user.UserId) {
+		//không có user trong order details thì insert user vào order details
 		strQuery := "INSERT INTO order_details(user_id, total_price, payment, discount) VALUES (?,?,?,?)"
 		_, err := db.Exec(strQuery, user.UserId, user.TotalPrice, user.Payment, user.Discount)
 		if err != nil {
 			log.Println(err)
 			return "Save User failed"
+		}
+
+		//sau khi insert user vào database thì insert list products mà user dặt hàng
+		for _, product := range listProducts{
+			strQuery, err := db.Prepare("INSERT INTO order_items(order_id,product_id,quantity,`active`) VALUES(?,?,?,0)")
+				if err != nil {
+					log.Println(err.Error())
+				}
+				_, err = strQuery.Exec(user.OrderId, product.ProductId, product.Quantity)
+				if err != nil {
+					log.Println("insert vào db lỗi",err.Error())
+				}
 		}
 	} else {
 		//có user thì update trong order detail
