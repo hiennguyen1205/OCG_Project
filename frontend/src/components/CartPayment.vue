@@ -97,12 +97,13 @@ export default {
     checkout() {
       if (this.authenticated && this.order.products != null) {
         if (this.order.products.length > 0) {
+          console.log(this.order);
           this.submitOrder(this.order);
         } else {
-          alert('Gio hang chong');
+          alert('Giỏ hàng trống!!!');
         }
       } else {
-        alert('Gio hang chong hoac ban chua dang nhap !');
+        alert('Giỏ hàng trống hoặc bạn chưa đăng nhập !');
       }
     },
   },

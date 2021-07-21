@@ -27,6 +27,7 @@ const state = () => ({
 
 const getters = {
     getLengthListProducts(state) {
+        if (state.order.products === null || state.order.products===undefined) {return 0}
         return state.order.products.length
     },
     calcSubTotal(state) {
@@ -54,10 +55,11 @@ const getters = {
 
     },
 
-    calcTotalPrice(state) {
-        return state.totalPrice = state.order.products.reduce((totalPrice, product) => totalPrice + product.price * product.quantity,
-            0)
-    },
+    // calcTotalPrice(state) {
+    //     if (state.order.products === null || state.order.products == undefined) return state.totalPrice=0
+    //     return state.totalPrice = state.order.products.reduce((totalPrice, product) => totalPrice + product.price * product.quantity,
+    //         0)
+    // },
     emptyListProducts(state) {
         state.order = {};
     },
@@ -66,8 +68,8 @@ const getters = {
 
 
 const actions = {
-    async submitOrder({ state }, order) {
-        await fetch('http://localhost:3000/api/orders', {
+    async submitOrder(_,order) {
+        await fetch('http://localhost:3000/auth/api/orders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
@@ -75,21 +77,23 @@ const actions = {
         })
             .then(() => {
                 // commit("submitedOrder")  
-                console.log(state.order);
+                // console.log(state.order);
                 console.log("OK");
             })
             .catch(err => console.log(err))
     },
     async getCartByUserId({ commit }, userId) {
+        
         await fetch('http://localhost:3000/api/orders/' + userId, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
         })
             .then(async (response) => {
+               
                 const data = await response.json()
                 commit("GET_CART", data)
-                // console.log("ĐƯỢC");
+                // console.log(data);
             })
             .catch(err => console.log(err))
     },
@@ -108,7 +112,14 @@ const mutations = {
                     0
                 );
         } else state.discount = 0;
-
+        // if (state.order.products === null || state.order.products===undefined){
+        //     state.discount = 0 
+        //     return
+        // }
+        // state.discount = state.order.products.reduce((salePrice, product) => salePrice += product.quantity * product.price * product.sale/100, 0)
+        // console.log(1);
+        // console.log(state.products);
+        // console.log(state.discount);
     },
 
     changeQuantity(state, { productId, number }) {
@@ -139,7 +150,7 @@ const mutations = {
         state.order.products = state.order.products.map((product) => {
             if (product.id === productId) {
                 product.quantity--;
-                if (product.quantity < 0) {
+                if (product.quantity < 1) {
                     product.quantity = 1;
                 }
             }
@@ -148,7 +159,6 @@ const mutations = {
     },
 
     removeItem(state, productId) {
-        console.log("hahaha");
         let confirmDelete = confirm("Do you want to delete state product " + productId + "??");
         if (confirmDelete) {
             state.order.products = state.order.products.filter(
@@ -187,6 +197,7 @@ const mutations = {
 
     GET_CART(state, data) {
         state.order = data;
+        // console.log(state.order);
     },
 };
 

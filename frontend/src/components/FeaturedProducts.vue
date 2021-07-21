@@ -118,7 +118,7 @@ export default {
   transition: transform 0.3s ease-out;
 }
 .product-item:hover {
-  transform: scale(1.01);
+  /* transform: scale(1.01); */
   border: 1px solid rgb(107, 240, 206);
 }
 

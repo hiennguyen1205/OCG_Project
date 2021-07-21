@@ -104,7 +104,7 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from "vuex";
+import { mapActions, mapMutations, mapState } from "vuex";
 export default {
   name: "Loginout",
   data() {
@@ -115,6 +115,9 @@ export default {
       password_confirm: "",
       address: "",
     };
+  },
+  computed: {
+    ...mapState("carts",["order"])
   },
   methods: {
     ...mapActions("carts", ["getCartByUserId"]),

@@ -98,6 +98,7 @@ export default {
       if (this.order.products === null || this.order.products === undefined) {
         return [];
       } else {
+        // console.log(this.order.products);
         return this.order.products;
       }
     },
