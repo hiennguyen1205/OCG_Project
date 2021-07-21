@@ -32,16 +32,15 @@ CREATE TABLE `order_details` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `user_id` INT NOT NULL,
   `total_price` FLOAT NOT NULL DEFAULT 0,
-  `payment` VARCHAR(100) NOT NULL,
-  `discount` TINYINT(100) NOT NULL
+  `payment` VARCHAR(100) NOT NULL DEFAULT "CARD",
+  `discount` TINYINT(100) NOT NULL DEFAULT 0
 );
 CREATE TABLE `order_items` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `order_id` INT NOT NULL,
   `product_id` INT NOT NULL,
   `quantity` INT NOT NULL,
-  `active` TINYINT(1) DEFAULT 0,
-  `send_email` TINYINT(1) DEFAULT 0
+  `active` TINYINT(1) DEFAULT 0
 );
 -- ADD FOREIGN KEY
 -- table products
