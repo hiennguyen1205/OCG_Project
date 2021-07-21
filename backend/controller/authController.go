@@ -155,32 +155,6 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(result)
 }
 
-type userInfor struct {
-	Email   string `json:"email"`
-	Address string `json:"address"`
-}
-
-func ChangeUserInfor(w http.ResponseWriter, r *http.Request) {
-	c, err := r.Cookie("id")
-	if err != nil {
-		log.Println("không lấy được cookie")
-		statusCode := http.StatusUnauthorized
-		http.Error(w, "Token doesnt exist", statusCode)
-	}
-	requestBody, _ := ioutil.ReadAll(r.Body)
-	var userinfor userInfor
-	json.Unmarshal(requestBody, &userinfor)
-	// log.Println(userinfor)
-	intIdUser, _ := strconv.Atoi(c.Value)
-	err = repository.UpdateUserInfor(userinfor.Email, userinfor.Address, intIdUser)
-	if err != nil {
-		json.NewEncoder(w).Encode(err)
-	} else {
-		json.NewEncoder(w).Encode("Đổi thông tin thành công")
-	}
-	w.Header().Set("Content-Type", "application/json")
-}
-
 type userPassword struct {
 	Password string `json:"password"`
 }
@@ -208,10 +182,24 @@ func ChangeUserPassword(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
-	requestBody, _ := ioutil.ReadAll(r.Body)
+	requestBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Println(err)
+	}
 	var user models.User
-	json.Unmarshal(requestBody, &user)
-	repository.UpdateUser(&user)
+	err1 := json.Unmarshal(requestBody, &user)
+	if err1 != nil {
+		log.Println(err1)
+	}
+	err2 := repository.UpdateUser(&user)
+	if err2 != nil {
+		log.Println(err)
+		json.NewEncoder(w).Encode("Failed")
+		statusCode := http.StatusInternalServerError
+		http.Error(w, "Can't change password", statusCode)
+	} else {
+		json.NewEncoder(w).Encode("Success")
+	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode("Success")
+
 }

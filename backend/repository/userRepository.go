@@ -58,17 +58,6 @@ func GetUserById(id int) models.User {
 	return user
 }
 
-func UpdateUserInfor(email string, address string, id int) (err error) {
-
-	strQuery, err := db.Prepare("UPDATE users SET email = ?, address = ? WHERE id=?")
-	if err != nil {
-		log.Println("Cannot change infor")
-		fmt.Println(err)
-	}
-	strQuery.Exec(email, address, id)
-	return err
-}
-
 func UpdateUserPasword(pass string, id int) (err error) {
 
 	strQuery, err := db.Prepare("UPDATE users SET password = ? WHERE id=?")
