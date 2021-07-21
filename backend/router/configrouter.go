@@ -56,7 +56,7 @@ func RouteProduct(routers *mux.Router) {
 	//save order to database active = 1
 	routers.Methods(http.MethodPut).Path("/api/orders").HandlerFunc(controller.SaveOrderByUserActive)
 	//save order to database active = 0
-	routers.Methods(http.MethodPost).Path("/api/orders").HandlerFunc(controller.SaveOrderByUserNotActive)
+	routers.Methods(http.MethodPost).Path("/api/orders").HandlerFunc(controller.SaveOrderByUserNotActiveController)
 	//infor order
 	routers.Methods(http.MethodGet).Path("/api/orders/infororder/{user_id}").HandlerFunc(controller.GetInformationOrder)
 }

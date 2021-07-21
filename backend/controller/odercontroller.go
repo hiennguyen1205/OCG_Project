@@ -3,7 +3,6 @@ package controller
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -17,7 +16,7 @@ func GetOrdersDetailsByUserId(write http.ResponseWriter, request *http.Request) 
 	//id user lưu trên cookie
 	vars := mux.Vars(request)
 	strIdUser,_ := strconv.Atoi(vars["user_id"])
-	log.Println(strIdUser)
+	// log.Println(strIdUser)
 	write.Header().Set("Content-Type", "application/json")
 	listOrders := repository.GetOrdersDetailsByUserId(strIdUser)
 	json.NewEncoder(write).Encode(listOrders)
@@ -34,7 +33,7 @@ func SaveOrderByUserActive(write http.ResponseWriter, request *http.Request) {
 }
 
 // save order to database avtive = 0
-func SaveOrderByUserNotActive(write http.ResponseWriter, request *http.Request) {
+func SaveOrderByUserNotActiveController(write http.ResponseWriter, request *http.Request) {
 	requestBody, _ := ioutil.ReadAll(request.Body)
 	var saveOrder dto.DisplayOrder
 	json.Unmarshal(requestBody, &saveOrder)
@@ -47,7 +46,7 @@ func SaveOrderByUserNotActive(write http.ResponseWriter, request *http.Request) 
 func GetInformationOrder(write http.ResponseWriter, request *http.Request){
 	vars := mux.Vars(request)
 	strIdUser,_ := strconv.Atoi(vars["user_id"])
-	log.Println(strIdUser)
+	// log.Println(strIdUser)
 	write.Header().Set("Content-Type", "application/json")
 	info := repository.InformationOrder(strIdUser)
 	json.NewEncoder(write).Encode(info)

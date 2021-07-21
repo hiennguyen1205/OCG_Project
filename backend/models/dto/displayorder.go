@@ -6,7 +6,7 @@ type DisplayOrder struct {
 }
 
 type DetailProduct struct {
-	ProductId int    `json:"product_id"`
+	ProductId int    `json:"id"`
 	Quantity  int    `json:"quantity"`
 	Name      string `json:"name"`
 	Price     int64  `json:"price"`
@@ -19,5 +19,4 @@ type DetailUser struct {
 	OrderId    int     `json:"order_id"`
 	Discount   int     `json:"discount"`
 	TotalPrice float64 `json:"total_price"`
-	Payment    string  `json:"payment"`
 }
