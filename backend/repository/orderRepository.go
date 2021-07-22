@@ -41,7 +41,7 @@ func GetOrdersDetailsByUserId(id int) (result dto.DisplayOrder) {
 	var product dto.DetailProduct
 	var user dto.DetailUser
 	//lấy danh sách sản phẩm của user chưa mua (active = 0)
-	strQuery := "SELECT od.user_id, od.id, od.discount, od.total_price, od.payment,oi.`active`, oi.product_id, oi.quantity, p.`name`, p.price, p.image " +
+	strQuery := "SELECT od.user_id, od.id, od.discount, od.total_price, od.payment,oi.`active`, oi.product_id, oi.quantity, p.`name`, p.price, p.image, p.sale " +
 		"FROM order_items oi " +
 		"JOIN order_details od ON od.id = oi.order_id " +
 		"JOIN products p ON p.id = oi.product_id " +
@@ -51,7 +51,7 @@ func GetOrdersDetailsByUserId(id int) (result dto.DisplayOrder) {
 		log.Println(err)
 	}
 	for response.Next() {
-		err := response.Scan(&user.UserId, &user.OrderId, &user.Discount, &user.TotalPrice, &user.Payment, &product.Active, &product.ProductId, &product.Quantity, &product.Name, &product.Price, &product.Image)
+		err := response.Scan(&user.UserId, &user.OrderId, &user.Discount, &user.TotalPrice, &user.Payment, &product.Active, &product.ProductId, &product.Quantity, &product.Name, &product.Price, &product.Image, &product.Sale)
 		if err != nil {
 			log.Println(err)
 		}
@@ -79,15 +79,13 @@ func GetOrdersDetailsByUserId(id int) (result dto.DisplayOrder) {
 	return result
 }
 
-
-
 //kiểm tra xem order của user có tồn tại không
 func IsValidOrderByUserId(id int) bool {
 	response := db.QueryRow(`SELECT id FROM order_details WHERE user_id = ?`, id)
 	var check int
 	err := response.Scan(&check)
 	if err == sql.ErrNoRows {
-		log.Println("không có order của user, ",err)
+		log.Println("không có order của user, ", err)
 		return false
 	}
 	return true
@@ -99,7 +97,7 @@ func IsValidProductItemByOrderId(orderId int, productId int) bool {
 	var check int
 	err := response.Scan(&check)
 	if err == sql.ErrNoRows {
-		log.Println("không có product trong order,",err)
+		log.Println("không có product trong order,", err)
 		return false
 	}
 	return true
@@ -110,7 +108,7 @@ func IsValidProductItemByOrderId(orderId int, productId int) bool {
 func SaveOrderByUserNotActive(display dto.DisplayOrder) (result string) {
 	user := display.User
 	listProducts := display.Products
-	
+
 	if !IsValidOrderByUserId(user.UserId) {
 		//không có user trong order details thì insert user vào order details
 		strQuery := "INSERT INTO order_details(user_id, total_price, payment, discount) VALUES (?,?,?,?)"
@@ -121,15 +119,15 @@ func SaveOrderByUserNotActive(display dto.DisplayOrder) (result string) {
 		}
 
 		//sau khi insert user vào database thì insert list products mà user dặt hàng
-		for _, product := range listProducts{
+		for _, product := range listProducts {
 			strQuery, err := db.Prepare("INSERT INTO order_items(order_id,product_id,quantity,`active`) VALUES(?,?,?,0)")
-				if err != nil {
-					log.Println(err.Error())
-				}
-				_, err = strQuery.Exec(user.OrderId, product.ProductId, product.Quantity)
-				if err != nil {
-					log.Println("insert vào db lỗi",err.Error())
-				}
+			if err != nil {
+				log.Println(err.Error())
+			}
+			_, err = strQuery.Exec(user.OrderId, product.ProductId, product.Quantity)
+			if err != nil {
+				log.Println("insert vào db lỗi", err.Error())
+			}
 		}
 	} else {
 		//có user thì update trong order detail
@@ -149,14 +147,14 @@ func SaveOrderByUserNotActive(display dto.DisplayOrder) (result string) {
 
 			//insert vào order detail
 			if !IsValidProductItemByOrderId(user.OrderId, product.ProductId) {
-				
+
 				strQuery, err := db.Prepare("INSERT INTO order_items(order_id,product_id,quantity,`active`) VALUES(?,?,?,0)")
 				if err != nil {
 					log.Println(err.Error())
 				}
 				_, err = strQuery.Exec(user.OrderId, product.ProductId, product.Quantity)
 				if err != nil {
-					log.Println("insert vào db lỗi",err.Error())
+					log.Println("insert vào db lỗi", err.Error())
 				}
 			} else {
 				response := db.QueryRow("SELECT active FROM order_items WHERE order_id = ? AND product_id = ?", user.OrderId, product.ProductId)

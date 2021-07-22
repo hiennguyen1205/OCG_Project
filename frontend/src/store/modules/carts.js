@@ -53,6 +53,19 @@ const getters = {
         }
 
     },
+    calcDiscount(state) {
+        if (state.order.products != null) {
+            return (
+                state.order.products.reduce(
+                    (totalPrice, product) =>
+                        totalPrice + product.price * product.quantity * product.sale,
+                    0
+                ) / 100
+            );
+        } else {
+            return 0;
+        }
+    },
 
     calcTotalPrice(state) {
         return state.totalPrice = state.order.products.reduce((totalPrice, product) => totalPrice + product.price * product.quantity,
@@ -67,7 +80,7 @@ const getters = {
 
 const actions = {
     async submitOrder({ state }, order) {
-        await fetch('http://localhost:3000/api/orders', {
+        await fetch('http://localhost:3000/auth/api/orders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
@@ -96,20 +109,6 @@ const actions = {
 };
 
 const mutations = {
-    calcDiscount(state) {
-        let s = state.promotions.filter(
-            (promotion) => promotion.code === state.promoCode
-        );
-
-        if (s.length > 0) {
-            state.discount =
-                (parseInt(s[0].discount.substr(0, 2)) / 100) * state.order.products.reduce(
-                    (totalPrice, product) => totalPrice + product.price * product.quantity,
-                    0
-                );
-        } else state.discount = 0;
-
-    },
 
     changeQuantity(state, { productId, number }) {
         state.order.products = state.order.products.map((product) => {
@@ -157,9 +156,6 @@ const mutations = {
         }
     },
 
-    changeDiscountCode(state, value) {
-        state.promoCode = value;
-    },
 
     addProductToCart(state, product) {
         if (state.order.products != null) {

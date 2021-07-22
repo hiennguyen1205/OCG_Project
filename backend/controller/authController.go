@@ -138,15 +138,18 @@ func AuthMiddleware(next http.Handler) http.Handler {
 
 	})
 }
-
-func GetUserById(w http.ResponseWriter, r *http.Request) {
-	var result models.User
+func GetCookie(w http.ResponseWriter, r *http.Request) *http.Cookie {
 	c, err := r.Cookie("id")
 	if err != nil {
 		log.Println("không lấy được cookie")
 		statusCode := http.StatusUnauthorized
 		http.Error(w, "Token doesnt exist", statusCode)
 	}
+	return c
+}
+func GetUserById(w http.ResponseWriter, r *http.Request) {
+	var result models.User
+	c := GetCookie(w, r)
 	log.Println(c.Value)
 	intIdUser, _ := strconv.Atoi(c.Value)
 	result = repository.GetUserById(intIdUser)
