@@ -90,20 +90,25 @@
         </div>
       </div>
     </div>
+    <CheckoutSuccess v-if="isShow" @close="Close(check)" :paymented="isPaied" />
   </main>
 </template>
 
 <script>
-import Stripe from '@/components/Stripe';
+import Stripe from "@/components/Stripe";
+import CheckoutSuccess from "@/components/CheckoutSuccess";
 export default {
-  name: 'CheckoutInfo',
+  name: "CheckoutInfo",
   components: {
     Stripe,
+    CheckoutSuccess,
   },
   data() {
     return {
       COD: false,
-      gateway: 'stripe',
+      gateway: "stripe",
+      isShow: false,
+      isPaied: true,
     };
   },
   methods: {
@@ -112,24 +117,35 @@ export default {
     },
     payment() {
       if (this.COD) {
-        this.$router.push({ name: 'Home' });
+        this.$router.push({ name: "Home" });
       } else {
         this.$refs.gateway.createPaymentMethod().then(async (res) => {
           console.log(res.paymentMethod.id);
-          const response = await fetch('http://localhost:3000/api/payment', {
-            method: 'POST',
+          fetch("http://localhost:3000/api/payment", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
-            credentials: 'include',
+            credentials: "include",
             body: JSON.stringify({
               payment_method_id: res.paymentMethod.id,
             }),
+          }).then((res) => {
+            console.log(res.status);
+            if (res.status == 200) {
+              this.isPaied = true;
+              this.isShow = true;
+            } else {
+              this.isPaied = false;
+              this.isShow = true;
+            }
           });
-          console.log(response);
         });
         // this.$router.push({ name: 'CheckoutInfomation' });
       }
+    },
+    Close(check) {
+      this.isShow = check;
     },
   },
 };
