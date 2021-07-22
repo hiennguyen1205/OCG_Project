@@ -12,6 +12,7 @@ type DetailProduct struct {
 	Price     int64  `json:"price"`
 	Image     string `json:"image"`
 	Active    int    `json:"active"`
+	Sale      int    `json:"sale"`
 }
 
 type DetailUser struct {

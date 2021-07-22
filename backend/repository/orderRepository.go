@@ -42,7 +42,9 @@ func GetOrdersDetailsByUserId(id int) (result dto.DisplayOrder) {
 	price := 0
 	payment := ""
 	//lấy danh sách sản phẩm của user chưa mua (active = 0)
-	strQuery := "SELECT od.user_id, od.id, od.discount, oi.`active`, oi.product_id, oi.quantity, p.`name`, p.price, p.image " +
+
+	strQuery := "SELECT od.user_id, od.id, od.discount, oi.`active`, oi.product_id, oi.quantity, p.`name`, p.price, p.image, p.sale" +
+
 		"FROM order_items oi " +
 		"JOIN order_details od ON od.id = oi.order_id " +
 		"JOIN products p ON p.id = oi.product_id " +
@@ -52,7 +54,7 @@ func GetOrdersDetailsByUserId(id int) (result dto.DisplayOrder) {
 		log.Println(err)
 	}
 	for response.Next() {
-		err := response.Scan(&user.UserId, &user.OrderId, &user.Discount, &product.Active, &product.ProductId, &product.Quantity, &product.Name, &product.Price, &product.Image)
+		err := response.Scan(&user.UserId, &user.OrderId, &user.Discount, &product.Active, &product.ProductId, &product.Quantity, &product.Name, &product.Price, &product.Image, &product.Sale)
 		if err != nil {
 			log.Println(err)
 		}
