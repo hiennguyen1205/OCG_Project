@@ -3,23 +3,6 @@
     <!-- Summary -->
     <section class="container">
       <div class="pay">
-        <div class="promotion">
-          <label for="promo-code">Nhập mã giảm giá</label>
-          <input
-            type="text"
-            id="promo-code"
-            :value="showPromoCode"
-            @input="fowardDiscountCode"
-          />
-          <button
-            type="button"
-            @click="getDiscount"
-            class="button-discount btn"
-          ></button>
-
-          <!-- <p>{{promoCode}}</p> -->
-        </div>
-
         <div class="summary">
           <ul>
             <li>
@@ -50,7 +33,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 import { formatCurrency } from '@/utils/currency.js';
 
 export default {
@@ -64,7 +47,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters('carts', ['calcSubTotal', 'calcTax']),
+    ...mapGetters('carts', ['calcSubTotal', 'calcDiscount', 'calcTax']),
     ...mapState('carts', ['discount', 'promoCode', 'order']),
     ...mapState('users', ['authenticated']),
     showSubTotal() {
@@ -76,7 +59,7 @@ export default {
     },
 
     showDiscount() {
-      return this.discount;
+      return this.calcDiscount;
     },
     showPromoCode() {
       return this.promoCode;
@@ -84,21 +67,17 @@ export default {
   },
 
   methods: {
-    ...mapMutations('carts', ['calcDiscount', 'changeDiscountCode']),
     ...mapActions('carts', ['submitOrder']),
 
     formatCurrency,
-    getDiscount() {
-      this.calcDiscount();
-    },
-    fowardDiscountCode(event) {
-      this.changeDiscountCode(event.target.value);
-    },
+
     checkout() {
       if (this.authenticated && this.order.products != null) {
         if (this.order.products.length > 0) {
           console.log(this.order);
           this.submitOrder(this.order);
+
+          this.$router.push({ name: 'CheckoutInfomation' });
         } else {
           alert('Giỏ hàng trống!!!');
         }

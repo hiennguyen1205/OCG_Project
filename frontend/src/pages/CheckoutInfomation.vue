@@ -47,61 +47,6 @@
                 />
               </div>
 
-              <!--Grid row-->
-              <div class="row">
-                <!--Grid column-->
-                <div class="col-lg-4 col-md-12 mb-4">
-                  <label for="country">Country</label>
-                  <select
-                    class="custom-select d-block w-100"
-                    id="country"
-                    required
-                  >
-                    <option value="">Lựa chọn thành phố</option>
-                    <option>Hà Nội</option>
-                    <option>Hải Phòng</option>
-                    <option>Đà Nẵng</option>
-                    <option>Tp Hồ Chí Minh</option>
-                  </select>
-                  <div class="invalid-feedback">
-                    Please select a valid country.
-                  </div>
-                </div>
-                <!--Grid column-->
-                <!--Grid column-->
-                <div class="col-lg-4 col-md-6 mb-4">
-                  <label for="state">Quận/Huyện</label>
-                  <input type="text" class="custom-select d-block w-100" />
-                  <div class="invalid-feedback">
-                    Please provide a valid state.
-                  </div>
-                </div>
-              </div>
-              <!--Grid row-->
-
-              <hr />
-
-              <div class="custom-control custom-checkbox">
-                <input
-                  type="checkbox"
-                  class="custom-control-input"
-                  id="same-address"
-                />
-                <label class="custom-control-label" for="same-address"
-                  >Giao Hàng đến đại chỉ trên</label
-                >
-              </div>
-              <div class="custom-control custom-checkbox">
-                <input
-                  type="checkbox"
-                  class="custom-control-input"
-                  id="save-info"
-                />
-                <label class="custom-control-label" for="save-info"
-                  >Lưu thông tin cho lần mua tiếp theo</label
-                >
-              </div>
-
               <hr />
 
               <div class="d-block my-3">
@@ -113,6 +58,7 @@
                     class="custom-control-input"
                     checked
                     required
+                    @change="onChange(false)"
                   />
                   <label class="custom-control-label" for="credit"
                     >Credit card</label
@@ -125,85 +71,18 @@
                     type="radio"
                     class="custom-control-input"
                     required
+                    @change="onChange(true)"
                   />
-                  <label class="custom-control-label" for="debit"
-                    >Debit card</label
-                  >
-                </div>
-                <div class="custom-control custom-radio">
-                  <input
-                    id="paypal"
-                    name="paymentMethod"
-                    type="radio"
-                    class="custom-control-input"
-                    required
-                  />
-                  <label class="custom-control-label" for="paypal"
-                    >Paypal</label
-                  >
+                  <label class="custom-control-label" for="debit">COD</label>
                 </div>
               </div>
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="cc-name">Name on card</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="cc-name"
-                    placeholder=""
-                    required
-                  />
-                  <small class="text-muted"
-                    >Full name as displayed on card</small
-                  >
-                  <div class="invalid-feedback">
-                    Name on card is required
-                  </div>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="cc-number">Credit card number</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="cc-number"
-                    placeholder=""
-                    required
-                  />
-                  <div class="invalid-feedback">
-                    Credit card number is required
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-3 mb-3">
-                  <label for="cc-expiration">Expiration</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="cc-expiration"
-                    placeholder=""
-                    required
-                  />
-                  <div class="invalid-feedback">
-                    Expiration date required
-                  </div>
-                </div>
-                <div class="col-md-3 mb-3">
-                  <label for="cc-expiration">CVV</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="cc-cvv"
-                    placeholder=""
-                    required
-                  />
-                  <div class="invalid-feedback">
-                    Security code required
-                  </div>
-                </div>
-              </div>
+              <Stripe v-if="!COD" ref="gateway" />
               <hr class="mb-4" />
-              <button class="btn btn-primary btn-lg btn-block" type="submit">
+              <button
+                class="btn btn-primary btn-lg btn-block"
+                type="submit"
+                @click.prevent="payment()"
+              >
                 Continue to checkout
               </button>
             </form>
@@ -215,8 +94,44 @@
 </template>
 
 <script>
+import Stripe from '@/components/Stripe';
 export default {
-  name: "CheckoutInfo",
+  name: 'CheckoutInfo',
+  components: {
+    Stripe,
+  },
+  data() {
+    return {
+      COD: false,
+      gateway: 'stripe',
+    };
+  },
+  methods: {
+    onChange(bool) {
+      this.COD = bool;
+    },
+    payment() {
+      if (this.COD) {
+        this.$router.push({ name: 'Home' });
+      } else {
+        this.$refs.gateway.createPaymentMethod().then(async (res) => {
+          console.log(res.paymentMethod.id);
+          const response = await fetch('http://localhost:3000/api/payment', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+              payment_method_id: res.paymentMethod.id,
+            }),
+          });
+          console.log(response);
+        });
+        // this.$router.push({ name: 'CheckoutInfomation' });
+      }
+    },
+  },
 };
 </script>
 

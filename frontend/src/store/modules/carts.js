@@ -54,6 +54,19 @@ const getters = {
         }
 
     },
+    calcDiscount(state) {
+        if (state.order.products != null) {
+            return (
+                state.order.products.reduce(
+                    (totalPrice, product) =>
+                        totalPrice + product.price * product.quantity * product.sale,
+                    0
+                ) / 100
+            );
+        } else {
+            return 0;
+        }
+    },
 
     // calcTotalPrice(state) {
     //     if (state.order.products === null || state.order.products == undefined) return state.totalPrice=0
@@ -69,6 +82,7 @@ const getters = {
 
 const actions = {
     async submitOrder(_,order) {
+
         await fetch('http://localhost:3000/auth/api/orders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -100,28 +114,6 @@ const actions = {
 };
 
 const mutations = {
-    calcDiscount(state) {
-        let s = state.promotions.filter(
-            (promotion) => promotion.code === state.promoCode
-        );
-
-        if (s.length > 0) {
-            state.discount =
-                (parseInt(s[0].discount.substr(0, 2)) / 100) * state.order.products.reduce(
-                    (totalPrice, product) => totalPrice + product.price * product.quantity,
-                    0
-                );
-        } else state.discount = 0;
-        // if (state.order.products === null || state.order.products===undefined){
-        //     state.discount = 0 
-        //     return
-        // }
-        // state.discount = state.order.products.reduce((salePrice, product) => salePrice += product.quantity * product.price * product.sale/100, 0)
-        // console.log(1);
-        // console.log(state.products);
-        // console.log(state.discount);
-    },
-
     changeQuantity(state, { productId, number }) {
         state.order.products = state.order.products.map((product) => {
             if (product.id === productId) {
@@ -167,9 +159,6 @@ const mutations = {
         }
     },
 
-    changeDiscountCode(state, value) {
-        state.promoCode = value;
-    },
 
     addProductToCart(state, product) {
         if (state.order.products != null) {
