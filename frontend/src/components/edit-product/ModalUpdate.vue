@@ -61,8 +61,6 @@ export default {
       this.productUpdate.sale = Number(this.productUpdate.sale)
       this.productUpdate.price = Number(this.productUpdate.price)
       this.$emit("confirmUpdateModal", this.productUpdate);
-      
-      //gọi API  
     },
   },
 };
