@@ -1,32 +1,31 @@
 package repository
 
 import (
-	// "log"
 
-	// "bt/project/models"
 	dto "bt/project/models/dto"
 	"database/sql"
 
-	// "container/list"
 	"log"
 )
+
 
 //thông tin đơn hàng
 func InformationOrder(id int) (result dto.DisplayOrder) {
 	var product dto.DetailProduct
 	var user dto.DetailUser
+	//tính tiền
 	//lấy danh sách sản phẩm của user đã mua (active = 1)
-	strQuery := "SELECT od.user_id, od.id, od.discount, od.total_price, od.payment,oi.`active`, oi.product_id, oi.quantity, p.`name`, p.price, p.image " +
+	strQuery := "SELECT od.user_id, od.id, od.discount, od.total_price, oi.`active`, oi.product_id, oi.quantity, p.`name`, p.price " +
 		"FROM order_items oi " +
 		"JOIN order_details od ON od.id = oi.order_id " +
 		"JOIN products p ON p.id = oi.product_id " +
-		"WHERE od.user_id = ? AND oi.`active` = 1 AND oi.`send_email` = 0"
+		"WHERE od.user_id = ? AND oi.`active` = 1"
 	response, err := db.Query(strQuery, id)
 	if err != nil {
 		log.Println(err)
 	}
 	for response.Next() {
-		err := response.Scan(&user.UserId, &user.OrderId, &user.Discount, &user.TotalPrice, &user.Payment, &product.Active, &product.ProductId, &product.Quantity, &product.Name, &product.Price, &product.Image)
+		err := response.Scan(&user.UserId, &user.OrderId, &user.Discount, &user.TotalPrice, &product.Active, &product.ProductId, &product.Quantity, &product.Name, &product.Price)
 		if err != nil {
 			log.Println(err)
 		}
@@ -40,18 +39,22 @@ func InformationOrder(id int) (result dto.DisplayOrder) {
 func GetOrdersDetailsByUserId(id int) (result dto.DisplayOrder) {
 	var product dto.DetailProduct
 	var user dto.DetailUser
+	price := 0
+	payment := ""
 	//lấy danh sách sản phẩm của user chưa mua (active = 0)
-	strQuery := "SELECT od.user_id, od.id, od.discount, od.total_price, od.payment,oi.`active`, oi.product_id, oi.quantity, p.`name`, p.price, p.image, p.sale " +
+
+	strQuery := "SELECT od.user_id, od.id, od.discount, oi.`active`, oi.product_id, oi.quantity, p.`name`, p.price, p.image, p.sale" +
+
 		"FROM order_items oi " +
 		"JOIN order_details od ON od.id = oi.order_id " +
 		"JOIN products p ON p.id = oi.product_id " +
-		"WHERE od.user_id = ? AND oi.`active` = 0 "
+		"WHERE od.user_id = ? AND oi.`active` = 0"
 	response, err := db.Query(strQuery, id)
 	if err != nil {
 		log.Println(err)
 	}
 	for response.Next() {
-		err := response.Scan(&user.UserId, &user.OrderId, &user.Discount, &user.TotalPrice, &user.Payment, &product.Active, &product.ProductId, &product.Quantity, &product.Name, &product.Price, &product.Image, &product.Sale)
+		err := response.Scan(&user.UserId, &user.OrderId, &user.Discount, &product.Active, &product.ProductId, &product.Quantity, &product.Name, &product.Price, &product.Image, &product.Sale)
 		if err != nil {
 			log.Println(err)
 		}
@@ -61,17 +64,17 @@ func GetOrdersDetailsByUserId(id int) (result dto.DisplayOrder) {
 	//nếu người đó không có danh sách sản phẩm thì danh sách sản phẩm null
 	if result.Products == nil {
 
-		strQuery := "SELECT od.user_id, od.discount, od.total_price, od.payment, oi.order_id " +
+		strQuery := "SELECT od.user_id, oi.order_id " +
 			"FROM order_items oi " +
 			"JOIN order_details od ON od.id = oi.order_id " +
 			"WHERE od.user_id = ?"
 		response := db.QueryRow(strQuery, id)
-		err := response.Scan(&user.UserId, &user.Discount, &user.TotalPrice, &user.Payment, &user.OrderId)
+		err := response.Scan(&user.UserId, &user.OrderId)
 		if err == sql.ErrNoRows {
 			log.Println(err)
 			strQuery = "SELECT * FROM order_details WHERE user_id = ? "
 			response = db.QueryRow(strQuery, id)
-			response.Scan(&user.UserId, &user.Discount, &user.TotalPrice, &user.Payment, &user.OrderId)
+			response.Scan(&user.OrderId, &user.UserId, &price, &payment, &user.Discount)
 		}
 		result.User = user
 	}
@@ -103,51 +106,14 @@ func IsValidProductItemByOrderId(orderId int, productId int) bool {
 	return true
 }
 
-//thêm sản phẩm vào giở hàng, chưa check out thì active = 0
-//sau đó lưu vào database
+//thêm sản phẩm vào giở hàng, chưa check out thì active = 0 sau đó lưu vào database
 func SaveOrderByUserNotActive(display dto.DisplayOrder) (result string) {
 	user := display.User
 	listProducts := display.Products
-
-	if !IsValidOrderByUserId(user.UserId) {
-		//không có user trong order details thì insert user vào order details
-		strQuery := "INSERT INTO order_details(user_id, total_price, payment, discount) VALUES (?,?,?,?)"
-		_, err := db.Exec(strQuery, user.UserId, user.TotalPrice, user.Payment, user.Discount)
-		if err != nil {
-			log.Println(err)
-			return "Save User failed"
-		}
-
-		//sau khi insert user vào database thì insert list products mà user dặt hàng
-		for _, product := range listProducts {
-			strQuery, err := db.Prepare("INSERT INTO order_items(order_id,product_id,quantity,`active`) VALUES(?,?,?,0)")
-			if err != nil {
-				log.Println(err.Error())
-			}
-			_, err = strQuery.Exec(user.OrderId, product.ProductId, product.Quantity)
-			if err != nil {
-				log.Println("insert vào db lỗi", err.Error())
-			}
-		}
-	} else {
-		//có user thì update trong order detail
-		strQuery, err := db.Prepare("UPDATE order_details SET total_price = ?, payment = ?, discount = ? WHERE id = ? ")
-		if err != nil {
-			log.Println(err)
-			return "Order failed"
-		}
-		_, err = strQuery.Exec(user.TotalPrice, user.Payment, user.Discount, user.UserId)
-		// log.Println(response.RowsAffected())
-		if err != nil {
-			log.Println(err)
-			return "Order failed"
-		}
 		//update danh sách product trong order items
 		for _, product := range listProducts {
-
-			//insert vào order detail
+			//insert vào order items
 			if !IsValidProductItemByOrderId(user.OrderId, product.ProductId) {
-
 				strQuery, err := db.Prepare("INSERT INTO order_items(order_id,product_id,quantity,`active`) VALUES(?,?,?,0)")
 				if err != nil {
 					log.Println(err.Error())
@@ -157,7 +123,7 @@ func SaveOrderByUserNotActive(display dto.DisplayOrder) (result string) {
 					log.Println("insert vào db lỗi", err.Error())
 				}
 			} else {
-				response := db.QueryRow("SELECT active FROM order_items WHERE order_id = ? AND product_id = ?", user.OrderId, product.ProductId)
+				response := db.QueryRow("SELECT active FROM order_items WHERE order_id = ? AND product_id = ? ORDER BY id DESC LIMIT 1", user.OrderId, product.ProductId)
 				var check int
 				err := response.Scan(&check)
 				if err == sql.ErrNoRows {
@@ -182,57 +148,32 @@ func SaveOrderByUserNotActive(display dto.DisplayOrder) (result string) {
 				}
 			}
 		}
-	}
+	
 	return "Successed!!"
 }
-
-//Sau khi user checkout thành công mới thì trường active product = 1
+// Sau khi user checkout thành công mới thì trường active product = 1
 func SaveOrderByUserActive(display dto.DisplayOrder) (result string) {
 	user := display.User
 	listProducts := display.Products
-	//không có user trong order details thì insert user vào order details
-	if !IsValidOrderByUserId(user.UserId) {
-		strQuery := "INSERT INTO order_details(user_id, total_price, payment, discount) VALUES (?,?,?,?)"
-		_, err := db.Exec(strQuery, user.UserId, user.TotalPrice, user.Payment, user.Discount)
+	log.Println("dòng 198, ", user.UserId)
+	price := CalcPriceOrder(user.UserId)
+	strQuery, err := db.Prepare("UPDATE order_details SET total_price = ?, discount = ? WHERE id = ? ")
+	if err != nil {
+		log.Println(err)
+		return "Order failed"
+	}
+	_, err = strQuery.Exec(price, user.Discount, user.UserId)
+	if err != nil {
+		log.Println(err)
+		return "Order failed"
+	}
+	//update danh sách product trong order items active = 1
+	for _, product := range listProducts {
+		strQuery, err := db.Prepare("UPDATE order_items SET quantity = ?, active = 1 WHERE order_id = ? AND product_id = ?")
 		if err != nil {
-			log.Println(err)
-			return "Order failed"
+			log.Println(err.Error())
 		}
-	} else {
-		//có user thì update trong order detail
-		strQuery, err := db.Prepare("UPDATE order_details SET total_price = ?, payment = ?, discount = ? WHERE id = ? ")
-		if err != nil {
-			log.Println(err)
-			return "Order failed"
-		}
-		_, err = strQuery.Exec(user.TotalPrice, user.Payment, user.Discount, user.UserId)
-		// log.Println(response.RowsAffected())
-		if err != nil {
-			log.Println(err)
-			return "Order failed"
-		}
-		//update danh sách product trong order items
-		for _, product := range listProducts {
-			// log.Println(IsValidProductItemByOrderId(user.OrderId, product.ProductId))
-			//nếu có product khớp với order detail id thì update
-			if IsValidProductItemByOrderId(user.OrderId, product.ProductId) {
-				strQuery, err := db.Prepare("UPDATE order_items SET quantity = ?, active = 1 WHERE order_id = ? AND product_id = ? AND active = 0")
-				if err != nil {
-					log.Println(err.Error())
-				}
-				strQuery.Exec(product.Quantity, user.OrderId, product.ProductId)
-			} else {
-				// không có product trong order items thì insert
-				strQuery, err := db.Prepare("INSERT INTO order_items(order_id, product_id, quantity, active) VALUES (?,?,?,1) ")
-				if err != nil {
-					log.Println(err.Error())
-				}
-				_, err = strQuery.Exec(user.OrderId, product.ProductId, product.Quantity)
-				if err != nil {
-					log.Println(err.Error())
-				}
-			}
-		}
+		strQuery.Exec(product.Quantity, user.OrderId, product.ProductId)
 	}
 	return "Order successed"
 }

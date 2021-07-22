@@ -111,6 +111,7 @@ func Logout(write http.ResponseWriter, request *http.Request) {
 }
 
 func AuthMiddleware(next http.Handler) http.Handler {
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		c, err := r.Cookie("jwt")
 
@@ -145,12 +146,14 @@ func GetCookie(w http.ResponseWriter, r *http.Request) *http.Cookie {
 		statusCode := http.StatusUnauthorized
 		http.Error(w, "Token doesnt exist", statusCode)
 	}
+
 	return c
 }
 func GetUserById(w http.ResponseWriter, r *http.Request) {
 	var result models.User
 	c := GetCookie(w, r)
 	log.Println(c.Value)
+
 	intIdUser, _ := strconv.Atoi(c.Value)
 	result = repository.GetUserById(intIdUser)
 	w.Header().Set("Content-Type", "application/json")
@@ -171,9 +174,7 @@ func ChangeUserPassword(w http.ResponseWriter, r *http.Request) {
 	requestBody, _ := ioutil.ReadAll(r.Body)
 	var userpass userPassword
 	json.Unmarshal(requestBody, &userpass)
-	log.Println(userpass.Password)
 	passwordencoded, _ := bcrypt.GenerateFromPassword([]byte(userpass.Password), 14)
-	log.Println(c.Value)
 	intIdUser, _ := strconv.Atoi(c.Value)
 	err = repository.UpdateUserPasword(string(passwordencoded), intIdUser)
 	if err != nil {
