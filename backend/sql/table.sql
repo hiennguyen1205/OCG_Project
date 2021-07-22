@@ -24,7 +24,9 @@ CREATE TABLE `users` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `username` VARCHAR(255) NOT NULL,
   `password` TEXT NOT NULL,
-  `email` VARCHAR(255) NOT NULL,
+  `name` NVARCHAR(100) NOT NULL,
+  `phone_number` VARCHAR(15) NOT NULL,
+  `email` VARCHAR(150) NOT NULL,
   `address` TEXT NOT NULL,
   `role` TINYINT(1) DEFAULT 0
 );

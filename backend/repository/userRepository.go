@@ -10,21 +10,21 @@ import (
 
 func CreateUser(user *models.User) (err error) {
 
-	strQuery := "INSERT INTO users(username, password, email, address) VALUES (?,?,?,?)"
-	result, _ := db.Exec(strQuery, user.Username, user.Password, user.Email, user.Address)
-	userId, err :=result.LastInsertId()
+	strQuery := "INSERT INTO users(username, password, email, address, name ,phone_number) VALUES (?,?,?,?,?,?)"
+	result, _ := db.Exec(strQuery, user.Username, user.Password, user.Email, user.Address, user.Name, user.PhoneNumber)
+	userId, err := result.LastInsertId()
 	if err != nil {
 		log.Println("Tạo user lôi, ", err)
 		return err
 	}
-	
+
 	//tạo order cho user luôn
 	strQuery = "INSERT INTO order_details(user_id) VALUES (?)"
-		_, err = db.Exec(strQuery, userId)
-		if err != nil {
-			log.Println(err)
-			return err
-		}
+	_, err = db.Exec(strQuery, userId)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
 	return err
 }
 

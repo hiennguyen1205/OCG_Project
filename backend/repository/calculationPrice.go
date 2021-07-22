@@ -2,12 +2,6 @@ package repository
 
 import "log"
 
-type PricesAndQuantityToCalc struct {
-	price    int64
-	quantity int64
-	sale     int
-}
-
 func CalcPriceOrder(id int) int64 {
 	var total int64
 	var subTotal int64

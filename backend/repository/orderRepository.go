@@ -1,13 +1,11 @@
 package repository
 
 import (
-
 	dto "bt/project/models/dto"
 	"database/sql"
 
 	"log"
 )
-
 
 //thông tin đơn hàng
 func InformationOrder(id int) (result dto.DisplayOrder) {
@@ -43,8 +41,7 @@ func GetOrdersDetailsByUserId(id int) (result dto.DisplayOrder) {
 	payment := ""
 	//lấy danh sách sản phẩm của user chưa mua (active = 0)
 
-	strQuery := "SELECT od.user_id, od.id, od.discount, oi.`active`, oi.product_id, oi.quantity, p.`name`, p.price, p.image, p.sale" +
-
+	strQuery := "SELECT od.user_id, od.id, od.discount, oi.`active`, oi.product_id, oi.quantity, p.`name`, p.price, p.image, p.sale " +
 		"FROM order_items oi " +
 		"JOIN order_details od ON od.id = oi.order_id " +
 		"JOIN products p ON p.id = oi.product_id " +
@@ -110,47 +107,48 @@ func IsValidProductItemByOrderId(orderId int, productId int) bool {
 func SaveOrderByUserNotActive(display dto.DisplayOrder) (result string) {
 	user := display.User
 	listProducts := display.Products
-		//update danh sách product trong order items
-		for _, product := range listProducts {
-			//insert vào order items
-			if !IsValidProductItemByOrderId(user.OrderId, product.ProductId) {
-				strQuery, err := db.Prepare("INSERT INTO order_items(order_id,product_id,quantity,`active`) VALUES(?,?,?,0)")
+	//update danh sách product trong order items
+	for _, product := range listProducts {
+		//insert vào order items
+		if !IsValidProductItemByOrderId(user.OrderId, product.ProductId) {
+			strQuery, err := db.Prepare("INSERT INTO order_items(order_id,product_id,quantity,`active`) VALUES(?,?,?,0)")
+			if err != nil {
+				log.Println(err.Error())
+			}
+			_, err = strQuery.Exec(user.OrderId, product.ProductId, product.Quantity)
+			if err != nil {
+				log.Println("insert vào db lỗi", err.Error())
+			}
+		} else {
+			response := db.QueryRow("SELECT active FROM order_items WHERE order_id = ? AND product_id = ? ORDER BY id DESC LIMIT 1", user.OrderId, product.ProductId)
+			var check int
+			err := response.Scan(&check)
+			if err == sql.ErrNoRows {
+				log.Println(err)
+			}
+			//nếu active = 1 thì insert sản phẩm với active = 0
+			if check == 1 {
+				strQuery, err := db.Prepare("INSERT INTO order_items(order_id,product_id,quantity,active) VALUES(?,?,?,0)")
 				if err != nil {
 					log.Println(err.Error())
 				}
-				_, err = strQuery.Exec(user.OrderId, product.ProductId, product.Quantity)
+				strQuery.Exec(user.OrderId, product.ProductId, product.Quantity)
+			} else { //nếu active = 0 thì update số lượng
+				strQuery, err := db.Prepare("UPDATE order_items SET quantity = ? WHERE order_id = ? AND product_id = ? AND active = 0")
 				if err != nil {
-					log.Println("insert vào db lỗi", err.Error())
+					log.Println(err.Error())
 				}
-			} else {
-				response := db.QueryRow("SELECT active FROM order_items WHERE order_id = ? AND product_id = ? ORDER BY id DESC LIMIT 1", user.OrderId, product.ProductId)
-				var check int
-				err := response.Scan(&check)
-				if err == sql.ErrNoRows {
-					log.Println(err)
-				}
-				//nếu active = 1 thì insert sản phẩm với active = 0
-				if check == 1 {
-					strQuery, err := db.Prepare("INSERT INTO order_items(order_id,product_id,quantity,active) VALUES(?,?,?,0)")
-					if err != nil {
-						log.Println(err.Error())
-					}
-					strQuery.Exec(user.OrderId, product.ProductId, product.Quantity)
-				} else { //nếu active = 0 thì update số lượng
-					strQuery, err := db.Prepare("UPDATE order_items SET quantity = ? WHERE order_id = ? AND product_id = ? AND active = 0")
-					if err != nil {
-						log.Println(err.Error())
-					}
-					_, err = strQuery.Exec(product.Quantity, user.OrderId, product.ProductId)
-					if err != nil {
-						log.Println(err.Error())
-					}
+				_, err = strQuery.Exec(product.Quantity, user.OrderId, product.ProductId)
+				if err != nil {
+					log.Println(err.Error())
 				}
 			}
 		}
-	
+	}
+
 	return "Successed!!"
 }
+
 // Sau khi user checkout thành công mới thì trường active product = 1
 func SaveOrderByUserActive(display dto.DisplayOrder) (result string) {
 	user := display.User

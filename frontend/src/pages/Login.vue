@@ -89,6 +89,14 @@
               />
             </div>
             <div class="group">
+              <label class="label">Name</label>
+              <input type="text" v-model="name" class="input" required />
+            </div>
+            <div class="group">
+              <label class="label">Phone Number</label>
+              <input type="text" v-model="phonenumber" class="input" required />
+            </div>
+            <div class="group">
               <label class="label">Address</label>
               <input id="addr" type="text" v-model="address" class="input" />
             </div>
@@ -104,25 +112,27 @@
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from "vuex";
+import { mapActions, mapMutations, mapState } from 'vuex';
 export default {
-  name: "Loginout",
+  name: 'Loginout',
   data() {
     return {
-      username: "",
-      email: "",
-      password: "",
-      password_confirm: "",
-      address: "",
+      username: '',
+      email: '',
+      password: '',
+      password_confirm: '',
+      address: '',
+      name: '',
+      phonenumber: '',
     };
   },
   computed: {
-    ...mapState("carts",["order"])
+    ...mapState('carts', ['order']),
   },
   methods: {
-    ...mapActions("carts", ["getCartByUserId"]),
-    ...mapActions("users", ["login", "register"]),
-    ...mapMutations("users", ["setAuth"]),
+    ...mapActions('carts', ['getCartByUserId']),
+    ...mapActions('users', ['login', 'register']),
+    ...mapMutations('users', ['setAuth']),
     Login() {
       this.login({
         username: this.username,
@@ -137,16 +147,19 @@ export default {
     },
     Signup() {
       if (this.password != this.password_confirm) {
-        alert("Passwords did not match");
+        alert('Passwords did not match');
       } else {
         this.register({
           username: this.username,
           password: this.password,
+          name: this.name,
+          phone_number: this.phonenumber,
           email: this.email,
+          address: this.address,
         })
           .then(async () => {
             await this.Login();
-            this.$router.push({ name: "Home" });
+            this.$router.push({ name: 'Home' });
           })
           .catch((error) => {
             console.log(error);
@@ -162,7 +175,7 @@ body {
   margin: 0;
   color: #6a6f8c;
   background: #c8c8c8;
-  font: 600 16px/18px "Open Sans", sans-serif;
+  font: 600 16px/18px 'Open Sans', sans-serif;
 }
 *,
 :after,
@@ -171,7 +184,7 @@ body {
 }
 .clearfix:after,
 .clearfix:before {
-  content: "";
+  content: '';
   display: table;
 }
 .clearfix:after {
@@ -260,7 +273,7 @@ a {
   border-radius: 25px;
   background: rgba(255, 255, 255, 0.1);
 }
-.login-form .group input[data-type="password"] {
+.login-form .group input[data-type='password'] {
   text-security: circle;
   -webkit-text-security: circle;
 }
@@ -281,7 +294,7 @@ a {
 }
 .login-form .group label .icon:before,
 .login-form .group label .icon:after {
-  content: "";
+  content: '';
   width: 10px;
   height: 2px;
   background: #fff;
