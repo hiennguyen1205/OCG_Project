@@ -2,10 +2,12 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 
+	"bt/project/connect"
 	dto "bt/project/models/dto"
 	"bt/project/repository"
 
@@ -15,7 +17,7 @@ import (
 func GetOrdersDetailsByUserId(write http.ResponseWriter, request *http.Request) {
 	//id user lưu trên cookie
 	vars := mux.Vars(request)
-	strIdUser,_ := strconv.Atoi(vars["user_id"])
+	strIdUser, _ := strconv.Atoi(vars["user_id"])
 	// log.Println(strIdUser)
 	write.Header().Set("Content-Type", "application/json")
 	listOrders := repository.GetOrdersDetailsByUserId(strIdUser)
@@ -43,11 +45,25 @@ func SaveOrderByUserNotActiveController(write http.ResponseWriter, request *http
 }
 
 //information order
-func GetInformationOrder(write http.ResponseWriter, request *http.Request){
+func GetInformationOrder(write http.ResponseWriter, request *http.Request) {
 	vars := mux.Vars(request)
-	strIdUser,_ := strconv.Atoi(vars["user_id"])
+	strIdUser, _ := strconv.Atoi(vars["user_id"])
 	// log.Println(strIdUser)
 	write.Header().Set("Content-Type", "application/json")
 	info := repository.InformationOrder(strIdUser)
 	json.NewEncoder(write).Encode(info)
+}
+
+func ChangeOrderState(write http.ResponseWriter, request *http.Request) {
+	cookie := GetCookie(write, request)
+	intIdUser, _ := strconv.Atoi(cookie.Value)
+	user := repository.GetUserById(intIdUser)
+	data, err := json.Marshal(user)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	connect.PublishingAMessage(data)
+
 }

@@ -252,9 +252,23 @@ VALUES
   );
 -- table users
 INSERT INTO
-  `users` (username, password, email, address)
+  `users` (
+    username,
+    password,
+    email,
+    address,
+    name,
+    phone_number
+  )
 VALUES
-  ("user1", "1234", "user1@gmail.com", "hà nội");
+  (
+    "user1",
+    "1234",
+    "user1@gmail.com",
+    "hà nội",
+    "hoc",
+    "98392321321"
+  );
 -- table order details
 INSERT INTO
   order_details (
