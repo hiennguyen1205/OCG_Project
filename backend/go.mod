@@ -7,6 +7,9 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
+	github.com/sendgrid/rest v2.6.4+incompatible // indirect
+	github.com/sendgrid/sendgrid-go v3.10.0+incompatible // indirect
+	github.com/streadway/amqp v1.0.0
 	github.com/stripe/stripe-go v70.15.0+incompatible // indirect
 	github.com/stripe/stripe-go/v72 v72.57.0
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e
