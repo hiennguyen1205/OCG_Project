@@ -4,7 +4,6 @@ import (
 	"bt/project/models"
 	"bt/project/repository"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -110,35 +109,35 @@ func Logout(write http.ResponseWriter, request *http.Request) {
 
 }
 
-func AuthMiddleware(next http.Handler) http.Handler {
+// func AuthMiddleware(next http.Handler) http.Handler {
 
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		c, err := r.Cookie("jwt")
+// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// 		c, err := r.Cookie("jwt")
 
-		if err != nil {
-			statusCode := http.StatusUnauthorized
-			http.Error(w, "Token doesnt exist", statusCode)
-			fmt.Println(err)
+// 		if err != nil {
+// 			statusCode := http.StatusUnauthorized
+// 			http.Error(w, "Token doesnt exist", statusCode)
+// 			fmt.Println(err)
 
-		} else {
-			token, err := jwt.ParseWithClaims(c.Value, &jwt.StandardClaims{}, func(t *jwt.Token) (interface{}, error) {
-				return []byte(SecretKey), nil
-			})
-			if err != nil {
-				statusCode := http.StatusUnauthorized
-				http.Error(w, "Unauthenticated", statusCode)
+// 		} else {
+// 			token, err := jwt.ParseWithClaims(c.Value, &jwt.StandardClaims{}, func(t *jwt.Token) (interface{}, error) {
+// 				return []byte(SecretKey), nil
+// 			})
+// 			if err != nil {
+// 				statusCode := http.StatusUnauthorized
+// 				http.Error(w, "Unauthenticated", statusCode)
 
-			} else {
-				claims := token.Claims
-				json.NewEncoder(w).Encode(claims)
-				json.NewEncoder(w).Encode('1')
-				next.ServeHTTP(w, r)
-			}
+// 			} else {
+// 				claims := token.Claims
+// 				json.NewEncoder(w).Encode(claims)
+// 				json.NewEncoder(w).Encode('1')
+// 				next.ServeHTTP(w, r)
+// 			}
 
-		}
+// 		}
 
-	})
-}
+// 	})
+// }
 func GetCookie(w http.ResponseWriter, r *http.Request) *http.Cookie {
 	c, err := r.Cookie("id")
 	if err != nil {
@@ -152,7 +151,7 @@ func GetCookie(w http.ResponseWriter, r *http.Request) *http.Cookie {
 func GetUserById(w http.ResponseWriter, r *http.Request) {
 	var result models.User
 	c := GetCookie(w, r)
-	log.Println(c.Value)
+	// log.Println(c.Value)
 
 	intIdUser, _ := strconv.Atoi(c.Value)
 	result = repository.GetUserById(intIdUser)

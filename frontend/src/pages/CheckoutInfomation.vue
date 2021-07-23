@@ -6,6 +6,18 @@
       <div class="row">
         <h2 class="my-5 h2 text-center">Checkout form</h2>
       </div>
+      <div class="changeInfo">
+        <p >
+          Nếu thông tin sai, click vào đây để thay đổi thông tin.
+           Lưu ý, thông tin bạn nhập phải chính xác để phục vụ cho mục đích nhận hàng.
+        </p>
+        <span
+          ><button class="btn btn-outline-primary" @click="changeInfoUser()">
+            Thay đổi thông tin cá nhân
+          </button></span
+        >
+      </div>
+      
       <!--Grid row-->
       <div class="row position">
         <!--Grid column-->
@@ -21,32 +33,50 @@
                   type="text"
                   id="name"
                   class="form-control"
-                  placeholder="FullName"
+                  placeholder="VD: Nguyễn Văn A"
+                  v-model="user.name"
+                  disabled
                 />
               </div>
 
               <!--email-->
               <div class="md-form mb-5">
-                <label for="email" class="">Email (optional)</label>
+                <label for="email" class="">Email: </label>
                 <input
                   type="text"
                   id="email"
                   class="form-control"
-                  placeholder="youremail@example.com"
+                  placeholder="VD: abcxyz@gmail.com"
+                  v-model="user.email"
+                  disabled
                 />
               </div>
 
               <!--address-->
               <div class="md-form mb-5">
-                <label for="address" class="">Địa chỉ</label>
+                <label for="address" class="">Địa chỉ: </label>
                 <input
                   type="text"
                   id="address"
                   class="form-control"
-                  placeholder="1234 Main St"
+                  placeholder="VD: 123 đường ABC quận XYZ thành phố MNP"
+                  v-model="user.address"
+                  disabled
                 />
               </div>
 
+              <!--Phone Number-->
+              <div class="md-form mb-5">
+                <label for="phone-number" class="">Điện thoại: </label>
+                <input
+                  type="text"
+                  id="phone-number"
+                  class="form-control"
+                  placeholder="VD: 0987654321"
+                  v-model="user.phone_number"
+                  disabled
+                />
+              </div>
               <hr />
 
               <div class="d-block my-3">
@@ -76,6 +106,7 @@
                   <label class="custom-control-label" for="debit">COD</label>
                 </div>
               </div>
+             
               <Stripe v-if="!COD" ref="gateway" />
               <hr class="mb-4" />
               <button
@@ -97,6 +128,7 @@
 <script>
 import Stripe from "@/components/Stripe";
 import CheckoutSuccess from "@/components/CheckoutSuccess";
+import { mapGetters, mapState } from "vuex";
 export default {
   name: "CheckoutInfo",
   components: {
@@ -109,7 +141,15 @@ export default {
       gateway: "stripe",
       isShow: false,
       isPaied: true,
+      isDisplayPayment: false,
     };
+  },
+  created() {
+    console.log(this.user);
+  },
+  computed: {
+    ...mapState("users", ["user"]),
+    ...mapGetters("carts",["emptyListProducts"])
   },
   methods: {
     onChange(bool) {
@@ -147,6 +187,9 @@ export default {
     Close(check) {
       this.isShow = check;
     },
+    changeInfoUser(){
+      this.$router.push({ name: "UserInfor" });
+    },
   },
 };
 </script>
@@ -159,5 +202,16 @@ export default {
 form > button {
   background-color: black;
   justify-content: center;
+}
+.changeInfo {
+  margin-bottom: 20px;
+  text-align: center;
+  color: red;
+  display: flex;
+  justify-content: space-around;
+}
+.changeInfo p{
+display:inline;
+max-width:550px;
 }
 </style>

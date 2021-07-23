@@ -112,27 +112,27 @@
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from 'vuex';
+import { mapActions, mapMutations, mapState } from "vuex";
 export default {
-  name: 'Loginout',
+  name: "Loginout",
   data() {
     return {
-      username: '',
-      email: '',
-      password: '',
-      password_confirm: '',
-      address: '',
-      name: '',
-      phonenumber: '',
+      username: "",
+      email: "",
+      password: "",
+      password_confirm: "",
+      address: "",
+      name: "",
+      phonenumber: "",
     };
   },
   computed: {
-    ...mapState('carts', ['order']),
+    ...mapState("carts", ["order"]),
   },
   methods: {
-    ...mapActions('carts', ['getCartByUserId']),
-    ...mapActions('users', ['login', 'register']),
-    ...mapMutations('users', ['setAuth']),
+    ...mapActions("carts", ["getCartByUserId"]),
+    ...mapActions("users", ["login", "register","getUser"]),
+    ...mapMutations("users", ["setAuth"]),
     Login() {
       this.login({
         username: this.username,
@@ -140,6 +140,7 @@ export default {
       })
         .then(() => {
           this.getCartByUserId(parseInt(document.cookie.slice(3)));
+          this.getUser();
         })
         .catch((e) => {
           console.log(e);
@@ -147,7 +148,7 @@ export default {
     },
     Signup() {
       if (this.password != this.password_confirm) {
-        alert('Passwords did not match');
+        alert("Passwords did not match");
       } else {
         this.register({
           username: this.username,
@@ -159,7 +160,7 @@ export default {
         })
           .then(async () => {
             await this.Login();
-            this.$router.push({ name: 'Home' });
+            this.$router.push({ name: "Home" });
           })
           .catch((error) => {
             console.log(error);
@@ -175,7 +176,7 @@ body {
   margin: 0;
   color: #6a6f8c;
   background: #c8c8c8;
-  font: 600 16px/18px 'Open Sans', sans-serif;
+  font: 600 16px/18px "Open Sans", sans-serif;
 }
 *,
 :after,
@@ -184,7 +185,7 @@ body {
 }
 .clearfix:after,
 .clearfix:before {
-  content: '';
+  content: "";
   display: table;
 }
 .clearfix:after {
@@ -200,7 +201,7 @@ a {
   width: 100%;
   margin: auto;
   max-width: 525px;
-  min-height: 670px;
+  min-height: 830px;
   position: relative;
   background: url(https://raw.githubusercontent.com/khadkamhn/day-01-login-form/master/img/bg.jpg)
     no-repeat center;
@@ -273,7 +274,7 @@ a {
   border-radius: 25px;
   background: rgba(255, 255, 255, 0.1);
 }
-.login-form .group input[data-type='password'] {
+.login-form .group input[data-type="password"] {
   text-security: circle;
   -webkit-text-security: circle;
 }
@@ -294,7 +295,7 @@ a {
 }
 .login-form .group label .icon:before,
 .login-form .group label .icon:after {
-  content: '';
+  content: "";
   width: 10px;
   height: 2px;
   background: #fff;

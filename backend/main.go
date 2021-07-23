@@ -28,6 +28,7 @@ func main() {
 		handlers.AllowedOrigins([]string{"http://localhost:8080"}),
 		handlers.AllowCredentials(),
 	)
+	
 	log.Fatal(http.ListenAndServe(":3000", handleCross(routers)))
 
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")

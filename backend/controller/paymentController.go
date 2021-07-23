@@ -25,7 +25,7 @@ func HandleCreatePaymentIntent(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(requestBody)
 	fmt.Println(pmKey.Id)
 	intIdUser, _ := strconv.Atoi(c.Value)
-	amount := repository.CalcAmount(intIdUser)
+	amount,_ := repository.CalcAmount(intIdUser)
 	params := &stripe.PaymentIntentParams{
 		PaymentMethod:      stripe.String(pmKey.Id),
 		Amount:             stripe.Int64(amount),
