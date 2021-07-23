@@ -22,9 +22,9 @@ CREATE TABLE `products` (
 );
 CREATE TABLE `users` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `username` VARCHAR(255) NOT NULL,
+  `username` VARCHAR(255) NOT NULL UNIQUE,
   `password` TEXT NOT NULL,
-  `name` NVARCHAR(100) NOT NULL,
+  `name` NVARCHAR(200) NOT NULL,
   `phone_number` VARCHAR(15) NOT NULL,
   `email` VARCHAR(150) NOT NULL,
   `address` TEXT NOT NULL,
@@ -252,9 +252,26 @@ VALUES
   );
 -- table users
 INSERT INTO
-  `users` (username, password, email, address, name, phone_number)
+
+  `users` (
+    username,
+    password,
+    email,
+    address,
+    name,
+    phone_number,
+    role,
+  )
 VALUES
-  ("user1", "1234", "user1@gmail.com", "hà nội","hiển","0987654321");
+  (
+    "hochg_1998",
+    "$2a$14$gSLIkZt/.WjjbsVaLDzRn.ot4I3N57a3RvGh5qKf6O/UcM4ystj/K",
+    "tranhoc.98@gmail.com",
+    "Đại kim, Hà Nội",
+    "Trần Văn Hoc",
+    "0332113666",
+    1
+  );
 
 -- table order details
 INSERT INTO

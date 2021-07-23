@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"bt/project/connect"
+	"bt/project/controller"
 	"bt/project/router"
 
 	"github.com/gorilla/handlers"
@@ -59,8 +60,7 @@ func main() {
 
 	go func() {
 		for d := range msgs {
-			// controller.SendEmailBySendGrid(d)
-			fmt.Println(d.Body)
+			controller.SendEmailBySendGrid(d)
 		}
 	}()
 

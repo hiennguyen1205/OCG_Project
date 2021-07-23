@@ -76,5 +76,6 @@ log.Println(u)
 		panic(err.Error())
 	}
 	strQuery.Exec(u.Username, u.Password, u.Email, u.Address, u.Name,u.PhoneNumber, u.Id)
+
 	return err
 }

@@ -17,14 +17,16 @@
     </div>
 
     <div class="row mb-3">
-      <label for="inputEmail3" class="col-sm-2 col-form-label">Tài khoản</label>
+      <label for="inputEmail3" class="col-sm-2 col-form-label">Ho Ten</label>
       <div class="col-sm-10">
+
         <input
           type="text"
           class="form-control"
           v-model="User.username"
           :readonly="isReadOnly"
         />
+
       </div>
     </div>
 
