@@ -1,14 +1,15 @@
 <template>
   <form @submit.prevent="changeInfor">
     <div class="row mb-3">
-      <label for="inputEmail3" class="col-sm-2 col-form-label">Tài khoản</label>
+      <label for="inputEmail3" class="col-sm-2 col-form-label">Ho Ten</label>
       <div class="col-sm-10">
-        <input
-          type="text"
-          class="form-control"
-          :value="User.username"
-          readonly
-        />
+        <input type="text" class="form-control" :value="User.name" />
+      </div>
+    </div>
+    <div class="row mb-3">
+      <label for="inputEmail3" class="col-sm-2 col-form-label">SDT</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" :value="User.phone_number" />
       </div>
     </div>
     <div class="row mb-3">
@@ -57,6 +58,8 @@ export default {
           id: this.user.id,
           username: this.user.username,
           pass: this.user.password,
+          name: this.user.name,
+          phone_number: this.user.phone_number,
           email: this.User.email,
           address: this.User.address,
           role: this.user.role,
