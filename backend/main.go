@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"bt/project/connect"
-	"bt/project/controller"
 	"bt/project/router"
 
 	"github.com/gorilla/handlers"
@@ -28,10 +27,8 @@ func main() {
 		handlers.AllowedOrigins([]string{"http://localhost:8080"}),
 		handlers.AllowCredentials(),
 	)
-	
-	log.Fatal(http.ListenAndServe(":3000", handleCross(routers)))
 
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial("amqp://guest:guest@174.138.40.239:5672/")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -44,6 +41,8 @@ func main() {
 		fmt.Println(err)
 	}
 	defer ch.Close()
+
+	fmt.Println("Successfuly created channel")
 
 	msgs, err := ch.Consume(
 		"EmailQueue", // queue
@@ -58,15 +57,14 @@ func main() {
 		fmt.Println(err)
 	}
 
-	forever := make(chan bool)
-
 	go func() {
 		for d := range msgs {
-			controller.SendEmailBySendGrid(d)
+			// controller.SendEmailBySendGrid(d)
+			fmt.Println(d.Body)
 		}
 	}()
 
 	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
-	<-forever
+	log.Fatal(http.ListenAndServe(":3000", handleCross(routers)))
 
 }

@@ -129,8 +129,9 @@
 import Stripe from "@/components/Stripe";
 import CheckoutSuccess from "@/components/CheckoutSuccess";
 import { mapGetters, mapState } from "vuex";
+
 export default {
-  name: "CheckoutInfo",
+  name: 'CheckoutInfo',
   components: {
     Stripe,
     CheckoutSuccess,
@@ -138,7 +139,7 @@ export default {
   data() {
     return {
       COD: false,
-      gateway: "stripe",
+      gateway: 'stripe',
       isShow: false,
       isPaied: true,
       isDisplayPayment: false,
@@ -157,22 +158,23 @@ export default {
     },
     payment() {
       if (this.COD) {
-        this.$router.push({ name: "Home" });
+        this.$router.push({ name: 'Home' });
       } else {
         this.$refs.gateway.createPaymentMethod().then(async (res) => {
           console.log(res.paymentMethod.id);
-          fetch("http://localhost:3000/api/payment", {
-            method: "POST",
+          fetch('http://localhost:3000/api/payment', {
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
-            credentials: "include",
+            credentials: 'include',
             body: JSON.stringify({
               payment_method_id: res.paymentMethod.id,
             }),
           }).then((res) => {
             console.log(res.status);
             if (res.status == 200) {
+              GetData('http://localhost:3000/api/email');
               this.isPaied = true;
               this.isShow = true;
             } else {

@@ -12,7 +12,7 @@ type Conn struct {
 
 func PublishingAMessage(data []byte) {
 
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial("amqp://guest:guest@174.138.40.239:5672/")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -39,18 +39,15 @@ func PublishingAMessage(data []byte) {
 	if err != nil {
 		fmt.Println(err)
 	}
-
 	fmt.Println(q)
-
 	err = ch.Publish(
 		"",
 		"EmailQueue",
 		false,
 		false,
 		amqp.Publishing{
-			ContentType:  "application/json",
-			Body:         data,
-			DeliveryMode: amqp.Persistent,
+			ContentType: "application/json",
+			Body:        data,
 		},
 	)
 	if err != nil {

@@ -10,8 +10,8 @@ import (
 
 func CreateUser(user *models.User) (err error) {
 
-	strQuery := "INSERT INTO users(username, password, email, address, name ,phone_number) VALUES (?,?,?,?,?,?)"
-	result, _ := db.Exec(strQuery, user.Username, user.Password, user.Email, user.Address, user.Name, user.PhoneNumber)
+	strQuery := "INSERT INTO users(username, password, name, phone_number, email, address) VALUES (?,?,?,?,?,?)"
+	result, _ := db.Exec(strQuery, user.Username, user.Password, user.Name, user.PhoneNumber, user.Email, user.Address)
 	userId, err := result.LastInsertId()
 	if err != nil {
 		log.Println("Tạo user lôi, ", err)
@@ -30,12 +30,12 @@ func CreateUser(user *models.User) (err error) {
 
 func CheckValid(u *models.User) (bool, int) {
 	var user models.User
-	response := db.QueryRow("SELECT * FROM users WHERE username = ?", u.Username)
+	response := db.QueryRow("SELECT id ,password FROM users WHERE username = ?", u.Username)
 	if response == nil {
 		fmt.Println("Lỗi database 5**")
 		return false, -1
 	}
-	err := response.Scan(&user.Id, &user.Username, &user.Password, &user.Name, &user.PhoneNumber, &user.Email, &user.Address, &user.Role)
+	err := response.Scan(&user.Id, &user.Password)
 	if err != nil {
 		fmt.Println("Tài khoản sai")
 		return false, -1
