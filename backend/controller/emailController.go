@@ -1,7 +1,16 @@
 package controller
 
-import "github.com/streadway/amqp"
+import (
+	"encoding/json"
+	"fmt"
+)
 
-func SendEmailBySendGrid(amqp.Delivery) {
+func SendEmailBySendGrid(msg []byte) {
+	var data EmailData
+	err := json.Unmarshal(msg, &data)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(data)
 
 }

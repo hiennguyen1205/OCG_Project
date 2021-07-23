@@ -7,9 +7,9 @@
         <h2 class="my-5 h2 text-center">Checkout form</h2>
       </div>
       <div class="changeInfo">
-        <p >
-          Nếu thông tin sai, click vào đây để thay đổi thông tin.
-           Lưu ý, thông tin bạn nhập phải chính xác để phục vụ cho mục đích nhận hàng.
+        <p>
+          Nếu thông tin sai, click vào đây để thay đổi thông tin. Lưu ý, thông
+          tin bạn nhập phải chính xác để phục vụ cho mục đích nhận hàng.
         </p>
         <span
           ><button class="btn btn-outline-primary" @click="changeInfoUser()">
@@ -17,7 +17,7 @@
           </button></span
         >
       </div>
-      
+
       <!--Grid row-->
       <div class="row position">
         <!--Grid column-->
@@ -106,7 +106,7 @@
                   <label class="custom-control-label" for="debit">COD</label>
                 </div>
               </div>
-             
+
               <Stripe v-if="!COD" ref="gateway" />
               <hr class="mb-4" />
               <button
@@ -126,9 +126,10 @@
 </template>
 
 <script>
-import Stripe from "@/components/Stripe";
-import CheckoutSuccess from "@/components/CheckoutSuccess";
-import { mapGetters, mapState } from "vuex";
+import Stripe from '@/components/Stripe';
+import CheckoutSuccess from '@/components/CheckoutSuccess';
+import { mapState, mapMutations } from 'vuex';
+import { PostData, AuthPutData } from '../utils/callapi';
 
 export default {
   name: 'CheckoutInfo',
@@ -149,10 +150,12 @@ export default {
     console.log(this.user);
   },
   computed: {
-    ...mapState("users", ["user"]),
-    ...mapGetters("carts",["emptyListProducts"])
+    ...mapState('users', ['user']),
+    ...mapState('carts', ['order']),
   },
   methods: {
+    ...mapMutations('carts', ['emptyListProducts']),
+
     onChange(bool) {
       this.COD = bool;
     },
@@ -160,8 +163,9 @@ export default {
       if (this.COD) {
         this.$router.push({ name: 'Home' });
       } else {
-        this.$refs.gateway.createPaymentMethod().then( (res) => {
-         if(!res.paymentMethod) return
+        let order = this.order;
+        this.$refs.gateway.createPaymentMethod().then((res) => {
+          if (!res.paymentMethod) return;
           fetch('http://localhost:3000/api/payment', {
             method: 'POST',
             headers: {
@@ -171,12 +175,14 @@ export default {
             body: JSON.stringify({
               payment_method_id: res.paymentMethod.id,
             }),
-          }).then((res) => {
+          }).then(async (res) => {
             console.log(res.status);
             if (res.status == 200) {
-              // GetData('http://localhost:3000/api/email');
               this.isPaied = true;
               this.isShow = true;
+              await PostData('email', order);
+              console.log(order);
+              await AuthPutData('orders', order);
             } else {
               this.isPaied = false;
               this.isShow = true;
@@ -187,10 +193,12 @@ export default {
       }
     },
     Close(check) {
+      this.emptyListProducts();
       this.isShow = check;
+      this.$router.push({ name: 'Home' });
     },
-    changeInfoUser(){
-      this.$router.push({ name: "UserInfor" });
+    changeInfoUser() {
+      this.$router.push({ name: 'UserInfor' });
     },
   },
 };
@@ -212,8 +220,8 @@ form > button {
   display: flex;
   justify-content: space-around;
 }
-.changeInfo p{
-display:inline;
-max-width:550px;
+.changeInfo p {
+  display: inline;
+  max-width: 550px;
 }
 </style>

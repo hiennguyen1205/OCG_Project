@@ -12,7 +12,7 @@ const state = () => ({
 
 const getters = {
     getLengthListProducts(state) {
-        if (state.order.products === null || state.order.products===undefined) {return 0}
+        if (state.order.products === null || state.order.products === undefined) { return 0 }
         return state.order.products.length
     },
     calcSubTotal(state) {
@@ -57,7 +57,7 @@ const getters = {
 
 
 const actions = {
-    async submitOrder(_,order) {
+    async submitOrder(_, order) {
         console.log(order);
         await fetch('http://localhost:3000/auth/api/orders', {
             method: 'POST',
@@ -71,14 +71,14 @@ const actions = {
             .catch(err => console.log(err))
     },
     async getCartByUserId({ commit }, userId) {
-        
+
         await fetch('http://localhost:3000/api/orders/' + userId, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
         })
             .then(async (response) => {
-               
+
                 const data = await response.json()
                 commit("GET_CART", data)
                 // console.log(data);
@@ -163,6 +163,9 @@ const mutations = {
         // console.log(state.order);
     },
     emptyListProducts(state) {
+        state.order.products = [];
+    },
+    emptyOrder(state) {
         state.order = {};
     },
 };

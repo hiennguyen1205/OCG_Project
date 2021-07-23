@@ -51,7 +51,7 @@ func ConfigRouterProduct() *mux.Router {
 	routers.HandleFunc("/api/payment", controller.HandleCreatePaymentIntent).Methods(http.MethodPost)
 
 	//SIGNAL
-	routers.HandleFunc("/api/email", controller.ChangeOrderState).Methods(http.MethodGet)
+	routers.HandleFunc("/api/email", controller.ChangeOrderState).Methods(http.MethodPost)
 
 	return routers
 }

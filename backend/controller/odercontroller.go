@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"bt/project/connect"
+	"bt/project/models"
 	dto "bt/project/models/dto"
 	"bt/project/repository"
 
@@ -23,16 +24,6 @@ func GetOrdersDetailsByUserId(write http.ResponseWriter, request *http.Request) 
 	write.Header().Set("Content-Type", "application/json")
 	listOrders := repository.GetOrdersDetailsByUserId(strIdUser)
 	json.NewEncoder(write).Encode(listOrders)
-}
-
-// save order to database avtive = 1
-func SaveOrderByUserActive(write http.ResponseWriter, request *http.Request) {
-	requestBody, _ := ioutil.ReadAll(request.Body)
-	var saveOrder dto.DisplayOrder
-	json.Unmarshal(requestBody, &saveOrder)
-	write.Header().Set("content-type", "application/json")
-	result := repository.SaveOrderByUserActive(saveOrder)
-	json.NewEncoder(write).Encode(result)
 }
 
 // save order to database avtive = 0
@@ -56,16 +47,42 @@ func GetInformationOrder(write http.ResponseWriter, request *http.Request) {
 	json.NewEncoder(write).Encode(info)
 }
 
+// save order to database avtive = 1
+func SaveOrderByUserActive(write http.ResponseWriter, request *http.Request) {
+	requestBody, _ := ioutil.ReadAll(request.Body)
+	var saveOrder dto.DisplayOrder
+	json.Unmarshal(requestBody, &saveOrder)
+	write.Header().Set("content-type", "application/json")
+	result := repository.SaveOrderByUserActive(saveOrder)
+	json.NewEncoder(write).Encode(result)
+}
+
+type EmailData struct {
+	User        models.User
+	ListProduct []dto.DetailProduct
+}
+
 func ChangeOrderState(write http.ResponseWriter, request *http.Request) {
-	cookie := GetCookie(write, request)
-	intIdUser, _ := strconv.Atoi(cookie.Value)
-	user := repository.GetUserById(intIdUser)
-	data, err := json.Marshal(user)
+	requestBody, _ := ioutil.ReadAll(request.Body)
+	var metaData dto.DisplayOrder
+	json.Unmarshal(requestBody, &metaData)
+	//lay thong tin user
+	user := repository.GetUserById(metaData.User.UserId)
+	// Lay thong tin product voi active = 0
+	listProducts := metaData.Products
+
+	emailData := EmailData{
+		User:        user,
+		ListProduct: listProducts,
+	}
+
+	data, err := json.Marshal(emailData)
 
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	connect.PublishingAMessage(data)
+	json.NewEncoder(write).Encode("Success")
 
 }

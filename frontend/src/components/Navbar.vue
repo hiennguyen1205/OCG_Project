@@ -75,11 +75,11 @@ export default {
   methods: {
     ...mapActions('users', ['logout']),
     ...mapMutations('users', ['setAuth', 'emptyUser']),
-    ...mapMutations('carts',['emptyListProducts']),
+    ...mapMutations('carts', ['emptyOrder']),
     logOut() {
       this.logout()
         .then(() => {
-          this.emptyListProducts();
+          this.emptyOrder();
           this.emptyUser();
           this.$router.push({ name: 'Home' });
         })
@@ -91,7 +91,7 @@ export default {
 
   computed: {
     ...mapState('carts', ['order']),
-    ...mapState('users', ['authenticated','user']),
+    ...mapState('users', ['authenticated', 'user']),
     totalProductsInCart() {
       return this.order.products != null ? this.order.products.length : '';
     },
