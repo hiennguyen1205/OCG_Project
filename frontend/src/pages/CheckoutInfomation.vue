@@ -160,8 +160,8 @@ export default {
       if (this.COD) {
         this.$router.push({ name: 'Home' });
       } else {
-        this.$refs.gateway.createPaymentMethod().then(async (res) => {
-          console.log(res.paymentMethod.id);
+        this.$refs.gateway.createPaymentMethod().then( (res) => {
+         if(!res.paymentMethod) return
           fetch('http://localhost:3000/api/payment', {
             method: 'POST',
             headers: {
@@ -174,7 +174,7 @@ export default {
           }).then((res) => {
             console.log(res.status);
             if (res.status == 200) {
-              GetData('http://localhost:3000/api/email');
+              // GetData('http://localhost:3000/api/email');
               this.isPaied = true;
               this.isShow = true;
             } else {

@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapGetters, mapMutations } from 'vuex';
+import { mapActions, mapState, mapMutations } from 'vuex';
 export default {
   name: 'Navbar',
   data() {
@@ -71,18 +71,17 @@ export default {
       logoShop: require('@/assets/images/logos/nha-xinh-logo.jpg'),
     };
   },
-  created(){
-    this.getUser()
-  },
+
   methods: {
-    ...mapActions('users', ['logout','getUser']),
+    ...mapActions('users', ['logout']),
     ...mapMutations('users', ['setAuth', 'emptyUser']),
+    ...mapMutations('carts',['emptyListProducts']),
     logOut() {
       this.logout()
         .then(() => {
-          this.$router.push({ name: 'Home' });
           this.emptyListProducts();
           this.emptyUser();
+          this.$router.push({ name: 'Home' });
         })
         .catch(() => {
           console.log('server failed');
@@ -93,7 +92,6 @@ export default {
   computed: {
     ...mapState('carts', ['order']),
     ...mapState('users', ['authenticated','user']),
-    ...mapGetters('carts', ['emptyListProducts']),
     totalProductsInCart() {
       return this.order.products != null ? this.order.products.length : '';
     },

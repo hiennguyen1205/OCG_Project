@@ -1,21 +1,6 @@
 
 
 const state = () => ({
-    promotions: [
-        {
-            code: "SUMMER",
-            discount: "50%",
-        },
-        {
-            code: "AUTUMN",
-            discount: "40%",
-        },
-        {
-            code: "WINTER",
-            discount: "30%",
-        },
-    ],
-    promoCode: "",
     discount: 0,
     tax: 0,
     sortType: "",
@@ -66,15 +51,6 @@ const getters = {
         } else {
             return 0;
         }
-    },
-
-    // calcTotalPrice(state) {
-    //     if (state.order.products === null || state.order.products == undefined) return state.totalPrice=0
-    //     return state.totalPrice = state.order.products.reduce((totalPrice, product) => totalPrice + product.price * product.quantity,
-    //         0)
-    // },
-    emptyListProducts(state) {
-        state.order = {};
     },
 };
 
@@ -185,6 +161,9 @@ const mutations = {
     GET_CART(state, data) {
         state.order = data;
         // console.log(state.order);
+    },
+    emptyListProducts(state) {
+        state.order = {};
     },
 };
 

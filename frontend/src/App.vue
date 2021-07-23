@@ -20,6 +20,7 @@ export default {
   },
   methods: {
     ...mapActions("carts", ["getCartByUserId"]),
+    ...mapActions("users",["getUser"]),
     ...mapMutations("users", ["setAuth"]),
   },
   computed: {
@@ -28,9 +29,8 @@ export default {
   mounted() {
     if (document.cookie) {
       let userId = parseInt(document.cookie.slice(3));
-      // console.log(userId);
+      this.getUser()
       this.getCartByUserId(userId);
-      // console.log(this.order);
       this.setAuth(true);
     } else {
       this.setAuth(false);

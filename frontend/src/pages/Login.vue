@@ -112,7 +112,7 @@
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from "vuex";
+import { mapActions, mapState } from "vuex";
 export default {
   name: "Loginout",
   data() {
@@ -132,7 +132,6 @@ export default {
   methods: {
     ...mapActions("carts", ["getCartByUserId"]),
     ...mapActions("users", ["login", "register","getUser"]),
-    ...mapMutations("users", ["setAuth"]),
     Login() {
       this.login({
         username: this.username,

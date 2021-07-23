@@ -110,7 +110,6 @@ export default {
       credentials: "include",
     })
       .then(async (response) => {
-        console.log();
         this.User = await response.json();
         this.saveUser(this.User);
       })
