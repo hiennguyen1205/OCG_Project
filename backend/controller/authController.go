@@ -117,15 +117,17 @@ func GetCookie(w http.ResponseWriter, r *http.Request) *http.Cookie {
 		statusCode := http.StatusUnauthorized
 		http.Error(w, "Token doesnt exist", statusCode)
 	}
-
 	return c
 }
+
 func GetUserById(w http.ResponseWriter, r *http.Request) {
 	var result models.User
 	c := GetCookie(w, r)
-	// log.Println(c.Value)
-
+	if c == nil{
+		return
+	}
 	intIdUser, _ := strconv.Atoi(c.Value)
+	log.Println("gias trij ",c.Value)
 	result = repository.GetUserById(intIdUser)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(result)
