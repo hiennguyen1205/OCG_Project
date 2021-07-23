@@ -59,8 +59,8 @@ func main() {
 	}
 
 	go func() {
-		for d := range msgs {
-			controller.SendEmailBySendGrid(d)
+		for data := range msgs {
+			controller.SendEmailBySendGrid(data.Body)
 		}
 	}()
 
