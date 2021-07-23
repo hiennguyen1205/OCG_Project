@@ -71,11 +71,12 @@ export default {
       logoShop: require('@/assets/images/logos/nha-xinh-logo.jpg'),
     };
   },
+  created(){
+    this.getUser()
+  },
   methods: {
-    ...mapActions('users', ['logout']),
-    ...mapGetters('carts', ['emptyListProducts']),
+    ...mapActions('users', ['logout','getUser']),
     ...mapMutations('users', ['setAuth', 'emptyUser']),
-    ...mapState('users', ['user']),
     logOut() {
       this.logout()
         .then(() => {
@@ -91,7 +92,8 @@ export default {
 
   computed: {
     ...mapState('carts', ['order']),
-    ...mapState('users', ['authenticated']),
+    ...mapState('users', ['authenticated','user']),
+    ...mapGetters('carts', ['emptyListProducts']),
     totalProductsInCart() {
       return this.order.products != null ? this.order.products.length : '';
     },

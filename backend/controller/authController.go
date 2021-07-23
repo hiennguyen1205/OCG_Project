@@ -123,7 +123,7 @@ func GetCookie(w http.ResponseWriter, r *http.Request) *http.Cookie {
 func GetUserById(w http.ResponseWriter, r *http.Request) {
 	var result models.User
 	c := GetCookie(w, r)
-	log.Println(c.Value)
+	// log.Println(c.Value)
 
 	intIdUser, _ := strconv.Atoi(c.Value)
 	result = repository.GetUserById(intIdUser)

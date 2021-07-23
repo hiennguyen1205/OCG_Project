@@ -1,4 +1,5 @@
 import router from "../../router/index.js"
+import { GetData } from "../../utils/callapi.js";
 const state = () => ({
     authenticated: false,
     user: {},
@@ -22,6 +23,8 @@ const actions = {
         })
             .then((response) => {
                 if (response.status === 200) {
+                    //đăng nhập xong lưu user
+                    
                     commit('setAuth', true);
                     router.push({ name: "Home" });
                 } else {
@@ -64,6 +67,11 @@ const actions = {
                 console.log("server failed");
             });
     },
+
+    getUser: async ({commit}) => {
+        let user = await GetData(`user`);
+        commit('saveUser', user);
+    }
 };
 
 const mutations = {

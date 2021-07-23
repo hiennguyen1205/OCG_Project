@@ -53,7 +53,7 @@ func GetUserById(id int) models.User {
 	var user models.User
 	err := db.QueryRow("SELECT * FROM users WHERE id = ?", id).Scan(&user.Id, &user.Username, &user.Password, &user.Name, &user.PhoneNumber, &user.Email, &user.Address, &user.Role)
 	if err != nil {
-		fmt.Println("Error in GetUserById()")
+		fmt.Println("Error in GetUserById")
 	}
 	return user
 }
@@ -70,11 +70,12 @@ func UpdateUserPasword(pass string, id int) (err error) {
 }
 
 func UpdateUser(u *models.User) (err error) {
-
-	strQuery, err := db.Prepare("UPDATE users SET username = ?, password = ?, name = ?, phone_number = ?, email = ?, address = ?, role = ? WHERE id=?")
+log.Println(u)
+	strQuery, err := db.Prepare("UPDATE users SET username = ?, password = ?, email = ?, address = ?, name = ?, phone_number = ? WHERE id=?")
 	if err != nil {
 		panic(err.Error())
 	}
-	strQuery.Exec(u.Username, u.Password, u.Name, u.PhoneNumber, u.Email, u.Address, u.Role, u.Id)
+	strQuery.Exec(u.Username, u.Password, u.Email, u.Address, u.Name,u.PhoneNumber, u.Id)
+
 	return err
 }
