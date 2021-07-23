@@ -57,9 +57,9 @@ func GetOrdersDetailsByUserId(id int) (result dto.DisplayOrder) {
 		result.User = user
 		result.Products = append(result.Products, product)
 	}
+
 	//nếu người đó không có danh sách sản phẩm thì danh sách sản phẩm null
 	if result.Products == nil {
-
 		strQuery := "SELECT od.user_id, oi.order_id " +
 			"FROM order_items oi " +
 			"JOIN order_details od ON od.id = oi.order_id " +
@@ -104,6 +104,10 @@ func IsValidProductItemByOrderId(orderId int, productId int) bool {
 
 //thêm sản phẩm vào giở hàng, chưa check out thì active = 0 sau đó lưu vào database
 func SaveOrderByUserNotActive(display dto.DisplayOrder) (result string) {
+	var (
+		discount int64
+		price    int64
+	)
 	user := display.User
 	listProducts := display.Products
 	//update danh sách product trong order items
@@ -145,6 +149,13 @@ func SaveOrderByUserNotActive(display dto.DisplayOrder) (result string) {
 		}
 	}
 
+	//update tổng tiền và tổng só tiền giảm giá
+	price, discount = CalcAmount(user.UserId)
+	_, err := db.Exec("UPDATE order_details SET total_price = ?, discount = ? WHERE id = ?", price, discount, user.UserId)
+	if err != nil {
+		log.Println(err)
+		return "Order failed"
+	}
 	return "Successed!!"
 }
 
@@ -152,18 +163,6 @@ func SaveOrderByUserNotActive(display dto.DisplayOrder) (result string) {
 func SaveOrderByUserActive(display dto.DisplayOrder) (result string) {
 	user := display.User
 	listProducts := display.Products
-	log.Println("dòng 198, ", user.UserId)
-	price := CalcPriceOrder(user.UserId)
-	strQuery, err := db.Prepare("UPDATE order_details SET total_price = ?, discount = ? WHERE id = ? ")
-	if err != nil {
-		log.Println(err)
-		return "Order failed"
-	}
-	_, err = strQuery.Exec(price, user.Discount, user.UserId)
-	if err != nil {
-		log.Println(err)
-		return "Order failed"
-	}
 	//update danh sách product trong order items active = 1
 	for _, product := range listProducts {
 		strQuery, err := db.Prepare("UPDATE order_items SET quantity = ?, active = 1 WHERE order_id = ? AND product_id = ?")

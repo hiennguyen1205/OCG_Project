@@ -82,7 +82,7 @@ const getters = {
 
 const actions = {
     async submitOrder(_,order) {
-
+        console.log(order);
         await fetch('http://localhost:3000/auth/api/orders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -90,8 +90,6 @@ const actions = {
             body: JSON.stringify(order),
         })
             .then(() => {
-                // commit("submitedOrder")  
-                // console.log(state.order);
                 console.log("OK");
             })
             .catch(err => console.log(err))

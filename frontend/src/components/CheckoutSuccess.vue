@@ -10,7 +10,7 @@
       {{paymented ? "Bạn đã thanh toán thành công":"Bạn chưa thanh toán thành công!!!"}}
       <div class="button">
         <!-- <button >Quay lại trang sản phẩm</button> -->
-        <button @click="close">Đóng</button>
+        <button @click="close" :class="[paymented ? 'btn btn-success' : 'btn btn-danger']">Đóng</button>
       </div>
     </div>
   </div>
@@ -24,9 +24,6 @@ export default {
   data() {
     return {
     };
-  },
-  mounted(){
-    console.log(this.paymented);
   },
   methods: {
     close(){
@@ -57,4 +54,8 @@ export default {
   align-items: center;
   padding: 220px;
 }
+.modal-header > h2{
+  margin: 0px auto;
+}
+
 </style>

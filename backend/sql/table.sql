@@ -35,7 +35,7 @@ CREATE TABLE `order_details` (
   `user_id` INT NOT NULL,
   `total_price` FLOAT NOT NULL DEFAULT 0,
   `payment` VARCHAR(100) NOT NULL DEFAULT "CARD",
-  `discount` TINYINT(100) NOT NULL DEFAULT 0
+  `discount` INT NOT NULL DEFAULT 0
 );
 CREATE TABLE `order_items` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
@@ -252,23 +252,10 @@ VALUES
   );
 -- table users
 INSERT INTO
-  `users` (
-    username,
-    password,
-    email,
-    address,
-    name,
-    phone_number
-  )
+  `users` (username, password, email, address, name, phone_number)
 VALUES
-  (
-    "user1",
-    "1234",
-    "user1@gmail.com",
-    "hà nội",
-    "hoc",
-    "98392321321"
-  );
+  ("user1", "1234", "user1@gmail.com", "hà nội","hiển","0987654321");
+
 -- table order details
 INSERT INTO
   order_details (
