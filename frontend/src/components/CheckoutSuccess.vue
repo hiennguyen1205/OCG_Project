@@ -1,34 +1,49 @@
 <template>
- <div id="myModal" class="modal parent">
+  <div id="myModal" class="modal parent">
     <!-- Modal content -->
     <div class="modal-content">
       <div class="modal-header">
-     
-      <h2>Thông báo</h2>
-       <span class="close"  @click="close">&times;</span>
-    </div>
-      {{paymented ? "Bạn đã thanh toán thành công":"Bạn chưa thanh toán thành công!!!"}}
+        <h2>Thông báo</h2>
+        <span class="close" @click="close">&times;</span>
+      </div>
+      <div
+        :class="[
+          paymented
+            ? { 'background-color': 'green' }
+            : { 'background-color': 'red' },
+        ]"
+      >
+        {{
+          paymented
+            ? "Bạn đã thanh toán thành công"
+            : "Bạn chưa thanh toán thành công!!!"
+        }}
+      </div>
+
       <div class="button">
         <!-- <button >Quay lại trang sản phẩm</button> -->
-        <button @click="close" :class="[paymented ? 'btn btn-success' : 'btn btn-danger']">Đóng</button>
+        <button
+          @click="close"
+          :class="[paymented ? 'btn btn-success' : 'btn btn-danger']"
+        >
+          Đóng
+        </button>
       </div>
     </div>
   </div>
-
 </template>
 
 <script>
 export default {
   name: "CheckoutSuccess",
- props:["paymented"],
+  props: ["paymented"],
   data() {
-    return {
-    };
+    return {};
   },
   methods: {
-    close(){
-      this.$emit("Close",false)
-    }
+    close() {
+      this.$emit("Close", false);
+    },
   },
 };
 </script>
@@ -45,17 +60,16 @@ export default {
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: rgb(0,0,0);
-  background-color: rgba(0,0,0,0.4);
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
 }
-.parent{
+.parent {
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 220px;
 }
-.modal-header > h2{
+.modal-header > h2 {
   margin: 0px auto;
 }
-
 </style>

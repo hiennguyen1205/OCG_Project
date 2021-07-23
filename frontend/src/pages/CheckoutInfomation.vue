@@ -126,13 +126,13 @@
 </template>
 
 <script>
-import Stripe from '@/components/Stripe';
-import CheckoutSuccess from '@/components/CheckoutSuccess';
-import { mapState, mapMutations } from 'vuex';
-import { PostData, AuthPutData } from '../utils/callapi';
+import Stripe from "@/components/Stripe";
+import CheckoutSuccess from "@/components/CheckoutSuccess";
+import { mapState, mapMutations } from "vuex";
+import { PostData, AuthPutData } from "../utils/callapi";
 
 export default {
-  name: 'CheckoutInfo',
+  name: "CheckoutInfo",
   components: {
     Stripe,
     CheckoutSuccess,
@@ -140,9 +140,9 @@ export default {
   data() {
     return {
       COD: false,
-      gateway: 'stripe',
+      gateway: "stripe",
       isShow: false,
-      isPaied: true,
+      isPaied: false,
       isDisplayPayment: false,
     };
   },
@@ -150,28 +150,28 @@ export default {
     console.log(this.user);
   },
   computed: {
-    ...mapState('users', ['user']),
-    ...mapState('carts', ['order']),
+    ...mapState("users", ["user"]),
+    ...mapState("carts", ["order"]),
   },
   methods: {
-    ...mapMutations('carts', ['emptyListProducts']),
+    ...mapMutations("carts", ["emptyListProducts"]),
 
     onChange(bool) {
       this.COD = bool;
     },
     payment() {
       if (this.COD) {
-        this.$router.push({ name: 'Home' });
+        this.$router.push({ name: "Home" });
       } else {
         let order = this.order;
         this.$refs.gateway.createPaymentMethod().then((res) => {
           if (!res.paymentMethod) return;
-          fetch('http://localhost:3000/api/payment', {
-            method: 'POST',
+          fetch("http://localhost:3000/api/payment", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
-            credentials: 'include',
+            credentials: "include",
             body: JSON.stringify({
               payment_method_id: res.paymentMethod.id,
             }),
@@ -180,9 +180,8 @@ export default {
             if (res.status == 200) {
               this.isPaied = true;
               this.isShow = true;
-              await PostData('email', order);
-              console.log(order);
-              await AuthPutData('orders', order);
+              await PostData("email", order);
+              await AuthPutData("orders", order);
             } else {
               this.isPaied = false;
               this.isShow = true;
@@ -193,12 +192,16 @@ export default {
       }
     },
     Close(check) {
-      this.emptyListProducts();
-      this.isShow = check;
-      this.$router.push({ name: 'Home' });
+      if (this.isPaied) {
+        this.emptyListProducts();
+        this.isShow = check;
+        this.$router.push({ name: "Home" });
+      } else {
+        this.isShow = check;
+      }
     },
     changeInfoUser() {
-      this.$router.push({ name: 'UserInfor' });
+      this.$router.push({ name: "UserInfor" });
     },
   },
 };
