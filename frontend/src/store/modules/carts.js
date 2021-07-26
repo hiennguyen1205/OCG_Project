@@ -58,7 +58,7 @@ const getters = {
 
 const actions = {
     async submitOrder(_, order) {
-        console.log(order);
+        // console.log(order);
         await fetch('http://localhost:3000/auth/api/orders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -78,10 +78,9 @@ const actions = {
             credentials: 'include',
         })
             .then(async (response) => {
-
                 const data = await response.json()
-                commit("GET_CART", data)
                 // console.log(data);
+                commit("GET_CART", data)
             })
             .catch(err => console.log(err))
     },
@@ -159,11 +158,11 @@ const mutations = {
     },
 
     GET_CART(state, data) {
-        state.order = {
-            user: data.user,
-            products: [...state.order.products, ...data.products],
-        }
-
+        // console.log(state.order.products);
+        // console.log(data.user);
+        state.order = data
+        // state.order.user = data.user;
+        // state.order.products = data.products;
     },
     emptyListProducts(state) {
         state.order.products = [];

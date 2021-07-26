@@ -127,7 +127,7 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	intIdUser, _ := strconv.Atoi(c.Value)
-	log.Println("gias trij ",c.Value)
+	// log.Println("Id user: ",c.Value)
 	result = repository.GetUserById(intIdUser)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(result)

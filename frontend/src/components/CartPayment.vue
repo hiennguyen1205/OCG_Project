@@ -72,6 +72,7 @@ export default {
     formatCurrency,
 
     checkout() {
+      // console.log(this.order);
       if (this.authenticated && this.order.products != null) {
         if (this.order.products.length > 0) {
           // console.log(this.order);
