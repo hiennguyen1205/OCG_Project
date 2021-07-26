@@ -70,6 +70,8 @@ const actions = {
 
     getUser: async ({commit}) => {
         let user = await GetData(`user`);
+        // console.log("user");
+        // console.log(user);
         commit('saveUser', user);
     }
 };
@@ -86,6 +88,7 @@ const mutations = {
     },
     saveUser(state, userInput) {
         state.user = userInput;
+        // console.log(state.user);
     }
 };
 
