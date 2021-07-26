@@ -63,17 +63,22 @@
 </template>
 
 <script>
-import { formatCurrency } from "@/utils/currency.js";
-import { mapMutations, mapState } from "vuex";
+import { formatCurrency } from '@/utils/currency.js';
+import { mapMutations, mapState } from 'vuex';
 
 export default {
-  name: "CartListProducts",
+  name: 'CartListProducts',
   data() {
     return {};
   },
 
   methods: {
-    ...mapMutations("carts", ["removeItem", "changeQuantity","decreaseQuantity","increaseQuantity"]),
+    ...mapMutations('carts', [
+      'removeItem',
+      'changeQuantity',
+      'decreaseQuantity',
+      'increaseQuantity',
+    ]),
     formatCurrency,
     changeQuantityInCart(productId, event) {
       this.changeQuantity({
@@ -93,7 +98,7 @@ export default {
   },
 
   computed: {
-    ...mapState("carts", ["order"]),
+    ...mapState('carts', ['order']),
     productsInChild() {
       if (this.order.products === null || this.order.products === undefined) {
         return [];
@@ -116,7 +121,7 @@ export default {
 };
 </script>
 
-<style scope>
+<style>
 a.qty {
   width: 1em;
   line-height: 1em;
@@ -150,8 +155,8 @@ a {
 a:hover {
   color: #f58551;
 }
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
