@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -31,7 +30,7 @@ func SaveOrderByUserNotActiveController(write http.ResponseWriter, request *http
 	requestBody, _ := ioutil.ReadAll(request.Body)
 	var saveOrder dto.DisplayOrder
 	json.Unmarshal(requestBody, &saveOrder)
-	log.Println(saveOrder)
+	// log.Println(saveOrder)
 	write.Header().Set("content-type", "application/json")
 	result := repository.SaveOrderByUserNotActive(saveOrder)
 	json.NewEncoder(write).Encode(result)

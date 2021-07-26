@@ -96,7 +96,7 @@ func IsValidProductItemByOrderId(orderId int, productId int) bool {
 	var check int
 	err := response.Scan(&check)
 	if err == sql.ErrNoRows {
-		log.Println("không có product trong order,", err)
+		log.Println("không có product trong order,", err, " sẽ cập nhật luôn!!")
 		return false
 	}
 	return true
