@@ -89,7 +89,7 @@ export default {
 };
 </script>
 
-<style scope>
+<style>
 .pay {
   display: flex;
 }

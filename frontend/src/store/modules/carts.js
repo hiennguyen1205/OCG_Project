@@ -159,8 +159,11 @@ const mutations = {
     },
 
     GET_CART(state, data) {
-        state.order = data;
-        // console.log(state.order);
+        state.order = {
+            user: data.user,
+            products: [...state.order.products, ...data.products],
+        }
+
     },
     emptyListProducts(state) {
         state.order.products = [];

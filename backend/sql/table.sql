@@ -252,7 +252,6 @@ VALUES
   );
 -- table users
 INSERT INTO
-
   `users` (
     username,
     password,
@@ -260,7 +259,7 @@ INSERT INTO
     address,
     name,
     phone_number,
-    role,
+    role
   )
 VALUES
   (
@@ -272,7 +271,6 @@ VALUES
     "0332113666",
     1
   );
-
 -- table order details
 INSERT INTO
   order_details (

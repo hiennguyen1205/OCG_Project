@@ -6,11 +6,11 @@
 </template>
 
 <script>
-import CartListProducts from "@/components/CartListProducts.vue";
-import CartPayment from "@/components/CartPayment.vue";
+import CartListProducts from '@/components/CartListProducts.vue';
+import CartPayment from '@/components/CartPayment.vue';
 
 export default {
-  name: "Checkout",
+  name: 'Checkout',
 
   components: {
     CartListProducts,
@@ -18,12 +18,10 @@ export default {
   },
 
   data() {
-    return {
-    };
+    return {};
   },
-  
-  methods: {
-  },
+
+  methods: {},
 };
 </script>
 
@@ -57,8 +55,6 @@ body {
     left: calc(50% - 20px);
   }
 }
-
-
 
 /* --- LARGE SCREEN --- */
 @media all and (min-width: 992px) {

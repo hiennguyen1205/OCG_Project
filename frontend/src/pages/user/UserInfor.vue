@@ -19,14 +19,12 @@
     <div class="row mb-3">
       <label for="inputEmail3" class="col-sm-2 col-form-label">Ho Ten</label>
       <div class="col-sm-10">
-
         <input
           type="text"
           class="form-control"
           v-model="User.username"
           :readonly="isReadOnly"
         />
-
       </div>
     </div>
 
@@ -57,32 +55,32 @@
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations } from 'vuex';
 
 export default {
-  name: "UserInfor",
+  name: 'UserInfor',
 
   data() {
     return {
       User: [],
-      name: "",
-      phone_number: "",
-      username: "",
-      email: "",
-      address: "",
+      name: '',
+      phone_number: '',
+      username: '',
+      email: '',
+      address: '',
       isReadOnly: true,
     };
   },
 
   methods: {
-    ...mapMutations("users", ["saveUser"]),
+    ...mapMutations('users', ['saveUser']),
     async changeInfor(event) {
       event.preventDefault();
       console.log(this.User);
-      await fetch("http://localhost:3000/api/user", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+      await fetch('http://localhost:3000/api/user', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           id: this.User.id,
           username: this.User.username,
@@ -95,19 +93,19 @@ export default {
         }),
       })
         .then(async () => {
-          alert("Change infor successfully");
+          alert('Change infor successfully');
         })
         .catch(async (error) => {
-          alert("Something went wrong" + error);
+          alert('Something went wrong' + error);
         });
     },
   },
 
   async beforeMount() {
-    await fetch("http://localhost:3000/api/user", {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
+    await fetch('http://localhost:3000/api/user', {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
     })
       .then(async (response) => {
         this.User = await response.json();
@@ -120,4 +118,4 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped></style>

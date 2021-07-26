@@ -16,6 +16,11 @@ type PaymentMethodId struct {
 	Id string `json:"payment_method_id"`
 }
 
+type ConfirmPaymentResponse struct {
+	RequiresAction            bool    `json:"requires_action"`
+	PaymentIntentClientSecret *string `json:"payment_intent_client_secret"`
+}
+
 func HandleCreatePaymentIntent(w http.ResponseWriter, r *http.Request) {
 	stripe.Key = "sk_test_51JFBJVAuOJBTYkNRmXP9Bah92NkAdHKKJo7yZI9t78zwdF68DSBBjbFoLDD4LXOLZHYnyviPghKalVZVGiDqIBAy003NcEHr19"
 	c := GetCookie(w, r)
@@ -25,7 +30,7 @@ func HandleCreatePaymentIntent(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(requestBody)
 	fmt.Println(pmKey.Id)
 	intIdUser, _ := strconv.Atoi(c.Value)
-	amount,_ := repository.CalcAmount(intIdUser)
+	amount, _ := repository.CalcAmount(intIdUser)
 	params := &stripe.PaymentIntentParams{
 		PaymentMethod:      stripe.String(pmKey.Id),
 		Amount:             stripe.Int64(amount),
@@ -48,27 +53,18 @@ func HandleCreatePaymentIntent(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-	json.NewEncoder(w).Encode(pi)
 
-}
-
-type ConfirmPaymentResponse struct {
-	RequiresAction            bool    `json:"requires_action"`
-	PaymentIntentClientSecret *string `json:"payment_intent_client_secret"`
-}
-
-func generatePaymentResponse(intent *stripe.PaymentIntent, w http.ResponseWriter) {
-	if intent.Status == stripe.PaymentIntentStatusRequiresAction &&
-		intent.NextAction.Type == "use_stripe_sdk" {
+	if pi.Status == stripe.PaymentIntentStatusRequiresAction &&
+		pi.NextAction.Type == "use_stripe_sdk" {
 
 		// Tell the client to handle the action
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusPaymentRequired)
 		json.NewEncoder(w).Encode(ConfirmPaymentResponse{
 			RequiresAction:            true,
-			PaymentIntentClientSecret: &intent.ClientSecret,
+			PaymentIntentClientSecret: &pi.ClientSecret,
 		})
 
-	} else if intent.Status == stripe.PaymentIntentStatusSucceeded {
+	} else if pi.Status == stripe.PaymentIntentStatusSucceeded {
 
 		// The payment didn’t need any additional actions and completed!
 		// Handle post-payment fulfillment
@@ -79,10 +75,38 @@ func generatePaymentResponse(intent *stripe.PaymentIntent, w http.ResponseWriter
 
 		// Invalid status
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "Invalid Payment Intent status: %s", intent.Status)
+		fmt.Fprintf(w, "Invalid Payment Intent status: %s", pi.Status)
 
 	}
+
 }
+
+// func generatePaymentResponse(intent *stripe.PaymentIntent, w http.ResponseWriter) {
+// 	if intent.Status == stripe.PaymentIntentStatusRequiresAction &&
+// 		intent.NextAction.Type == "use_stripe_sdk" {
+
+// 		// Tell the client to handle the action
+// 		w.WriteHeader(http.StatusPaymentRequired)
+// 		json.NewEncoder(w).Encode(ConfirmPaymentResponse{
+// 			RequiresAction:            true,
+// 			PaymentIntentClientSecret: &intent.ClientSecret,
+// 		})
+
+// 	} else if intent.Status == stripe.PaymentIntentStatusSucceeded {
+
+// 		// The payment didn’t need any additional actions and completed!
+// 		// Handle post-payment fulfillment
+// 		w.WriteHeader(http.StatusOK)
+// 		fmt.Fprint(w, "Success")
+
+// 	} else {
+
+// 		// Invalid status
+// 		w.WriteHeader(http.StatusInternalServerError)
+// 		fmt.Fprintf(w, "Invalid Payment Intent status: %s", intent.Status)
+
+// 	}
+// }
 
 // type PaymentGateway interface {
 // 	auth(interface{}) (*Transaction, error)
