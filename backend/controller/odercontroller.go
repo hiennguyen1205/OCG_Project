@@ -22,6 +22,7 @@ func GetOrdersDetailsByUserId(write http.ResponseWriter, request *http.Request) 
 	// log.Println(strIdUser)
 	write.Header().Set("Content-Type", "application/json")
 	listOrders := repository.GetOrdersDetailsByUserId(strIdUser)
+	// log.Println(listOrders)
 	json.NewEncoder(write).Encode(listOrders)
 }
 
@@ -38,10 +39,10 @@ func SaveOrderByUserNotActiveController(write http.ResponseWriter, request *http
 
 //information order
 func GetInformationOrder(write http.ResponseWriter, request *http.Request) {
+	write.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(request)
 	strIdUser, _ := strconv.Atoi(vars["user_id"])
 	// log.Println(strIdUser)
-	write.Header().Set("Content-Type", "application/json")
 	info := repository.InformationOrder(strIdUser)
 	json.NewEncoder(write).Encode(info)
 }
@@ -84,4 +85,36 @@ func ChangeOrderState(write http.ResponseWriter, request *http.Request) {
 	connect.PublishingAMessage(data)
 	json.NewEncoder(write).Encode("Success")
 
+}
+
+func UpdateOrderDetails(write http.ResponseWriter, request *http.Request) {
+	requestBody, _ := ioutil.ReadAll(request.Body)
+	var orderInfo dto.DisplayOrder
+	json.Unmarshal(requestBody, &orderInfo)
+	write.Header().Set("content-type", "application/json")
+	// log.Println(orderInfo)
+	result := repository.UpdateOrderDetails(orderInfo)
+	json.NewEncoder(write).Encode(result)
+}
+
+func GetAllOrrderDetailsForAdmin(write http.ResponseWriter, request *http.Request) {
+	result := repository.GetAllOrrderDetailsForAdmin()
+	write.Header().Set("content-type", "application/json")
+	json.NewEncoder(write).Encode(result)
+}
+
+func DeleteOrderDetails(write http.ResponseWriter, request *http.Request) {
+	vars := mux.Vars(request)
+	orderId,_ := strconv.Atoi(vars["order_id"])
+	result := repository.DeleteOrderDetails(orderId)
+	write.Header().Set("content-type", "application/json")
+	json.NewEncoder(write).Encode(result)
+}
+
+func DetailsOrderAdmin(write http.ResponseWriter, request *http.Request){
+	vars := mux.Vars(request)
+	orderId,_ := strconv.Atoi(vars["order_id"])
+	result := repository.GetDetailOrder(orderId)
+	write.Header().Set("content-type", "application/json")
+	json.NewEncoder(write).Encode(result)
 }

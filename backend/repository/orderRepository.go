@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"bt/project/models"
 	dto "bt/project/models/dto"
 	"database/sql"
 
@@ -44,7 +45,7 @@ func GetOrdersDetailsByUserId(id int) (result dto.DisplayOrder) {
 		"FROM order_items oi " +
 		"JOIN order_details od ON od.id = oi.order_id " +
 		"JOIN products p ON p.id = oi.product_id " +
-		"WHERE od.user_id = ? AND oi.`active` = 0"
+		"WHERE od.user_id = ? AND oi.`active` = 0 AND od.is_delete = 0"
 	response, err := db.Query(strQuery, id)
 	if err != nil {
 		log.Println(err)
@@ -172,4 +173,50 @@ func SaveOrderByUserActive(display dto.DisplayOrder) (result string) {
 		strQuery.Exec(product.Quantity, user.OrderId, product.ProductId)
 	}
 	return "Order successed"
+}
+
+func UpdateOrderDetails(display dto.DisplayOrder) (result string) {
+	user := display.User
+	// log.Println(user)
+	_, err := db.Exec("UPDATE order_details SET is_paied = 1 WHERE id = ? AND user_id = ?", user.OrderId, user.UserId)
+	if  err != nil {
+		log.Println(err)
+		return
+	}
+	return "Update Order Success!"
+}
+
+func GetAllOrrderDetailsForAdmin() (result []models.AdminOrderDetails){
+	rows, _ := db.Query("SELECT od.id, od.total_price, od.is_paied, od.status, u.name FROM order_details od JOIN users u ON u.id = od.user_id WHERE is_delete = 0 LIMIT 20 OFFSET 0")
+	var OrderDetails models.AdminOrderDetails
+	for rows.Next(){
+		err := rows.Scan(&OrderDetails.OrderId, &OrderDetails.TotalPrice,&OrderDetails.Ispaied,&OrderDetails.Status, &OrderDetails.UserName)
+		if err!= nil{
+			log.Println("Lỗi không lấy được thông tin order details")
+		}
+		result = append(result, OrderDetails)
+	}
+	return result
+}
+
+func DeleteOrderDetails (orderId int) string{
+	_, err := db.Exec("UPDATE order_details SET is_delete = 1 WHERE id = ?", orderId)
+	if err!= nil {
+		log.Println("Không xóa được order!!")
+		return err.Error()
+	}
+	return "Xóa Order thành công"
+}
+
+func GetDetailOrder (orderId int) (result []models.OrderItemInOrder){
+	rows,_ := db.Query("SELECT od.id, p.name, p.price, oi.quantity FROM order_items oi JOIN order_details od ON od.id = oi.order_id JOIN products p ON p.id = oi.product_id WHERE od.id = ? ", orderId)
+	var items models.OrderItemInOrder
+	for rows.Next(){
+		err := rows.Scan(&items.OrderId, &items.Name, &items.Price, &items.Quantity)
+		if err != nil {
+			log.Println("Không hiển thị được order")
+		}
+		result = append(result, items)
+	}
+	return result
 }
