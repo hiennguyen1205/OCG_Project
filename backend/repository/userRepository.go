@@ -70,7 +70,7 @@ func UpdateUserPasword(pass string, id int) (err error) {
 }
 
 func UpdateUser(u *models.User) (err error) {
-log.Println(u)
+// log.Println(u)
 	strQuery, err := db.Prepare("UPDATE users SET username = ?, password = ?, email = ?, address = ?, name = ?, phone_number = ? WHERE id=?")
 	if err != nil {
 		panic(err.Error())

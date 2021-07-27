@@ -2,8 +2,8 @@ package middleware
 
 import (
 	"bt/project/controller"
-	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
@@ -28,8 +28,8 @@ func AuthMiddleware(next http.Handler) http.Handler {
 
 			} else {
 				claims := token.Claims
-				json.NewEncoder(w).Encode(claims)
-				json.NewEncoder(w).Encode('1')
+				log.Println(claims)
+				// json.NewEncoder(w).Encode(claims)
 				next.ServeHTTP(w, r)
 			}
 
