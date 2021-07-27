@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { formatCurrency } from '@/utils/currency.js';
+import { formatCurrency } from '../utils/currency.js';
 import { mapMutations, mapState } from 'vuex';
 
 export default {
