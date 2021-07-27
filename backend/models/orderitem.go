@@ -8,8 +8,9 @@ type OrderItem struct {
 }
 
 type OrderItemInOrder struct {
-	OrderId int `json:"id"`
-	Name string `json:"name"`
-	Price int `json:"price"`
-	Quantity int `json:"quantity"`
+	OrderId  int    `json:"id"`
+	Image    string `json:"image"`
+	Name     string `json:"name"`
+	Price    int    `json:"price"`
+	Quantity int    `json:"quantity"`
 }

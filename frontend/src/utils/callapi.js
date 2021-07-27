@@ -1,4 +1,5 @@
 var baseURL = "http://localhost:3000/api/"
+var baseAuthURL = "http://localhost:3000/auth/api/"
 async function PostData(url = '', data = {}) {
     console.log("postdata")
     // Default options are marked with *
@@ -58,8 +59,7 @@ async function PutData(url = '', data = {}) {
 }
 
 async function AuthPutData(url = '', data = {}) {
-    console.log('authput');
-    var Url = "http://localhost:3000/auth/api/" + url
+    var Url = baseAuthURL + url
     const response = await fetch(Url, {
         method: 'PUT',
         credentials: 'include',
@@ -72,4 +72,17 @@ async function AuthPutData(url = '', data = {}) {
     return response;
 }
 
-export { PostData, GetData, DeleteData, PutData, AuthPutData }
+async function AuthGetData(url = '') {
+    var Url = baseAuthURL + url
+    const response = await fetch(Url, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        redirect: 'follow',
+    });
+    return response.json();
+}
+
+export { PostData, GetData, DeleteData, PutData, AuthPutData, AuthGetData }

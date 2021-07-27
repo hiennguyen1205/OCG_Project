@@ -177,7 +177,8 @@ func SaveOrderByUserActive(display dto.DisplayOrder) (result string) {
 
 func UpdateOrderDetails(display dto.DisplayOrder) (result string) {
 	user := display.User
-	// log.Println(user)
+	log.Println("user nè ",user)
+
 	_, err := db.Exec("UPDATE order_details SET is_paied = 1 WHERE id = ? AND user_id = ?", user.OrderId, user.UserId)
 	if  err != nil {
 		log.Println(err)
@@ -209,14 +210,18 @@ func DeleteOrderDetails (orderId int) string{
 }
 
 func GetDetailOrder (orderId int) (result []models.OrderItemInOrder){
-	rows,_ := db.Query("SELECT od.id, p.name, p.price, oi.quantity FROM order_items oi JOIN order_details od ON od.id = oi.order_id JOIN products p ON p.id = oi.product_id WHERE od.id = ? ", orderId)
+	rows,_ := db.Query("SELECT od.id, p.image, p.name, p.price, oi.quantity FROM order_items oi JOIN order_details od ON od.id = oi.order_id JOIN products p ON p.id = oi.product_id WHERE od.id = ? ", orderId)
 	var items models.OrderItemInOrder
 	for rows.Next(){
-		err := rows.Scan(&items.OrderId, &items.Name, &items.Price, &items.Quantity)
+		err := rows.Scan(&items.OrderId,&items.Image, &items.Name, &items.Price, &items.Quantity)
 		if err != nil {
 			log.Println("Không hiển thị được order")
 		}
 		result = append(result, items)
 	}
 	return result
+}
+
+func GetOrderItems (orderId int) {
+
 }
