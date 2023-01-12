@@ -58,22 +58,24 @@ const routes = [
         component: () => import(/* webpackChunkName: "login" */ '../pages/User.vue'),
         children: [
             {
-                // path: '/login', component: Login 
                 path: 'userinfor',
                 name: 'UserInfor',
                 component: () => import(/* webpackChunkName: "login" */ '../pages/user/UserInfor.vue')
             },
             {
-                // path: '/login', component: Login 
                 path: 'userpassword',
                 name: 'UserPassword',
                 component: () => import(/* webpackChunkName: "login" */ '../pages/user/UserPassword.vue')
             },
             {
-                // path: '/login', component: Login 
                 path: 'admin',
                 name: 'Admin',
                 component: () => import(/* webpackChunkName: "admin" */ '../pages/user/Admin.vue')
+            },
+            {
+                path: 'order',
+                name: 'Order',
+                component: () => import(/* webpackChunkName: "admin" */ '../pages/user/AdminOrder.vue')
             },
         ]
     },

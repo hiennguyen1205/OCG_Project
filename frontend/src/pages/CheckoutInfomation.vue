@@ -147,7 +147,7 @@ export default {
     };
   },
   created() {
-    console.log(this.user);
+    // console.log(this.user);
   },
   computed: {
     ...mapState('users', ['user']),
@@ -182,6 +182,7 @@ export default {
               this.isShow = true;
               await PostData('email', order);
               await AuthPutData('orders', order);
+              await AuthPutData('orders/order_details',order);
             } else {
               this.isPaied = false;
               this.isShow = true;

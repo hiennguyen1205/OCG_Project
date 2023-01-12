@@ -64,4 +64,12 @@ func RouteProduct(routers *mux.Router) {
 	routers.Methods(http.MethodPost).Path("/api/orders").HandlerFunc(controller.SaveOrderByUserNotActiveController)
 	//infor order
 	routers.Methods(http.MethodGet).Path("/api/orders/infororder/{user_id}").HandlerFunc(controller.GetInformationOrder)
+	//update order detail
+	routers.Methods(http.MethodPut).Path("/api/orders/order_details").HandlerFunc(controller.UpdateOrderDetails)
+	//get all orrder details for admin
+	routers.Methods(http.MethodGet).Path("/api/orders/admin").HandlerFunc(controller.GetAllOrrderDetailsForAdmin)
+	//delete order for admin
+	routers.Methods(http.MethodPut).Path("/api/orders/{order_id}").HandlerFunc(controller.DeleteOrderDetails)
+	//get details order admin
+	routers.Methods(http.MethodGet).Path("/api/orders/details/{order_id}").HandlerFunc(controller.DetailsOrderAdmin)
 }
