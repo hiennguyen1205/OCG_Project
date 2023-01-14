@@ -1,13 +1,11 @@
 package main
 
 import (
+	"bt/project/connect"
+	"bt/project/router"
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-
-	"bt/project/connect"
-	"bt/project/router"
 
 	"github.com/gorilla/handlers"
 	"github.com/joho/godotenv"
@@ -18,7 +16,6 @@ func main() {
 	envErr := godotenv.Load("env")
 	if envErr != nil {
 		fmt.Println("Could not load .env file")
-		os.Exit(1)
 	}
 	database := connect.Connect()
 	defer database.Close()
