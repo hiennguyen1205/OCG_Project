@@ -15,7 +15,7 @@ import (
 
 func main() {
 	//connect database
-	envErr := godotenv.Load(".env")
+	envErr := godotenv.Load()
 	if envErr != nil {
 		fmt.Println("Could not load .env file")
 		os.Exit(1)
