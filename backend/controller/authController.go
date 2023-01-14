@@ -16,7 +16,11 @@ import (
 
 const SecretKey = "secret"
 
-func Register(write http.ResponseWriter, request *http.Request) {
+type AuthController struct {
+	UserRepository *repository.UserRepository
+}
+
+func (ac *AuthController) Register(write http.ResponseWriter, request *http.Request) {
 	requestBody, _ := ioutil.ReadAll(request.Body)
 	// if err1 != nil {
 	// 	json.NewEncoder(write).Encode(err1)
@@ -26,7 +30,7 @@ func Register(write http.ResponseWriter, request *http.Request) {
 
 	password, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 14)
 	user.Password = string(password)
-	err := repository.CreateUser(&user)
+	err := ac.UserRepository.CreateUser(&user)
 	if err != nil {
 		json.NewEncoder(write).Encode(err)
 	} else {
@@ -35,12 +39,12 @@ func Register(write http.ResponseWriter, request *http.Request) {
 
 }
 
-func Login(write http.ResponseWriter, request *http.Request) {
+func (ac *AuthController) Login(write http.ResponseWriter, request *http.Request) {
 	requestBody, _ := ioutil.ReadAll(request.Body)
 	var user models.User
 	json.Unmarshal(requestBody, &user)
 
-	isValid, userId := repository.CheckValid(&user)
+	isValid, userId := ac.UserRepository.CheckValid(&user)
 	if isValid {
 		//jwt
 
@@ -86,7 +90,7 @@ func Login(write http.ResponseWriter, request *http.Request) {
 	}
 }
 
-func Logout(write http.ResponseWriter, request *http.Request) {
+func (ac *AuthController) Logout(write http.ResponseWriter, request *http.Request) {
 	cookie := &http.Cookie{
 		Name:     "jwt",
 		Path:     "/",
@@ -120,15 +124,15 @@ func GetCookie(w http.ResponseWriter, r *http.Request) *http.Cookie {
 	return c
 }
 
-func GetUserById(w http.ResponseWriter, r *http.Request) {
+func (ac *AuthController) GetUserById(w http.ResponseWriter, r *http.Request) {
 	var result models.User
 	c := GetCookie(w, r)
-	if c == nil{
+	if c == nil {
 		return
 	}
 	intIdUser, _ := strconv.Atoi(c.Value)
 	// log.Println("Id user: ",c.Value)
-	result = repository.GetUserById(intIdUser)
+	result = ac.UserRepository.GetUserById(intIdUser)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(result)
 }
@@ -137,7 +141,7 @@ type userPassword struct {
 	Password string `json:"password"`
 }
 
-func ChangeUserPassword(w http.ResponseWriter, r *http.Request) {
+func (ac *AuthController) ChangeUserPassword(w http.ResponseWriter, r *http.Request) {
 	c, err := r.Cookie("id")
 	if err != nil {
 		log.Println("không lấy được cookie")
@@ -149,7 +153,7 @@ func ChangeUserPassword(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(requestBody, &userpass)
 	passwordencoded, _ := bcrypt.GenerateFromPassword([]byte(userpass.Password), 14)
 	intIdUser, _ := strconv.Atoi(c.Value)
-	err = repository.UpdateUserPasword(string(passwordencoded), intIdUser)
+	err = ac.UserRepository.UpdateUserPasword(string(passwordencoded), intIdUser)
 	if err != nil {
 		json.NewEncoder(w).Encode(err)
 	} else {
@@ -159,7 +163,7 @@ func ChangeUserPassword(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func UpdateUser(w http.ResponseWriter, r *http.Request) {
+func (ac *AuthController) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	requestBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		log.Println(err)
@@ -169,7 +173,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	if err1 != nil {
 		log.Println(err1)
 	}
-	err2 := repository.UpdateUser(&user)
+	err2 := ac.UserRepository.UpdateUser(&user)
 	if err2 != nil {
 		log.Println(err)
 		json.NewEncoder(w).Encode("Failed")

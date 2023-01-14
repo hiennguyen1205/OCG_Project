@@ -1,13 +1,20 @@
 package repository
 
-import "bt/project/models"
+import (
+	"bt/project/models"
+	"database/sql"
+)
 
-func GetAllCategories() (result []models.Category) {
-	response, _ := db.Query("SELECT * FROM categories")
+type CategoryRepository struct {
+	Db *sql.DB
+}
+
+func (cr *CategoryRepository) GetAllCategories() (result []models.Category) {
+	response, _ := cr.Db.Query("SELECT * FROM categories")
 	defer response.Close()
 	var category models.Category
 	for response.Next() {
-		err := response.Scan(&category.Id,&category.Name)
+		err := response.Scan(&category.Id, &category.Name)
 		if err != nil {
 			panic(err)
 		}

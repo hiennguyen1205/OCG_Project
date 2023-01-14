@@ -4,16 +4,15 @@ import (
 	"database/sql"
 	"fmt"
 
-	"bt/project/connect"
 	"bt/project/models"
 )
 
-// biến dùng để connect tới database
-var db = connect.Connect()
+type ProductRepository struct {
+	Db *sql.DB
+}
 
-//hàm insert data và database
-func InitData() {
-	defer db.Close()
+// hàm insert data và database
+func (pd *ProductRepository) InitData() {
 	listCategories := []models.Category{
 		{Name: "Loại 1"},
 		{Name: "Loại 2"},
@@ -96,7 +95,7 @@ func InitData() {
 
 	for _, category := range listCategories {
 		strQuery := "INSERT INTO categories(name) VALUES (?)"
-		result, err := db.Exec(strQuery, category.Name)
+		result, err := pd.Db.Exec(strQuery, category.Name)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -106,7 +105,7 @@ func InitData() {
 
 	for _, product := range listProducts {
 		strQuery := "INSERT INTO products(name, description, price, category_id, image, sale, is_feature) VALUES (?,?,?,?,?,?,?)"
-		result, err := db.Exec(strQuery, product.Name, product.Description, product.Price, product.CategoryId, product.Image, product.Sale, product.IsFeature)
+		result, err := pd.Db.Exec(strQuery, product.Name, product.Description, product.Price, product.CategoryId, product.Image, product.Sale, product.IsFeature)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -120,33 +119,33 @@ func InitData() {
 * input: 4 params giúp cho việc phân trang, search theo tên và sắp xếp sản phẩm
 * output: 1 slice các sản phẩm
  */
-func GetAllProducts(limit int, cursor int, search string, sort string, categoryId int, isFeature int, all int) (result []models.Product) {
+func (pd *ProductRepository) GetAllProducts(limit int, cursor int, search string, sort string, categoryId int, isFeature int, all int) (result []models.Product) {
 	var strQuery string
 	var response *sql.Rows
 	lenSearch := len(search)
 	lenSort := len(sort)
 	if lenSearch != 0 && lenSort != 0 {
 		strQuery = ("SELECT * FROM products WHERE id > ? AND category_id = ? AND name LIKE ? ORDER BY price " + sort + " LIMIT ?")
-		response, _ = db.Query(strQuery, cursor, categoryId, "%"+search+"%", limit)
+		response, _ = pd.Db.Query(strQuery, cursor, categoryId, "%"+search+"%", limit)
 	} else if lenSearch != 0 && len(sort) == 0 {
 		strQuery = ("SELECT * FROM products WHERE id > ? AND category_id = ? AND name LIKE ? LIMIT ?")
-		response, _ = db.Query(strQuery, cursor, categoryId, "%"+search+"%", limit)
+		response, _ = pd.Db.Query(strQuery, cursor, categoryId, "%"+search+"%", limit)
 	} else if lenSearch == 0 && len(sort) != 0 {
 		strQuery = ("SELECT * FROM products WHERE id > ? AND category_id = ? ORDER BY price " + sort + " LIMIT ?")
-		response, _ = db.Query(strQuery, cursor, categoryId, limit)
+		response, _ = pd.Db.Query(strQuery, cursor, categoryId, limit)
 	} else {
 		strQuery = ("SELECT * FROM products WHERE id > ? AND category_id = ? LIMIT ?")
-		response, _ = db.Query(strQuery, cursor, categoryId, limit)
+		response, _ = pd.Db.Query(strQuery, cursor, categoryId, limit)
 	}
 
 	if isFeature == 1 {
 		strQuery = ("SELECT * FROM products WHERE id > ? AND is_feature = 1 LIMIT ?")
-		response, _ = db.Query(strQuery, cursor, limit)
+		response, _ = pd.Db.Query(strQuery, cursor, limit)
 	}
 
 	if all == 1 {
 		strQuery = ("SELECT * FROM products WHERE id > ? LIMIT ?")
-		response, _ = db.Query(strQuery, cursor, limit)
+		response, _ = pd.Db.Query(strQuery, cursor, limit)
 	}
 
 	if response == nil {
@@ -164,25 +163,25 @@ func GetAllProducts(limit int, cursor int, search string, sort string, categoryI
 	return result
 }
 
-func GetProductById(id int) models.Product {
+func (pd *ProductRepository) GetProductById(id int) models.Product {
 	var product models.Product
-	err := db.QueryRow("SELECT * FROM products WHERE id = ?", id).Scan(&product.Id, &product.Name, &product.Description, &product.Price, &product.CategoryId, &product.Image, &product.Sale, &product.IsFeature)
+	err := pd.Db.QueryRow("SELECT * FROM products WHERE id = ?", id).Scan(&product.Id, &product.Name, &product.Description, &product.Price, &product.CategoryId, &product.Image, &product.Sale, &product.IsFeature)
 	if err != nil {
-		fmt.Println("Error in GetAllProductById()")
+		fmt.Println("Error in GetAllProductById()", err)
 	}
 	return product
 }
 
-func CreateProduct(product models.Product) (err error) {
+func (pd *ProductRepository) CreateProduct(product models.Product) (err error) {
 	strQuery := "INSERT INTO products(name, description, price, category_id, image, sale, is_feature) VALUES (?,?,?,?,?,?,?)"
-	result, err := db.Exec(strQuery, product.Name, product.Description, product.Price, product.CategoryId, product.Image, product.Sale, product.IsFeature)
+	result, err := pd.Db.Exec(strQuery, product.Name, product.Description, product.Price, product.CategoryId, product.Image, product.Sale, product.IsFeature)
 	fmt.Println(result)
 	return err
 }
 
-func UpdateProduct(product models.Product) (err error) {
+func (pd *ProductRepository) UpdateProduct(product models.Product) (err error) {
 
-	strQuery, err := db.Prepare("UPDATE products SET name = ?, description = ?, price = ?, category_id = ?, image = ?, sale = ?, is_feature = ? WHERE id=?")
+	strQuery, err := pd.Db.Prepare("UPDATE products SET name = ?, description = ?, price = ?, category_id = ?, image = ?, sale = ?, is_feature = ? WHERE id=?")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -190,13 +189,13 @@ func UpdateProduct(product models.Product) (err error) {
 	return err
 }
 
-func DeleteProductById(id int) (str string, err error) {
+func (pd *ProductRepository) DeleteProductById(id int) (str string, err error) {
 	//xóa foreign key
 	strQueryOrderItem := "DELETE FROM order_items WHERE product_id = ?"
-	db.Exec(strQueryOrderItem, id)
+	pd.Db.Exec(strQueryOrderItem, id)
 	//xóa sản phẩm
 	strQuery := "DELETE FROM products WHERE id = ?"
-	result, err := db.Exec(strQuery, id)
+	result, err := pd.Db.Exec(strQuery, id)
 	fmt.Println(result)
 	return "Xóa thành công!", err
 }

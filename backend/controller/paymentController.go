@@ -20,8 +20,11 @@ type ConfirmPaymentResponse struct {
 	RequiresAction            bool    `json:"requires_action"`
 	PaymentIntentClientSecret *string `json:"payment_intent_client_secret"`
 }
+type PaymentController struct {
+	OrderRepository *repository.OrderRepository
+}
 
-func HandleCreatePaymentIntent(w http.ResponseWriter, r *http.Request) {
+func (pc *PaymentController) HandleCreatePaymentIntent(w http.ResponseWriter, r *http.Request) {
 	stripe.Key = "sk_test_51JFBJVAuOJBTYkNRmXP9Bah92NkAdHKKJo7yZI9t78zwdF68DSBBjbFoLDD4LXOLZHYnyviPghKalVZVGiDqIBAy003NcEHr19"
 	c := GetCookie(w, r)
 	requestBody, _ := ioutil.ReadAll(r.Body)
@@ -30,7 +33,7 @@ func HandleCreatePaymentIntent(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(requestBody)
 	fmt.Println(pmKey.Id)
 	intIdUser, _ := strconv.Atoi(c.Value)
-	amount, _ := repository.CalcAmount(intIdUser)
+	amount, _ := pc.OrderRepository.CalcAmount(intIdUser)
 	params := &stripe.PaymentIntentParams{
 		PaymentMethod:      stripe.String(pmKey.Id),
 		Amount:             stripe.Int64(amount),
