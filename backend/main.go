@@ -13,7 +13,7 @@ import (
 
 func main() {
 	//connect database
-	envErr := godotenv.Load("env")
+	envErr := godotenv.Load(".env")
 	if envErr != nil {
 		fmt.Println("Could not load .env file")
 	}
@@ -28,7 +28,7 @@ func main() {
 	handleCross := handlers.CORS(
 		handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization", "Origin", "Accept"}),
 		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"}),
-		handlers.AllowedOrigins([]string{"http://localhost:8080"}),
+		handlers.AllowedOrigins([]string{"http://localhost:8080", "http://hoc-tran-test-s3-vue.s3-website-ap-southeast-1.amazonaws.com"}),
 		handlers.AllowCredentials(),
 	)
 
