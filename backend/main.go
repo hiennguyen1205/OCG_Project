@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	//connect database
+	//connect database.
 	envErr := godotenv.Load(".env")
 	if envErr != nil {
 		fmt.Println("Could not load .env file")
