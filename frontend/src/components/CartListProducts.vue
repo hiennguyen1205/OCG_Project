@@ -16,7 +16,7 @@
               <div class="thumbnail">
                 <a href="#">
                   <img
-                    :src="`http://localhost:3000/${product.image}`"
+                    :src="`${rootApi}/${product.image}`"
                     :alt="product.name"
                   />
                 </a>
@@ -69,7 +69,9 @@ import { mapMutations, mapState } from 'vuex';
 export default {
   name: 'CartListProducts',
   data() {
-    return {};
+    return {
+      rootApi: process.env.VUE_APP_ROOT_API,
+    };
   },
 
   methods: {

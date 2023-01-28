@@ -15,7 +15,7 @@ const getters = {
 
 const actions = {
     login: async ({ commit }, user) => {
-        await fetch('http://localhost:3000/api/login', {
+        await fetch(`${process.env.VUE_APP_ROOT_API}/api/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
@@ -38,7 +38,7 @@ const actions = {
     },
 
     register: async ({ commit }, user) => {
-        await fetch("http://localhost:3000/api/register", {
+        await fetch(`${process.env.VUE_APP_ROOT_API}/api/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(user),
@@ -54,7 +54,7 @@ const actions = {
     },
 
     logout: ({ commit }) => {
-        fetch("http://localhost:3000/api/logout", {
+        fetch(`${process.env.VUE_APP_ROOT_API}/api/logout`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",

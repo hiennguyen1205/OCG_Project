@@ -22,7 +22,7 @@
           </th>
           <td class="t-center parentCenter">
             <div class="center">
-              <img :src="`http://localhost:3000/${order.image}`" alt="hihi" />
+              <img :src="`${rootApi}/${order.image}`" alt="hihi" />
             </div>
           </td>
           <td class="t-center parentCenter">
@@ -63,6 +63,7 @@ export default {
   data() {
     return {
         total: 0,
+        rootApi: process.env.VUE_APP_ROOT_API,
     };
   },
   computed: {

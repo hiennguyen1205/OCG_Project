@@ -77,7 +77,7 @@ export default {
     async changeInfor(event) {
       event.preventDefault();
       console.log(this.User);
-      await fetch('http://localhost:3000/api/user', {
+      await fetch(`${process.env.VUE_APP_ROOT_API}/api/user`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -102,7 +102,7 @@ export default {
   },
 
   async beforeMount() {
-    await fetch('http://localhost:3000/api/user', {
+    await fetch(`${process.env.VUE_APP_ROOT_API}/api/user`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',

@@ -166,7 +166,7 @@ export default {
         let order = this.order;
         this.$refs.gateway.createPaymentMethod().then((res) => {
           if (!res.paymentMethod) return;
-          fetch('http://localhost:3000/api/payment', {
+          fetch(`${process.env.VUE_APP_ROOT_API}/api/payment`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

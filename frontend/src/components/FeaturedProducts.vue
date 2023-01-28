@@ -21,7 +21,7 @@
           <div :class="{ discount: product.sale }">
           {{ product.Sale > 0 ? product.sale + "%" : "" }}
         </div>
-        <img :src="`http://localhost:3000/${product.image}`" alt="hihi" />
+        <img :src="`${rootApi}/${product.image}`" alt="hihi" />
         <div>
           <h4>{{ product.name }}</h4>
           <p>
@@ -58,6 +58,7 @@ export default {
   data() {
     return {
       products: [],
+      rootApi: process.env.VUE_APP_ROOT_API,
     };
   },
 

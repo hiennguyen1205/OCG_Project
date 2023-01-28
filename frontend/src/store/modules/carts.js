@@ -59,7 +59,7 @@ const getters = {
 const actions = {
     async submitOrder(_, order) {
         // console.log(order);
-        await fetch('http://localhost:3000/auth/api/orders', {
+        await fetch(`${process.env.VUE_APP_ROOT_API}/auth/api/orders`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
@@ -72,7 +72,7 @@ const actions = {
     },
     async getCartByUserId({ commit }, userId) {
 
-        await fetch('http://localhost:3000/api/orders/' + userId, {
+        await fetch(`${process.env.VUE_APP_ROOT_API}/api/orders/` + userId, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',

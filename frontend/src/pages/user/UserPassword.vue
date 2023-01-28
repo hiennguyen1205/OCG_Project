@@ -39,7 +39,7 @@ export default {
       if (this.password != this.password_confirm) {
         alert('Passwords did not match');
       } else {
-        await fetch('http://localhost:3000/api/change-password', {
+        await fetch(`${process.env.VUE_APP_ROOT_API}/api/change-password`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',

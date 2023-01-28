@@ -9,7 +9,7 @@
           <div>
             <img
               :src="
-                product.image ? `http://localhost:3000/${product.image}` : ''
+                product.image ? `${rootApi}/${product.image}` : ''
               "
               alt=""
               class="img-fluid wc-image"
@@ -88,6 +88,7 @@ export default {
     return {
       product: {},
       quantityOfProduct: 1,
+      rootApi: process.env.VUE_APP_ROOT_API,
     };
   },
 

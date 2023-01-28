@@ -78,7 +78,7 @@
                   {{ product.sale > 0 ? product.sale + '%' : '' }}
                 </div>
                 <img
-                  :src="`http://localhost:3000/${product.image}`"
+                  :src="`${rootApi}/${product.image}`"
                   alt="hihi"
                 />
                 <div class="decription">
@@ -140,6 +140,7 @@ export default {
       cursor: 0,
       categoryId: 1,
       searchProducts: '',
+      rootApi: process.env.VUE_APP_ROOT_API,
     };
   },
 

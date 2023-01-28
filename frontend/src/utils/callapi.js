@@ -1,5 +1,5 @@
-var baseURL = "http://localhost:3000/api/"
-var baseAuthURL = "http://localhost:3000/auth/api/"
+var baseURL = `${process.env.VUE_APP_ROOT_API}/api/`
+var baseAuthURL = `${process.env.VUE_APP_ROOT_API}/auth/api/`
 async function PostData(url = '', data = {}) {
     console.log("postdata")
     // Default options are marked with *
